@@ -1,29 +1,31 @@
-import React from 'react'
-import Hero from './_components/Hero';
-import FeaturesSection from './_components/FeaturesSection';
-import FeaturedCollections from './_components/FeaturedCollections';
-import PopularProduct from './_components/PopularProduct';
-import KnitKnotHero from './_components/KnitKnotHero';
-import Collection from './_components/Collection';
-import Testimonial from './_components/Testimonial';
-import Articales from './_components/Articales';
-import FavouritDicount from './_components/FavouritDicount';
+import Hero from "./_components/Hero";
+import Collections from "./_components/Collections";
+import NewArrivals from "./_components/NewArrivals";
+import ProductLineup from "./_components/ProductLineup";
+import ClassicFeature from "./_components/ClassicFeature";
+import ShoeCare from "./_components/ShoeCare";
+import CallToAction from "./_components/CallToAction";
+import BrandStory from "./_components/BrandStory";
+import StyleGuide from "./_components/StyleGuide";
+import Faq from "./_components/Faq";
+import RecentlyViewed from "./_components/RecentlyViewed";
 
-
-const Home = () => {
+export default function Home() {
   return (
-    <div>
-      <Hero/>
-      <FeaturesSection/>
-      <FeaturedCollections/>
-      <PopularProduct/>
-      <KnitKnotHero/>
-      <Collection/>
-      <Testimonial/>
-      <Articales/>
-      <FavouritDicount/>
-    </div>
-  )
+    <>
+      <main id="home">
+        <Hero />
+        <Collections />
+        <BrandStory />
+        <NewArrivals />
+        <ProductLineup />
+        <ClassicFeature />
+        <StyleGuide />
+        <Faq />
+        <ShoeCare />
+        <CallToAction />
+        <RecentlyViewed />
+        </main>
+    </>
+  );
 }
-
-export default Home;

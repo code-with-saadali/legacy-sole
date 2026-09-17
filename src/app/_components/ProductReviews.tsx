@@ -1,0 +1,17 @@
+"use client";
+
+import { FormEvent, useCallback, useEffect, useState } from "react";
+import { FiStar } from "react-icons/fi";
+import { supabase } from "../../lib/supabase";
+
+type Review = { id: string; customer_name: string; rating: number; body: string; created_at: string };
+
+export default function ProductReviews({ slug }: { slug: string }) {
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [message, setMessage] = useState("");
+  const load = useCallback(async () => { if (!supabase) return; const { data } = await supabase.from("reviews").select("id,customer_name,rating,body,created_at").eq("product_slug", slug).eq("approved", true).order("created_at", { ascending: false }); if (data) setReviews(data); }, [slug]);
+  useEffect(() => { void load(); }, [load]);
+  const average = reviews.length ? reviews.reduce((sum, item) => sum + item.rating, 0) / reviews.length : 0;
+  const submit = async (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); if (!supabase) return; const form = new FormData(event.currentTarget); const { error } = await supabase.from("reviews").insert({ product_slug: slug, customer_name: String(form.get("name")), rating: Number(form.get("rating")), body: String(form.get("body")) }); setMessage(error ? error.message : "Thanks, your review has been added."); if (!error) { event.currentTarget.reset(); await load(); } };
+  return <section className="mt-16 border-t border-black/10 pt-10" aria-labelledby="reviews-title"><div className="flex flex-wrap items-end justify-between gap-5"><div><p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Customer notes</p><h2 id="reviews-title" className="mt-3 text-4xl text-[#20211e]">Reviews & ratings</h2></div><div className="flex items-center gap-2 text-sm"><FiStar className="fill-[#b66b4d] text-[#b66b4d]" /><strong>{average ? average.toFixed(1) : "New"}</strong><span className="text-black/40">({reviews.length})</span></div></div><div className="mt-8 grid gap-10 lg:grid-cols-[1fr_320px]"><div className="divide-y divide-black/10">{reviews.length ? reviews.map(review => <article key={review.id} className="py-5 first:pt-0"><div className="flex items-center justify-between"><p className="text-xs font-medium">{review.customer_name}</p><span className="flex gap-0.5 text-[#b66b4d]">{[1,2,3,4,5].map(star => <FiStar key={star} size={13} className={star <= review.rating ? "fill-current" : ""} />)}</span></div><p className="mt-3 text-sm leading-6 text-black/55">{review.body}</p></article>) : <p className="py-8 text-sm text-black/45">Be the first to review this pair.</p>}</div><form onSubmit={submit} className="space-y-3 border border-black/10 bg-[#F8F6F1] p-5"><p className="text-[10px] uppercase tracking-[0.16em] text-black/45">Leave a review</p><input required name="name" placeholder="Your name" className="checkout-input" /><select name="rating" defaultValue="5" className="checkout-input"><option value="5">5 stars</option><option value="4">4 stars</option><option value="3">3 stars</option><option value="2">2 stars</option><option value="1">1 star</option></select><textarea required name="body" minLength={5} placeholder="How does it feel?" rows={4} className="checkout-input" /><button className="w-full bg-[#4b5a42] px-4 py-3 text-[10px] uppercase tracking-[0.14em] text-white hover:bg-[#b66b4d]">Submit review</button>{message && <p className="text-xs text-[#4b5a42]">{message}</p>}</form></div></section>;
+}

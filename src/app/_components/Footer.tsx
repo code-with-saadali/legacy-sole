@@ -1,85 +1,122 @@
-"use client";
-
 import Link from "next/link";
-import { FaFacebookF, FaInstagram, FaXTwitter } from "react-icons/fa6";
+import { FiArrowUpRight, FiInstagram, FiFacebook } from "react-icons/fi";
 
-const Footer = () => {
+const footerLinks = [
+  { label: "Collections", href: "#collections" },
+  { label: "New Arrivals", href: "#new-arrivals" },
+  { label: "The Line-Up", href: "#collection" },
+  { label: "Our Story", href: "#our-story" },
+  { label: "Style Notes", href: "#style-guide" },
+  { label: "Questions", href: "#questions" },
+  { label: "Shoe Care", href: "#shoe-care" },
+  { label: "Track Order", href: "/track-order" },
+];
+
+export default function Footer() {
   return (
-    <footer className="bg-[#EDEBE5] text-[#1e1e1e] pt-16 px-6 md:px-20">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-        {/* Subscribe */}
-        <div className="md:col-span-1">
-          <h2 className="text-lg font-semibold mb-2">Subscribe to get 10% OFF</h2>
-          <p className="text-sm text-gray-600 mb-4">Subscribe for store updates and discounts.</p>
-          <form className="flex items-center bg-white rounded-full overflow-hidden shadow max-w-sm">
-            <input
-              type="email"
-              placeholder="Email"
-              className="w-full px-4 py-2 text-sm text-black focus:outline-none"
+    <footer className="site-chrome bg-[#20211e] px-[5%] pb-6 pt-14 text-white lg:pt-18">
+      <div className="grid gap-12 border-b border-white/10 pb-12 lg:grid-cols-[1fr_auto] lg:items-start lg:gap-20">
+        <div>
+          <Link
+            href="#home"
+            aria-label="Legacy Sole home"
+            className="inline-flex flex-col"
+          >
+            <div className="flex items-start">
+              <span className="text-[38px] font-black leading-none tracking-[-2.4px] sm:text-[46px]">
+                LEGACY SOLE
+              </span>
+              <span className="ml-1 mt-1 text-[9px] font-semibold text-white/55">
+                ®
+              </span>
+            </div>
+
+            <span className="mt-2 text-[8px] font-medium uppercase tracking-[0.45em] text-white/35">
+              Everyday Footwear
+            </span>
+          </Link>
+
+          <p className="mt-6 max-w-95 text-[12px] leading-6 text-white/45 sm:text-[13px]">
+            Easy silhouettes, everyday comfort and pairs made to move naturally
+            with the way you live.
+          </p>
+
+          <Link
+            href="#collections"
+            className="group mt-7 inline-flex items-center gap-3 text-[11px] font-medium text-white"
+          >
+            Explore the collection
+            <FiArrowUpRight
+              size={14}
+              className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
             />
-            <button
-              type="submit"
-              className="px-4 py-2 text-gray-700 hover:text-black"
-            >
-              →
-            </button>
-          </form>
+          </Link>
         </div>
 
-        {/* Quick Links */}
-        <div>
-          <h3 className="text-sm font-semibold mb-3">Quick links</h3>
-          <ul className="space-y-2 text-sm text-gray-700">
-            <li><Link href="/" className="hover:underline">Home</Link></li>
-            <li><Link href="/story" className="hover:underline">Story</Link></li>
-            <li><Link href="/shop" className="hover:underline">Shop</Link></li>
-            <li><Link href="/testimonials" className="hover:underline">Testimonials</Link></li>
-            <li><Link href="/blog" className="hover:underline">Blog</Link></li>
-          </ul>
-        </div>
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[220px_170px]">
+          <div>
+            <p className="text-[9px] font-medium uppercase tracking-[0.2em] text-white/30">
+              Explore
+            </p>
 
-        {/* Categories */}
-        <div>
-          <h3 className="text-sm font-semibold mb-3">Categories</h3>
-          <ul className="space-y-2 text-sm text-gray-700">
-            <li><Link href="/collections/bestsellers" className="hover:underline">Bestseller&apos;s</Link></li>
-            <li><Link href="/collections/men" className="hover:underline">Men’s</Link></li>
-            <li><Link href="/collections/new" className="hover:underline">New Arrival</Link></li>
-            <li><Link href="/collections/style-essentials" className="hover:underline">Style Essentials</Link></li>
-            <li><Link href="/collections/summer" className="hover:underline">Summer Collection</Link></li>
-          </ul>
-        </div>
+            <nav aria-label="Footer navigation" className="mt-5 grid gap-3">
+              {footerLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="w-fit text-[12px] text-white/55 transition-colors duration-300 hover:text-[#ed682c]"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
 
-        {/* Customer Care */}
-        <div>
-          <h3 className="text-sm font-semibold mb-3">Customer Care</h3>
-          <ul className="space-y-2 text-sm text-gray-700">
-            <li><Link href="/terms" className="hover:underline">Terms & Conditions</Link></li>
-            <li><Link href="/returns" className="hover:underline">Shipping & Returns</Link></li>
-            <li><Link href="/faq" className="hover:underline">FAQ</Link></li>
-            <li><Link href="/contact" className="hover:underline">Contact</Link></li>
-            <li><Link href="/404" className="hover:underline">404</Link></li>
-          </ul>
+          <div>
+            <p className="text-[9px] font-medium uppercase tracking-[0.2em] text-white/30">
+              Follow
+            </p>
+
+            <div className="mt-5 flex gap-2">
+              <Link
+                href="#"
+                aria-label="Instagram"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/60 transition-all duration-300 hover:border-[#ed682c] hover:bg-[#ed682c] hover:text-white"
+              >
+                <FiInstagram size={15} />
+              </Link>
+
+              <Link
+                href="#"
+                aria-label="Facebook"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/60 transition-all duration-300 hover:border-[#ed682c] hover:bg-[#ed682c] hover:text-white"
+              >
+                <FiFacebook size={15} />
+              </Link>
+            </div>
+
+            <p className="mt-7 max-w-45 text-[11px] leading-5 text-white/35">
+              Follow the latest drops, styling notes and everyday favourites.
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Bottom */}
-      <div className="border-t border-gray-300 mt-16 py-6 flex flex-col md:flex-row items-center justify-between text-sm text-gray-500">
-        <p>© Framerify {new Date().getFullYear()} KnitKnot. All Rights Reserved.</p>
-        <div className="flex space-x-4 mt-4 md:mt-0">
-          <a href="#" className="p-2 bg-white rounded-full text-gray-800 hover:text-black transition">
-            <FaFacebookF />
-          </a>
-          <a href="#" className="p-2 bg-white rounded-full text-gray-800 hover:text-black transition">
-            <FaInstagram />
-          </a>
-          <a href="#" className="p-2 bg-white rounded-full text-gray-800 hover:text-black transition">
-            <FaXTwitter />
-          </a>
-        </div>
+      <div className="flex flex-col gap-4 py-5 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-[9px] uppercase tracking-[0.16em] text-white/25">
+          © {new Date().getFullYear()} Legacy Sole
+        </p>
+
+        <p className="text-[9px] uppercase tracking-[0.16em] text-white/25">
+          Made for your everyday
+        </p>
+      </div>
+
+      <div className="overflow-hidden border-t border-white/10 pt-4">
+        <p className="select-none whitespace-nowrap text-center text-[clamp(54px,11vw,170px)] font-black leading-[0.8] tracking-[-0.08em] text-white/[0.035]">
+          LEGACY SOLE
+        </p>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}

@@ -1,242 +1,141 @@
 "use client";
-import { motion, useScroll, useTransform } from "framer-motion";
-import Image from "next/image";
-import { useRef } from "react";
 
-const Hero = () => {
-  const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
+import { useCatalog } from "./CatalogProvider";
+﻿import Image from "./ProductImage";
+import Link from "next/link";
+import { FiArrowUpRight, FiPlus } from "react-icons/fi";
 
-
-  const yTitle = useTransform(scrollYProgress, [0, 1], [0, -70]);
-  const yImage = useTransform(scrollYProgress, [0, 1], [0, -30]);
-  const xLeft = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const xRight = useTransform(scrollYProgress, [0, 1], [0, -200]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.02]);
-  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-
+export default function Hero() {
+  const { products } = useCatalog();
+  const product = products.find(item => item.slug === "aero-runner") ?? products[0];
+  if (!product) return <section id="home" className="px-[5%] py-20"><h1 className="text-5xl">Made for every single day.</h1><Link href="/shop">Explore the collection</Link></section>;
   return (
-    <div
-      ref={containerRef}
-      className="min-h-screen flex flex-col justify-center items-center px-4 max-md:pt-34 pt-44 overflow-hidden relative bg-gradient-to-b from-[#f8f5f2] to-[#eae4dd]"
+    <section
+      id="home"
+      aria-labelledby="hero-title"
+      className="relative overflow-hidden bg-[#F4F1E9]"
     >
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/concrete-wall.png')] opacity-20" />
-      </div>
-      
-      <div className="max-w-7xl w-full relative z-10">
-        {/* Main Content Row */}
-        <div className="relative flex flex-col md:flex-row justify-center items-center gap-8 md:gap-16 mb-16">
-          {/* Elevated Tag Box */}
-          <motion.div
-            initial={{ opacity: 0, y: 20, rotate: -2 }}
-            animate={{ opacity: 1, y: 0, rotate: -2 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-            className="absolute top-0 left-0 md:left-[-30px] md:top-1/4 transform -translate-y-1/3 -ml-3 z-10 -mt-16"
-          >
-            <div className="bg-[#1a1a1a] h-[50px] w-[150px] flex flex-col justify-center items-center rounded-md relative shadow-lg overflow-hidden border border-[#333]">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#ffffff22] to-transparent opacity-30" />
-              <h1 className="text-xs font-medium uppercase tracking-[0.2em] text-[#f8f5f2] z-10">
-                Summer is here
-              </h1>
-              <h1 className="text-xs font-medium uppercase tracking-[0.2em] text-[#f8f5f2] z-10">
-                get ready!
-              </h1>
+      <div className="mx-auto px-[5%]">
+        <div className="grid min-h-[calc(100svh-118px)] items-center gap-7 py-6 lg:h-[calc(100svh-128px)] lg:min-h-140 lg:grid-cols-[0.84fr_1.16fr] lg:gap-8 lg:py-6 xl:gap-10">
+          <div className="relative z-10 flex min-w-0 flex-col justify-center lg:h-full">
+            <div className="flex items-center gap-3">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#ed682c]" />
+              <p className="text-[9px] font-medium uppercase tracking-[0.2em] text-black/55 sm:text-[10px]">
+                Legacy Sole / Summer 2026
+              </p>
             </div>
-          </motion.div>
 
-          {/* Refined Decorative Elements */}
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="absolute bg-[#1a1a1a] w-8 h-8 rounded-full top-[-20px] left-8 opacity-30 mt-5"
-          />
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.6 }}
-            className="absolute w-6 h-6 rounded-full bg-[#d4af37] top-1/4 right-4 opacity-70"
-          />
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.7 }}
-            className="absolute w-4 h-4 rounded-full bg-[#d4af37] bottom-8 left-1/4 opacity-40"
-          />
-
-          {/* Elegant Headings */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="text-center md:text-right"
-            style={{ x: xLeft, y: yTitle }}
-          >
-            <h1 className="text-5xl md:text-6xl lg:text-8xl font-bold uppercase tracking-tight text-[#1a1a1a]">
-              Your
+            <h1
+              id="hero-title"
+              className="mt-5 max-w-150 text-[clamp(48px,6.7vw,92px)] font-medium leading-[0.87] tracking-[-0.07em] text-[#20211e]"
+            >
+              Made for every
+              <br />
+              <span className="font-serif font-normal italic tracking-tighter text-[#ed682c]">
+                single day.
+              </span>
             </h1>
-          </motion.div>
 
-          {/* Main Image with Border and Shadow */}
-          <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="relative w-[300px] h-[400px] md:w-[380px] md:h-[480px] overflow-hidden z-10 group"
-            style={{ y: yImage, scale }}
-          >
-            <div className="absolute inset-0 border-4 border-[#ffffffcc] rounded-xl z-20 pointer-events-none" />
-            <div className="absolute inset-0 rounded-xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)]" />
-            <Image
-              src="/dz9jyD4eKoxFvRvO2exMS97GwOY.avif"
-              alt="Summer fashion collection"
-              layout="fill"
-              objectFit="cover"
-              className="rounded-xl transition-transform duration-700 group-hover:scale-105"
-            />
-          </motion.div>
+            <p className="mt-5 max-w-92 text-[12px] leading-6 text-black/50 sm:text-[13px]">
+              Refined silhouettes made for slow mornings, long days and
+              everything in between.
+            </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-            className="text-center md:text-left"
-            style={{ x: xRight, y: yTitle }}
-          >
-            <h1 className="text-5xl md:text-6xl lg:text-8xl font-bold uppercase tracking-tight text-[#1a1a1a]">
-              Style
-            </h1>
-          </motion.div>
-        </div>
-
-          {/* Premium Secondary Headings with Elegant Line */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center mb-16 relative"
-          style={{ opacity, y: yTitle }}
-        >
-          <div className="absolute left-1/2 top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-64 h-px bg-gradient-to-r from-transparent via-[#d4af37] to-transparent opacity-70" />
-          <div className="relative z-10 px-8 inline-block">
-            <motion.h2
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-              className="text-xl md:text-2xl font-light uppercase tracking-[0.4em] mb-1 text-[#7a6a5c]"
-            >
-              Starts
-            </motion.h2>
-            <motion.h2
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.9 }}
-              className="text-xl md:text-2xl font-light uppercase tracking-[0.4em] text-[#7a6a5c]"
-            >
-              Here
-            </motion.h2>
-          </div>
-        </motion.div>
-        {/* Premium Rotating Discount Badge */}
-        <motion.div
-          className="absolute bottom-10 md:bottom-40 right-4 md:right-48 w-[130px] h-[130px] md:w-[160px] md:h-[160px] rounded-full z-20"
-          initial={{ scale: 0.5, rotate: -30, opacity: 0 }}
-          animate={{ scale: 1, rotate: 0, opacity: 1 }}
-          transition={{
-            duration: 1,
-            delay: 1.2,
-            type: "spring",
-            stiffness: 120,
-            damping: 12,
-          }}
-        >
-          <div className="relative w-full h-full">
-            {/* Metallic Border */}
-            <div className="absolute inset-0 rounded-full border-2 border-[#d4af37] border-opacity-60 shadow-[0_0_15px_rgba(212,175,55,0.3)]" />
-
-            {/* Rotating Text Circle */}
-            <motion.div
-              className="absolute inset-0 flex items-center justify-center rounded-full overflow-hidden"
-              animate={{ rotate: 360 }}
-              transition={{
-                repeat: Infinity,
-                duration: 12,
-                ease: "linear",
-              }}
-            >
-              <svg viewBox="0 0 100 100" className="w-full h-full fill-[#1a1a1a]">
-                <defs>
-                  <path
-                    id="circlePath"
-                    d="
-              M 50, 50
-              m -30, 0
-              a 30,30 0 1,1 60,0
-              a 30,30 0 1,1 -60,0
-            "
+            <div className="mt-7">
+              <Link
+                href="#collections"
+                className="group inline-flex items-center gap-6 rounded-full bg-[#20211e] px-5 py-3 text-[11px] font-medium text-white transition-all duration-300 hover:bg-[#b66b4d]"
+              >
+                Explore the edit
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-black">
+                  <FiArrowUpRight
+                    size={14}
+                    className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                   />
-                </defs>
-                <text fontSize="5.5" fontWeight="bold" letterSpacing="1.5px">
-                  <textPath
-                    xlinkHref="#circlePath"
-                    startOffset="0%"
-                    textLength="220"
-                  >
-                    • SUMMER SALE • LIMITED OFFER • EXCLUSIVE •
-                  </textPath>
-                </text>
-              </svg>
-            </motion.div>
-
-            {/* Center Circle with Gradient */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-br from-[#d4af37] to-[#b8972f] w-[65px] h-[65px] md:w-[80px] md:h-[80px] rounded-full flex flex-col items-center justify-center shadow-[0_4px_15px_rgba(0,0,0,0.2)] border border-[#ffffff66]">
-              <h1 className="text-[16px] md:text-[18px] font-extrabold text-white tracking-tight">
-                30%
-              </h1>
-              <h2 className="uppercase text-[10px] md:text-[11px] text-white -mt-[2px] tracking-widest font-medium">
-                OFF
-              </h2>
+                </span>
+              </Link>
             </div>
           </div>
-        </motion.div>
-      </div>
 
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden z-0">
-        <motion.div
-          className="absolute bottom-8 left-8 w-12 h-12 rounded-full"
-          style={{ y: yImage }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.2 }}
-          transition={{ delay: 1.3 }}
-        >
-          <div className="w-full h-full rounded-full bg-gradient-to-br from-[#d4af37] to-[#b8972f] opacity-20 shadow-[0_0_20px_rgba(212,175,55,0.3)]" />
-        </motion.div>
-        <motion.div
-          className="absolute top-12 right-8 w-10 h-10 rounded-full"
-          style={{ y: yImage }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.15 }}
-          transition={{ delay: 1.4 }}
-        >
-          <div className="w-full h-full rounded-full bg-gradient-to-br from-[#d4af37] to-[#b8972f] opacity-15 shadow-[0_0_20px_rgba(212,175,55,0.3)]" />
-        </motion.div>
-        <motion.div
-          className="absolute bottom-24 right-16 w-6 h-6 rounded-full"
-          style={{ y: yImage }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.1 }}
-          transition={{ delay: 1.5 }}
-        >
-          <div className="w-full h-full rounded-full bg-gradient-to-br from-[#d4af37] to-[#b8972f] opacity-10 shadow-[0_0_20px_rgba(212,175,55,0.3)]" />
-        </motion.div>
+          <div className="relative min-h-107.5 overflow-hidden rounded-[26px] bg-[#EDE7DD] sm:min-h-125 lg:h-[calc(100%-8px)] lg:min-h-0 lg:max-h-162.5 lg:self-center lg:rounded-4xl xl:max-h-170">
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute left-1/2 top-[8%] -translate-x-1/2 whitespace-nowrap text-[clamp(60px,9vw,132px)] font-semibold leading-none tracking-[-0.075em] text-[#DFD6C8]"
+            >
+              EVERYDAY
+            </span>
+
+            <div className="absolute left-5 top-5 z-10 flex items-center gap-2 rounded-full border border-black/10 bg-[#F4F1E9]/85 px-3 py-2 backdrop-blur-md sm:left-6 sm:top-6">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#ed682c]" />
+              <span className="text-[8px] font-medium uppercase tracking-[0.16em] text-black/60">
+                New Season
+              </span>
+            </div>
+
+            <div className="absolute right-5 top-5 z-10 text-right sm:right-6 sm:top-6">
+              <p className="text-[8px] uppercase tracking-[0.18em] text-black/35">
+                Featured
+              </p>
+              <p className="mt-1 text-[11px] font-medium text-black/70">
+                01 / 04
+              </p>
+            </div>
+
+            <div className="absolute inset-x-[3%] bottom-25 top-16.25 sm:bottom-27.5 sm:top-18.75 lg:inset-x-[1%] lg:bottom-26.25 lg:top-19.5">
+              <Image
+                src={product.image}
+                alt={`${product.name}, ${product.color}`}
+                fill
+                priority
+                sizes="(max-width: 1023px) 90vw, 56vw"
+                className="object-contain drop-shadow-[0_30px_30px_rgba(0,0,0,0.11)]"
+              />
+            </div>
+
+            <div className="absolute right-5 top-1/2 z-10 hidden -translate-y-1/2 flex-col items-center gap-3 xl:flex">
+              <div className="h-14 w-px bg-black/15" />
+
+              <button
+                type="button"
+                aria-label="View product details"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 bg-[#F4F1E9]/85 transition-all duration-300 hover:border-[#ed682c] hover:bg-[#ed682c] hover:text-white"
+              >
+                <FiPlus size={15} />
+              </button>
+
+              <div className="h-14 w-px bg-black/15" />
+            </div>
+
+            <Link
+              href="#new-arrivals"
+              className="group absolute inset-x-0 bottom-0 flex items-center justify-between bg-[#F4F1E9]/90 px-5 py-4 backdrop-blur-md sm:px-6"
+            >
+              <div>
+                <p className="text-[8px] font-medium uppercase tracking-[0.18em] text-black/40">
+                  In Focus / 01
+                </p>
+
+                <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <h2 className="text-[13px] font-semibold tracking-[-0.02em] text-[#20211e] sm:text-sm">
+                    {product.name}
+                  </h2>
+
+                  <span className="text-[10px] text-black/45 sm:text-[11px]">
+                    {product.color}
+                  </span>
+                </div>
+              </div>
+
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-black/15 bg-white/60 text-[#20211e] transition-all duration-300 group-hover:border-[#ed682c] group-hover:bg-[#ed682c] group-hover:text-white">
+                <FiArrowUpRight
+                  size={16}
+                  className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                />
+              </span>
+            </Link>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   );
-};
-
-export default Hero;
+}

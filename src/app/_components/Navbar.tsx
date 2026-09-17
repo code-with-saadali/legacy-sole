@@ -1,213 +1,477 @@
-"use client";
+﻿"use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence, Variants } from "framer-motion";
-import { FaSearch, FaShoppingCart } from "react-icons/fa";
-import { IoIosArrowDown } from "react-icons/io";
-import { FiMenu, FiX } from "react-icons/fi";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import {
+  FiArrowUpRight,
+  FiHeart,
+  FiMenu,
+  FiSearch,
+  FiShoppingBag,
+  FiUser,
+  FiX,
+} from "react-icons/fi";
 
-const navItems = [
-  { name: "Home", link: "/" },
-  { name: "New Arrival", link: "/arrival" },
-  { name: "Mens", link: "/men" },
-  { name: "Womens", link: "/women" },
-  { name: "Shop", link: "/shop" },
-  { name: "Contact", link: "/contact-us" },
+const menuColumns = [
+  {
+    title: "Shop",
+    caption: "Explore all footwear",
+    links: [
+      { label: "Running", href: "/shop?category=Running" },
+      { label: "Casual", href: "/shop?category=Everyday" },
+      { label: "Boots", href: "/shop?category=Boots" },
+      { label: "Sneakers", href: "/shop?category=Sneakers" },
+      { label: "View All", href: "/shop" },
+    ],
+  },
+  {
+    title: "Collections",
+    caption: "Curated seasonal edits",
+    links: [
+      { label: "New Season", href: "/#collections" },
+      { label: "Best Sellers", href: "/#best-sellers" },
+      { label: "Essentials", href: "/#essentials" },
+      { label: "Limited Edition", href: "/#limited" },
+    ],
+  },
+  {
+    title: "Shoes",
+    caption: "Find your everyday pair",
+    links: [
+      { label: "Sneakers", href: "/shop?category=Sneakers" },
+      { label: "Running", href: "/shop?category=Running" },
+      { label: "Boots", href: "/shop?category=Boots" },
+      { label: "Everyday", href: "/shop?category=Everyday" },
+    ],
+  },
+  {
+    title: "Discover",
+    caption: "More from Legacy Sole",
+    links: [
+      { label: "New Arrivals", href: "/#new-arrivals" },
+      { label: "Best Sellers", href: "/#best-sellers" },
+      { label: "The Line-Up", href: "/#collection" },
+      { label: "Shoe Care", href: "/#shoe-care" },
+    ],
+  },
 ];
 
-const navItemVariants: Variants = {
-  hidden: { opacity: 0, y: -10 },
-  visible: (custom) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: custom * 0.08,
-      type: "spring",
-      stiffness: 180,
-    },
-  }),
-};
-
-const dropdownVariants: Variants = {
-  hidden: { opacity: 0, y: -10 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.25,
-      ease: "easeOut",
-    },
-  },
-  exit: {
-    opacity: 0,
-    y: -10,
-    transition: {
-      duration: 0.2,
-      ease: "easeIn",
-    },
-  },
-};
-
-export default function Navbar({ onCartOpen }: { onCartOpen: () => void }) {
-  const [isHomeHovered, setIsHomeHovered] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showNavbar, setShowNavbar] = useState(true);
-  const lastScrollY = useRef(0);
+export default function Navbar() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      setShowNavbar(
-        currentScrollY < lastScrollY.current || currentScrollY < 10
-      );
-      lastScrollY.current = currentScrollY;
+      setScrolled(window.scrollY > 18);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+      }
+    };
+
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, []);
 
+  useEffect(() => {
+    const updateCartCount = () => {
+      try {
+        const stored = window.localStorage.getItem("legacy-sole-cart");
+        const items = stored ? JSON.parse(stored) : [];
+
+        setCartCount(
+          items.reduce(
+            (
+              total: number,
+              item: {
+                quantity?: number;
+              }
+            ) => total + (item.quantity ?? 0),
+            0
+          )
+        );
+      } catch {
+        setCartCount(0);
+      }
+    };
+
+    updateCartCount();
+
+    window.addEventListener("cart-updated", updateCartCount);
+
+    return () => {
+      window.removeEventListener("cart-updated", updateCartCount);
+    };
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
+
   return (
-    <motion.nav
-      initial={{ y: -80 }}
-      animate={{ y: showNavbar ? 0 : -100 }}
-      transition={{ duration: 0.4, ease: [0.33, 1, 0.68, 1] }}
-      className="text-white fixed top-0 w-full z-[10000] shadow bg-white/90"
-    >
-      <motion.div
-        className="w-full px-5 lg:px-24 mx-auto py-4 flex items-center justify-between z-50 text-[#323232] relative"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeInOut" }}
-      >
-        <Link href="/">
-          <motion.div
-            className="text-3xl font-serif italic text-black tracking-tight"
-            whileHover={{ scale: 1.07 }}
-            transition={{ type: "spring", stiffness: 200 }}
+    <>
+      {/* =====================================================
+          TOP ANNOUNCEMENT BAR
+      ===================================================== */}
+      <div className="site-chrome relative z-70 bg-[#11110f]">
+        <div className="mx-auto flex min-h-10 items-center justify-center px-5 sm:justify-between sm:px-[5%]">
+          <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-white/85 sm:text-[11px]">
+            Good Shoes. Great Days.
+          </p>
+
+          <Link
+            href="/#new-arrivals"
+            className="group hidden items-center gap-2 text-[11px] font-medium text-white/50 transition-colors duration-300 hover:text-white sm:flex"
           >
-            KnitKnot
-          </motion.div>
-        </Link>
+            New season styles now available
 
-        <div className="hidden md:flex gap-14 max-lg:gap-8 text-[16px] font-medium">
-          {navItems.map((item, index) => (
-            <motion.div
-              key={index}
-              className="relative group cursor-pointer flex items-center gap-1"
-              custom={index}
-              initial="hidden"
-              animate="visible"
-              variants={navItemVariants}
-              whileHover={{ y: -2 }}
-              onMouseEnter={() =>
-                item.name === "Home" && setIsHomeHovered(true)
-              }
-              onMouseLeave={() =>
-                item.name === "Home" && setIsHomeHovered(false)
-              }
-            >
-              <Link href={item.link} className="flex items-center gap-1">
-                {item.name}
-                {item.name === "Home" && <IoIosArrowDown size={17} />}
-              </Link>
-
-              <div className="absolute bottom-0 left-0 w-full h-[1px] bg-[#242424] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-
-              {item.name === "Home" && (
-                <AnimatePresence>
-                  {isHomeHovered && (
-                    <motion.div
-                      className="absolute top-full mt-3 w-48 bg-[#EDEBE5] shadow-md py-6 px-4 text-[16px] flex flex-col gap-2 z-40"
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      variants={dropdownVariants}
-                    >
-                      <Link
-                        href="/"
-                        className="hover:text-black transition duration-200 border-b border-gray-300 pb-2"
-                      >
-                        Home 1
-                      </Link>
-                      <Link
-                        href="/home2"
-                        className="hover:text-black transition duration-200"
-                      >
-                        Home 2
-                      </Link>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              )}
-            </motion.div>
-          ))}
+            <FiArrowUpRight
+              size={13}
+              className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            />
+          </Link>
         </div>
+      </div>
 
-        <div className="flex items-center gap-6">
-          <motion.div
-            whileHover={{ scale: 1.2, rotate: 5 }}
-            whileTap={{ scale: 0.9 }}
-            transition={{ type: "spring", stiffness: 300 }}
-            className="cursor-pointer"
-          >
-            <FaSearch size={18} />
-          </motion.div>
+      {/* =====================================================
+          NAVBAR
+      ===================================================== */}
+      <header
+        className={`site-chrome sticky top-0 z-70 w-full transition-all duration-500 ${
+          menuOpen
+            ? "bg-[#F4F1E9] shadow-none"
+            : scrolled
+              ? "bg-[#F4F1E9]/95 shadow-[0_10px_35px_rgba(0,0,0,0.045)] backdrop-blur-xl"
+              : "bg-[#F4F1E9]"
+        }`}
+      >
+        <div
+          className={`relative mx-auto flex items-center justify-between px-[5%] transition-all duration-500 ${
+            scrolled ? "h-18 lg:h-19.5" : "h-19.5 lg:h-22"
+          }`}
+        >
+          {/* LEFT */}
+          <div className="flex flex-1 items-center gap-2">
+            <button
+              type="button"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
+              aria-controls="main-menu"
+              onClick={() => setMenuOpen((prev) => !prev)}
+              className={`group flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-300 sm:h-11 sm:w-11 ${
+                menuOpen
+                  ? "border-black/15 bg-[#20211e] text-white shadow-[0_8px_20px_rgba(0,0,0,0.14)]"
+                  : "border-black/8 bg-white/45 text-[#20211e] hover:border-black/[0.14] hover:bg-white"
+              }`}
+            >
+              {menuOpen ? (
+                <FiX
+                  size={18}
+                  className="transition-transform duration-300 group-hover:rotate-90"
+                />
+              ) : (
+                <FiMenu size={18} />
+              )}
+            </button>
 
-          <motion.div
-            whileHover={{ scale: 1.2 }}
-            whileTap={{ scale: 0.95 }}
-            className="relative cursor-pointer"
-            onClick={onCartOpen}
-          >
-            <FaShoppingCart size={20} />
-          </motion.div>
+            <button
+              type="button"
+              aria-label="Search"
+              className="group flex h-10 w-10 items-center justify-center rounded-full text-[#20211e] transition-all duration-300 hover:bg-white/60 sm:h-11 sm:w-11"
+            >
+              <FiSearch
+                size={18}
+                className="transition-transform duration-300 group-hover:scale-105"
+              />
+            </button>
+          </div>
 
-          {/* Mobile Menu Toggle */}
-          <div
-            className="md:hidden cursor-pointer"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          {/* CENTER LOGO */}
+          <Link
+            href="/"
+            onClick={closeMenu}
+            aria-label="Legacy Sole home"
+            className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-start whitespace-nowrap"
           >
-            {isMobileMenuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
+            <span className="text-[24px] font-black leading-none tracking-[-1.7px] text-[#20211e] sm:text-[31px] lg:text-[33px]">
+              LEGACY SOLE
+            </span>
+
+            <span className="ml-1 mt-0.5 text-[8px] font-semibold text-[#20211e]">
+              ®
+            </span>
+          </Link>
+
+          {/* RIGHT */}
+          <div className="flex flex-1 items-center justify-end gap-1 sm:gap-2">
+            <Link
+              href="/wishlist"
+              aria-label="Wishlist"
+              className="group hidden h-10 w-10 items-center justify-center rounded-full text-[#20211e] transition-all duration-300 hover:bg-white/60 sm:flex sm:h-11 sm:w-11"
+            >
+              <FiHeart
+                size={18}
+                className="transition-all duration-300 group-hover:scale-105 group-hover:text-[#b66b4d]"
+              />
+            </Link>
+
+            <Link
+              href="/cart"
+              aria-label="Shopping bag"
+              className="group relative flex h-10 w-10 items-center justify-center rounded-full text-[#20211e] transition-all duration-300 hover:bg-white/60 sm:h-11 sm:w-11"
+            >
+              <FiShoppingBag
+                size={18}
+                className="transition-transform duration-300 group-hover:scale-105"
+              />
+
+              <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#b66b4d] px-1 text-[8px] font-semibold leading-none text-white">
+                {cartCount}
+              </span>
+            </Link>
+
+            <Link
+              href="/account"
+              aria-label="Account"
+              className="group hidden h-10 w-10 items-center justify-center rounded-full text-[#20211e] transition-all duration-300 hover:bg-white/60 sm:flex sm:h-11 sm:w-11"
+            >
+              <FiUser
+                size={18}
+                className="transition-transform duration-300 group-hover:scale-105"
+              />
+            </Link>
           </div>
         </div>
+      </header>
 
-        {/* Mobile Menu */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="absolute top-[100%] left-0 w-full bg-white flex flex-col items-center gap-5 py-10 text-[16px] font-medium z-40"
-            >
-              {/* Home Dropdown */}
-              <div className="flex flex-col gap-2 items-center">
-                <Link href="/" className="cursor-pointer hover:text-black">
-                  Home 1
-                </Link>
-                <Link href="/home2" className="cursor-pointer hover:text-black">
-                  Home 2
-                </Link>
+      {/* =====================================================
+          BACKDROP
+      ===================================================== */}
+      <div
+        onClick={closeMenu}
+        aria-hidden="true"
+        className={`fixed inset-0 z-40 bg-[#0e0e0c]/35 backdrop-blur-xs transition-all duration-500 ${
+          menuOpen
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0"
+        }`}
+      />
+
+      {/* =====================================================
+          PREMIUM MEGA MENU
+      ===================================================== */}
+      <div
+        id="main-menu"
+        role="dialog"
+        aria-modal="true"
+        aria-hidden={!menuOpen}
+        className={`fixed inset-x-3 top-31 z-50 mx-auto w-auto max-w-365 origin-top overflow-hidden rounded-[22px] border border-black/5.5 bg-[#F4F1E9] shadow-[0_40px_120px_rgba(0,0,0,0.22)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:inset-x-6 sm:top-32 lg:top-34.5 ${
+          menuOpen
+            ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
+            : "pointer-events-none -translate-y-3 scale-[0.985] opacity-0"
+        }`}
+        style={{
+          maxHeight: "calc(100dvh - 150px)",
+        }}
+      >
+        {/* ===================================================
+            SCROLLABLE CONTENT
+        =================================================== */}
+        <div className="scrollbar-hidden relative max-h-[calc(100dvh-150px)] overflow-y-auto overscroll-contain">
+          {/* AMBIENT BACKGROUND */}
+          <div className="pointer-events-none absolute -left-20 -top-24 h-64 w-64 rounded-full bg-white/70 blur-3xl" />
+
+          <div className="pointer-events-none absolute -bottom-20 right-10 h-64 w-64 rounded-full bg-[#e7ddd1]/60 blur-3xl" />
+
+          {/* TOP LINE */}
+          <div className="absolute left-0 top-0 h-px w-full bg-black/8" />
+
+          <div
+            className={`absolute left-6 top-0 h-0.5 bg-[#20211e] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] sm:left-8 ${
+              menuOpen ? "w-16" : "w-0"
+            }`}
+          />
+
+          {/* =================================================
+              TOP INFO AREA
+          ================================================= */}
+          <div
+            className={`relative flex items-start justify-between gap-5 border-b border-black/[0.07] px-5 pb-5 pt-6 transition-all duration-500 sm:px-7 sm:pb-6 sm:pt-7 lg:px-10 lg:pb-7 lg:pt-8 ${
+              menuOpen
+                ? "translate-y-0 opacity-100"
+                : "translate-y-3 opacity-0"
+            }`}
+          >
+            <div className="max-w-xl">
+              <div className="flex items-center gap-3">
+                <span className="h-px w-5 bg-[#20211e]/35 sm:w-6" />
+
+                <p className="text-[8px] font-medium uppercase tracking-[0.25em] text-black/35 sm:text-[9px]">
+                  Explore Legacy Sole
+                </p>
               </div>
 
-              {/* Other nav items except "Home" */}
-              {navItems
-                .filter((item) => item.name !== "Home")
-                .map((item, index) => (
-                  <Link
-                    href={item.link}
-                    key={index}
-                    className="cursor-pointer hover:text-black"
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-    </motion.nav>
+              <h3 className="mt-2.5 text-[20px] font-medium tracking-[-0.035em] text-[#20211e] sm:text-[24px] lg:text-[27px]">
+                Find your next pair.
+              </h3>
+
+              <p className="mt-1.5 max-w-125 text-[11px] leading-5 text-black/45 sm:text-[12px] lg:text-[13px]">
+                Everyday essentials, seasonal edits and timeless footwear
+                designed to move with you.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={closeMenu}
+              aria-label="Close menu"
+              className="group flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-black/8 bg-white/65 text-black/55 shadow-[0_6px_18px_rgba(0,0,0,0.04)] transition-all duration-300 hover:border-black/15 hover:bg-[#20211e] hover:text-white sm:h-10 sm:w-10"
+            >
+              <FiX
+                size={16}
+                className="transition-transform duration-300 group-hover:rotate-90"
+              />
+            </button>
+          </div>
+
+          {/* =================================================
+              MENU COLUMNS
+          ================================================= */}
+          <div className="relative grid grid-cols-2 gap-y-8 px-5 py-6 sm:px-7 sm:py-7 md:grid-cols-4 md:gap-y-0 lg:px-10 lg:py-8">
+            {menuColumns.map((column, columnIndex) => (
+              <div
+                key={column.title}
+                className={`relative min-w-0 transition-all duration-500 ${
+                  columnIndex % 2 === 0
+                    ? "pr-4"
+                    : "border-l border-black/6 pl-4"
+                } md:border-l md:border-black/[0.07] md:px-6 md:first:border-l-0 md:first:pl-0 md:last:pr-0 ${
+                  menuOpen
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-4 opacity-0"
+                }`}
+                style={{
+                  transitionDelay: menuOpen
+                    ? `${100 + columnIndex * 65}ms`
+                    : "0ms",
+                }}
+              >
+                {/* COLUMN HEADER */}
+                <div className="mb-4 sm:mb-5">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full border border-black/8 bg-white/45 px-1.5 text-[8px] font-medium tabular-nums text-black/35">
+                      0{columnIndex + 1}
+                    </span>
+
+                    <h4 className="truncate text-[13px] font-semibold tracking-[-0.02em] text-[#252622] sm:text-[14px] lg:text-[15px]">
+                      {column.title}
+                    </h4>
+                  </div>
+
+                  <p className="mt-1.5 pl-7 text-[9px] leading-4 text-black/35 sm:text-[10px] lg:text-[11px]">
+                    {column.caption}
+                  </p>
+                </div>
+
+                {/* LINKS */}
+                <div className="flex flex-col">
+                  {column.links.map((item) => (
+                    <Link
+                      key={`${column.title}-${item.label}`}
+                      href={item.href}
+                      onClick={closeMenu}
+                      className="group relative flex min-h-9 items-center justify-between gap-2 rounded-lg px-0 text-[12px] text-black/60 transition-all duration-300 hover:px-2 hover:text-black sm:text-[13px] lg:text-[14px]"
+                    >
+                      <span className="relative truncate">
+                        {item.label}
+
+                        <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-[#20211e] transition-all duration-300 group-hover:w-full" />
+                      </span>
+
+                      <FiArrowUpRight
+                        size={12}
+                        className="shrink-0 -translate-x-1 translate-y-1 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100"
+                      />
+
+                      <span className="pointer-events-none absolute inset-0 -z-10 rounded-lg bg-white/0 transition-colors duration-300 group-hover:bg-white/45" />
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* =================================================
+              BOTTOM BAR
+          ================================================= */}
+          <div
+            className={`relative flex flex-col gap-4 border-t border-black/[0.07] bg-[#ece7dd]/65 px-5 py-4 transition-all duration-500 sm:px-7 md:flex-row md:items-center md:justify-between lg:px-10 ${
+              menuOpen
+                ? "translate-y-0 opacity-100"
+                : "translate-y-2 opacity-0"
+            }`}
+            style={{
+              transitionDelay: menuOpen ? "320ms" : "0ms",
+            }}
+          >
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+              <div className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#20211e]" />
+
+                <p className="text-[9px] font-medium uppercase tracking-[0.18em] text-black/40 sm:text-[10px]">
+                  Legacy Sole
+                </p>
+              </div>
+
+              <span className="hidden h-3 w-px bg-black/10 sm:block" />
+
+              <p className="text-[10px] text-black/45 sm:text-[11px]">
+                Everyday comfort, refined.
+              </p>
+
+              <span className="hidden h-3 w-px bg-black/10 md:block" />
+
+              <p className="hidden text-[11px] text-black/45 md:block">
+                Based in Pakistan
+              </p>
+            </div>
+
+            <Link
+              href="/#new-arrivals"
+              onClick={closeMenu}
+              className="group inline-flex w-fit shrink-0 items-center gap-2 rounded-full border border-black/10 bg-white/50 px-4 py-2 text-[10px] font-medium text-[#20211e] transition-all duration-300 hover:border-black/20 hover:bg-[#20211e] hover:text-white sm:text-[11px]"
+            >
+              Discover new arrivals
+
+              <FiArrowUpRight
+                size={13}
+                className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              />
+            </Link>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

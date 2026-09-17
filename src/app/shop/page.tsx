@@ -1,14 +1,11 @@
-import React from "react";
-import Hero from "./_components/Hero";
-import ProductFilterGrid from "./_components/ProductFilterGrid";
+import type { Metadata } from "next";
+import ShopClient from "../_components/ShopClient";
 
-const page = () => {
-  return (
-    <div>
-      <Hero />
-      <ProductFilterGrid />
-    </div>
-  );
+export const metadata: Metadata = {
+  title: "The Shop | Legacy Sole",
+  description: "Explore the Legacy Sole edit of everyday sneakers and runners.",
 };
 
-export default page;
+export default function ShopPage() {
+  return <ShopClient />;
+}

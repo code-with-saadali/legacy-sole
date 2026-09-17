@@ -1,10 +1,124 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 :root {
-  --font-kumbh-sans: 'Kumbh Sans', sans-serif;
-  --font-geist-mono: 'Geist Mono', monospace;
+  --ink: #252622;
+  --paper: #F4F1E9;
+  --orange: #ed682c;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 7rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 body {
-  font-family: var(--font-kumbh-sans);
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-kumbh-sans), Arial, sans-serif;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body.admin-mode {
+  background: #f0eee6;
+}
+
+body.admin-mode .site-chrome {
+  display: none;
+}
+
+.scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.checkout-input {
+  width: 100%;
+  border: 1px solid rgb(0 0 0 / 0.14);
+  background: rgb(248 246 241 / 0.7);
+  padding: 0.85rem 0.9rem;
+  font-size: 0.75rem;
+  outline: none;
+}
+
+.checkout-input:focus {
+  border-color: var(--olive);
+  box-shadow: 0 0 0 1px var(--olive);
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  color: rgb(0 0 0 / 0.48);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.admin-field input,
+.admin-field select,
+.admin-field textarea {
+  width: 100%;
+  border: 1px solid rgb(0 0 0 / 0.14);
+  background: #f4f1e9;
+  padding: 0.75rem;
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: normal;
+  outline: none;
+  text-transform: none;
+}
+
+.admin-field input:focus,
+.admin-field select:focus,
+.admin-field textarea:focus {
+  border-color: var(--olive);
+  box-shadow: 0 0 0 1px var(--olive);
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
 }
