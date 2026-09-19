@@ -1,25 +1,68 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import {
+  readShopFilters,
+  shopFilterUrl,
+  shopSorts,
+} from "../_data/shop-filters";
 import { useCatalog } from "./CatalogProvider";
 import ShopFilters from "../shop/_components/ShopFilters";
 import ShopProducts from "../shop/_components/ShopProducts";
 
-
 export default function ShopClient() {
-  const { products, categories: databaseCategories, loading, error } = useCatalog();
-  const [category, setCategory] = useState("All shoes");
-  const [colour, setColour] = useState("All colours");
-  const [maxPrice, setMaxPrice] = useState<number | null>(null);
-  const [sort, setSort] = useState("Featured");
-  const categories = ["All shoes", ...Array.from(new Set([...databaseCategories, ...products.map((product) => product.category)]))];
+  const {
+    products,
+    categories: databaseCategories,
+    loading,
+    error,
+  } = useCatalog();
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q")?.trim() ?? "";
+  const { category, colour, maxPrice, sort } = readShopFilters(searchParams);
+  const updateFilters = (
+    changes: Record<string, string | null>,
+    replace = false,
+  ) => {
+    // Read the latest URL so rapid interactions preserve each other's filters.
+    const next = shopFilterUrl(window.location.href, changes);
+    const current =
+      window.location.pathname + window.location.search + window.location.hash;
+    if (next === current) return;
+    if (replace) window.history.replaceState(null, "", next);
+    else window.history.pushState(null, "", next);
+  };
+  const categories = [
+    "All shoes",
+    ...Array.from(
+      new Set([
+        ...databaseCategories,
+        ...products.map((product) => product.category),
+      ]),
+    ),
+  ];
 
   const visibleProducts = useMemo(() => {
     const filtered = products.filter((product) => {
-      const matchesCategory = category === "All shoes" || product.category === category;
-      const matchesColour = colour === "All colours" || product.color === colour;
+      const matchesCategory =
+        category === "All shoes" || product.category === category;
+      const matchesColour =
+        colour === "All colours" || product.color === colour;
+      const searchable =
+        `${product.name} ${product.category} ${product.color} ${product.slug}`.toLowerCase();
+      const matchesSearch = query
+        .toLowerCase()
+        .split(/\s+/)
+        .every((word) => searchable.includes(word));
 
-      return matchesCategory && matchesColour && product.price <= (maxPrice ?? Infinity);
+      return (
+        matchesSearch &&
+        matchesCategory &&
+        matchesColour &&
+        product.price <= (maxPrice ?? Infinity)
+      );
     });
 
     return [...filtered].sort((first, second) => {
@@ -27,12 +70,16 @@ export default function ShopClient() {
       if (sort === "Price: high to low") return second.price - first.price;
       return 0;
     });
-  }, [category, colour, maxPrice, products, sort]);
+  }, [category, colour, maxPrice, products, sort, query]);
 
   const resetFilters = () => {
-    setCategory("All shoes");
-    setColour("All colours");
-    setMaxPrice(null);
+    updateFilters({
+      category: null,
+      colour: null,
+      maxPrice: null,
+      sort: null,
+      q: null,
+    });
   };
 
   return (
@@ -41,9 +88,25 @@ export default function ShopClient() {
         <div className="flex items-center justify-between gap-5">
           <div className="flex items-center gap-3">
             <span className="h-2 w-2 rounded-full bg-[#ed682c]" />
-            <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-black/45 sm:text-xs">
-              Legacy Sole / Shop
-            </p>
+            <nav
+              aria-label="Breadcrumb"
+              className="flex flex-wrap gap-2 text-[11px] font-medium uppercase tracking-[0.2em] text-black/45 sm:text-xs"
+            >
+              <Link href="/">Legacy Sole</Link>
+              <span aria-hidden="true">/</span>
+              <Link
+                href="/shop"
+                aria-current={category === "All shoes" ? "page" : undefined}
+              >
+                Shop
+              </Link>
+              {category !== "All shoes" && (
+                <>
+                  <span aria-hidden="true">/</span>
+                  <span aria-current="page">{category}</span>
+                </>
+              )}
+            </nav>
           </div>
 
           <p className="hidden text-[11px] uppercase tracking-[0.16em] text-black/35 sm:block">
@@ -55,12 +118,14 @@ export default function ShopClient() {
           <h1 className="max-w-262.5 text-[clamp(64px,10vw,150px)] font-medium leading-[0.8] tracking-[-0.075em] text-[#20211e]">
             The
             <br />
-            <span className="font-serif font-normal italic tracking-tighter text-[#ed682c]">shop.</span>
+            <span className="font-serif font-normal italic tracking-tighter text-[#ed682c]">
+              shop.
+            </span>
           </h1>
 
           <p className="max-w-90 text-[14px] leading-7 text-black/50">
-            A focused rotation of everyday footwear designed around comfort, versatility and the way your day
-            actually moves.
+            A focused rotation of everyday footwear designed around comfort,
+            versatility and the way your day actually moves.
           </p>
         </div>
       </section>
@@ -68,27 +133,66 @@ export default function ShopClient() {
       <div className="mt-10 grid gap-10 lg:grid-cols-[240px_1fr] lg:gap-14 xl:grid-cols-[300px_1fr]">
         <ShopFilters
           category={category}
-          onCategoryChange={setCategory}
+          onCategoryChange={(value) =>
+            updateFilters({ category: value === "All shoes" ? null : value })
+          }
           colour={colour}
-          onColourChange={setColour}
-          maxPrice={maxPrice ?? Math.max(1, ...products.map((product) => product.price))}
-          priceLimit={Math.max(1, maxPrice ?? 0, ...products.map((product) => product.price))}
+          onColourChange={(value) =>
+            updateFilters({ colour: value === "All colours" ? null : value })
+          }
+          maxPrice={
+            maxPrice ?? Math.max(1, ...products.map((product) => product.price))
+          }
+          priceLimit={Math.max(
+            1,
+            maxPrice ?? 0,
+            ...products.map((product) => product.price),
+          )}
           colours={[...new Set(products.map((product) => product.color))]}
-          onMaxPriceChange={setMaxPrice}
+          onMaxPriceChange={(value) =>
+            updateFilters({ maxPrice: String(value) }, true)
+          }
           onReset={resetFilters}
           categories={categories}
         />
 
         <div>
-        {loading && <p role="status">Loading products...</p>}
-        {error && <p role="alert">Unable to refresh products. Please try again shortly.</p>}
-        <ShopProducts
-          products={visibleProducts}
-          totalCount={products.length}
-          sort={sort}
-          onSortChange={setSort}
-          onReset={resetFilters}
-        />
+          {query && (
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+              <p role="status" className="text-sm text-black/65">
+                Search results for <strong>&ldquo;{query}&rdquo;</strong>
+              </p>
+              <button
+                type="button"
+                onClick={() => updateFilters({ q: null })}
+                className="text-sm underline underline-offset-4"
+              >
+                Clear search
+              </button>
+            </div>
+          )}
+          {loading && <p role="status">Loading products...</p>}
+          {error && (
+            <p role="alert">
+              Unable to refresh products. Please try again shortly.
+            </p>
+          )}
+          <ShopProducts
+            products={visibleProducts}
+            totalCount={products.length}
+            sort={sort}
+            onSortChange={(value) =>
+              updateFilters({
+                sort:
+                  value === "Featured"
+                    ? null
+                    : (Object.entries(shopSorts).find(
+                        ([, label]) => label === value,
+                      )?.[0] ?? null),
+              })
+            }
+            onReset={resetFilters}
+          />
         </div>
       </div>
     </main>

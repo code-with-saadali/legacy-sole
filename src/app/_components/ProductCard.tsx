@@ -1,0 +1,8 @@
+import Link from "next/link";
+import type {Product} from "../_data/products";
+import ProductImage from "./ProductImage";
+import WishlistButton from "./WishlistButton";
+import CompareButton from "./CompareButton";
+export default function ProductCard({product}:{product:Product}){
+ return <article className="group min-w-0"><div className="relative overflow-hidden rounded-3xl bg-[#E9E3D9]"><Link href={`/products/${product.slug}`} className="relative block aspect-[0.95]"><ProductImage src={product.image} alt={`${product.name}, ${product.color}`} fill sizes="(max-width:640px) 90vw, (max-width:1024px) 45vw, 28vw" className="object-contain p-[7%] transition-transform duration-500 group-hover:scale-105"/>{product.tag&&<span className="absolute left-4 top-4 rounded-full bg-[#F4F1E9] px-3 py-2 text-[9px] uppercase tracking-wider">{product.tag}</span>}</Link><WishlistButton product={product} className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-[#F4F1E9]"/></div><div className="mt-4 flex items-start justify-between gap-3"><div><Link href={`/products/${product.slug}`} className="text-xl font-medium tracking-tight">{product.name}</Link><p className="mt-1 text-xs text-black/50">{product.color}</p></div><strong className="shrink-0 text-sm font-medium">Rs. {product.price.toLocaleString()}</strong></div><div className="mt-3 flex justify-between gap-2 text-xs text-black/50"><span>{product.category}</span>{(product.stock??0)<=0?<span>Sold out</span>:(product.stock??0)<=5?<span className="text-[#a04c2a]">Only {product.stock} left</span>:null}</div><CompareButton slug={product.slug}/></article>;
+}

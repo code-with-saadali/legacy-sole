@@ -1,7 +1,7 @@
 "use client";
 
 import { useCatalog } from "./CatalogProvider";
-﻿import Image from "./ProductImage";
+import Image from "./ProductImage";
 import Link from "next/link";
 import { FiArrowUpRight } from "react-icons/fi";
 
@@ -37,7 +37,12 @@ const looks = [
 
 export default function StyleGuide() {
   const { products } = useCatalog();
-  const availableLooks = looks.flatMap(look => { const product = products.find(item => item.slug === look.slug); return product ? [{ ...look, shoe: product.name, image: product.image }] : []; });
+  const availableLooks = looks.flatMap((look) => {
+    const product = products.find((item) => item.slug === look.slug);
+    return product
+      ? [{ ...look, shoe: product.name, image: product.image }]
+      : [];
+  });
   if (!availableLooks.length) return null;
   return (
     <section

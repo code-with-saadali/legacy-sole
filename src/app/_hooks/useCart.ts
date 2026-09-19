@@ -9,13 +9,26 @@ export default function useCart() {
   const [hydrated, setHydrated] = useState(false);
   const { products, loading, error } = useCatalog();
   useEffect(() => {
-    const sync = () => { try { setStored(parseCart(localStorage.getItem(cartKey))); } catch { setStored([]); } setHydrated(true); };
+    const sync = () => {
+      try {
+        setStored(parseCart(localStorage.getItem(cartKey)));
+      } catch {
+        setStored([]);
+      }
+      setHydrated(true);
+    };
     sync();
     window.addEventListener("storage", sync);
     window.addEventListener("cart-updated", sync);
-    return () => { window.removeEventListener("storage", sync); window.removeEventListener("cart-updated", sync); };
+    return () => {
+      window.removeEventListener("storage", sync);
+      window.removeEventListener("cart-updated", sync);
+    };
   }, []);
-  const items = stored.map(item => ({ ...item, ...products.find(product => product.slug === item.slug) }));
+  const items = stored.map((item) => ({
+    ...item,
+    ...products.find((product) => product.slug === item.slug),
+  }));
   const issues = !loading && !error ? cartIssues(items, products) : [];
   const updateCart = (next: CartItem[]) => {
     localStorage.setItem(cartKey, JSON.stringify(next));

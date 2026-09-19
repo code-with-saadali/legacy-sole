@@ -2,13 +2,11 @@ import Link from "next/link";
 import { FiArrowUpRight, FiInstagram, FiFacebook } from "react-icons/fi";
 
 const footerLinks = [
-  { label: "Collections", href: "#collections" },
-  { label: "New Arrivals", href: "#new-arrivals" },
-  { label: "The Line-Up", href: "#collection" },
-  { label: "Our Story", href: "#our-story" },
-  { label: "Style Notes", href: "#style-guide" },
-  { label: "Questions", href: "#questions" },
-  { label: "Shoe Care", href: "#shoe-care" },
+  { label: "Collections", href: "/#collections" },
+  { label: "New Arrivals", href: "/#new-arrivals" },
+  { label: "The Line-Up", href: "/#collection" },
+  { label: "Our Story", href: "/#our-story" },
+  { label: "Style Notes", href: "/#style-guide" },
   { label: "Track Order", href: "/track-order" },
 ];
 
@@ -18,7 +16,7 @@ export default function Footer() {
       <div className="grid gap-12 border-b border-white/10 pb-12 lg:grid-cols-[1fr_auto] lg:items-start lg:gap-20">
         <div>
           <Link
-            href="#home"
+            href="/"
             aria-label="Legacy Sole home"
             className="inline-flex flex-col"
           >

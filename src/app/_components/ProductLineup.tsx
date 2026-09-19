@@ -11,10 +11,16 @@ import WishlistButton from "./WishlistButton";
 export default function ProductLineup() {
   const { products, loading, error } = useCatalog();
   const [filter, setFilter] = useState("All shoes");
-  const filters = ["All shoes", ...Array.from(new Set(products.map((product) => product.category)))];
+  const filters = [
+    "All shoes",
+    ...Array.from(new Set(products.map((product) => product.category))),
+  ];
 
   const visible = products.filter(
-    (product) => filter === "All shoes" || !filters.includes(filter) || product.category === filter,
+    (product) =>
+      filter === "All shoes" ||
+      !filters.includes(filter) ||
+      product.category === filter,
   );
 
   return (
@@ -80,8 +86,14 @@ export default function ProductLineup() {
       </div>
 
       {loading && <p role="status">Loading collection...</p>}
-      {error && <p role="alert">Unable to refresh the collection. Please try again shortly.</p>}
-      {!loading && !error && !products.length && <p>No products are available yet.</p>}
+      {error && (
+        <p role="alert">
+          Unable to refresh the collection. Please try again shortly.
+        </p>
+      )}
+      {!loading && !error && !products.length && (
+        <p>No products are available yet.</p>
+      )}
       <div className="grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-6">
         {visible.map((product) => (
           <article key={product.slug} className="group min-w-0">
@@ -89,11 +101,15 @@ export default function ProductLineup() {
               <div className="relative aspect-[1.08] overflow-hidden rounded-[26px] bg-[#EAE3D8] lg:rounded-[30px]">
                 <div className="absolute left-5 top-5 z-10 flex items-center rounded-full border border-black/10 bg-[#F8F6F1]/85 px-3 py-2 backdrop-blur-md">
                   <span className="text-[8px] font-medium uppercase tracking-[0.16em] text-black/55">
-                    {product.featured ? "Featured / " : ""}{product.tag}
+                    {product.featured ? "Featured / " : ""}
+                    {product.tag}
                   </span>
                 </div>
 
-                <WishlistButton product={product} className="absolute right-5 top-5 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-[#F8F6F1]/80 text-[#20211e] backdrop-blur-md hover:border-[#ed682c] hover:bg-[#ed682c] hover:text-white" />
+                <WishlistButton
+                  product={product}
+                  className="absolute right-5 top-5 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-[#F8F6F1]/80 text-[#20211e] backdrop-blur-md hover:border-[#ed682c] hover:bg-[#ed682c] hover:text-white"
+                />
 
                 <span className="pointer-events-none absolute left-1/2 top-[10%] -translate-x-1/2 whitespace-nowrap text-[clamp(52px,6vw,90px)] font-semibold tracking-[-0.08em] text-black/[0.035]">
                   SOLE

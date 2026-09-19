@@ -1,13 +1,15 @@
 "use client";
 
 import { useCatalog } from "./CatalogProvider";
-﻿import Image from "./ProductImage";
+import Image from "./ProductImage";
 import Link from "next/link";
 import { FiArrowUpRight } from "react-icons/fi";
 
 export default function NewArrivals() {
   const { products } = useCatalog();
-  const product = [...products].reverse().find(item => /new|arrival/i.test(item.tag)) ?? products[products.length - 1];
+  const product =
+    [...products].reverse().find((item) => /new|arrival/i.test(item.tag)) ??
+    products[products.length - 1];
   if (!product) return null;
   return (
     <section
@@ -62,7 +64,9 @@ export default function NewArrivals() {
                 <p className="text-[8px] uppercase tracking-[0.18em] text-white/35">
                   Price
                 </p>
-                <p className="mt-2 text-[12px] font-medium">Rs. {product.price.toLocaleString()}</p>
+                <p className="mt-2 text-[12px] font-medium">
+                  Rs. {product.price.toLocaleString()}
+                </p>
               </div>
             </div>
 

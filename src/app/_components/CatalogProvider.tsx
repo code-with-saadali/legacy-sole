@@ -1,6 +1,13 @@
 ﻿"use client";
 
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { getCategories, getProducts, type Product } from "../_data/products";
 import { supabase } from "../../lib/supabase";
 
@@ -20,7 +27,11 @@ export function useCatalog() {
   return catalog;
 }
 
-export default function CatalogProvider({ children }: { children: React.ReactNode }) {
+export default function CatalogProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,32 +42,62 @@ export default function CatalogProvider({ children }: { children: React.ReactNod
   const refresh = useCallback(async () => {
     const version = ++request.current;
     try {
-      const [nextProducts, nextCategories] = await Promise.all([getProducts(), getCategories()]);
+      const [nextProducts, nextCategories] = await Promise.all([
+        getProducts(),
+        getCategories(),
+      ]);
       if (version !== request.current) return;
       setProducts(nextProducts);
       setCategories(nextCategories);
       setError("");
     } catch (cause) {
-      if (version === request.current) setError(cause instanceof Error ? cause.message : "Unable to load the collection.");
+      if (version === request.current)
+        setError(
+          cause instanceof Error
+            ? cause.message
+            : "Unable to load the collection.",
+        );
     } finally {
       if (version === request.current) setLoading(false);
     }
   }, []);
 
-  const invalidate = useCallback(() => { request.current += 1; }, []);
+  const invalidate = useCallback(() => {
+    request.current += 1;
+  }, []);
 
   useEffect(() => {
     void refresh();
     const client = supabase;
-    if (!client) { setConnection("Not configured"); return; }
-    const channel = client.channel("storefront-catalog")
-      .on("postgres_changes", { event: "*", schema: "public", table: "products" }, () => void refresh())
-      .on("postgres_changes", { event: "*", schema: "public", table: "categories" }, () => void refresh())
+    if (!client) {
+      setConnection("Not configured");
+      return;
+    }
+    const channel = client
+      .channel("storefront-catalog")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "products" },
+        () => void refresh(),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "categories" },
+        () => void refresh(),
+      )
       .subscribe((status) => {
-        setConnection(status === "SUBSCRIBED" ? "Live" : status === "CHANNEL_ERROR" || status === "TIMED_OUT" ? "Reconnecting" : "Connecting");
+        setConnection(
+          status === "SUBSCRIBED"
+            ? "Live"
+            : status === "CHANNEL_ERROR" || status === "TIMED_OUT"
+              ? "Reconnecting"
+              : "Connecting",
+        );
         if (status === "SUBSCRIBED") void refresh();
       });
-    const resume = () => { if (document.visibilityState === "visible") void refresh(); };
+    const resume = () => {
+      if (document.visibilityState === "visible") void refresh();
+    };
     window.addEventListener("online", resume);
     window.addEventListener("focus", resume);
     document.addEventListener("visibilitychange", resume);
@@ -72,5 +113,11 @@ export default function CatalogProvider({ children }: { children: React.ReactNod
     };
   }, [refresh, invalidate]);
 
-  return <CatalogContext.Provider value={{ products, categories, loading, error, connection, refresh }}>{children}</CatalogContext.Provider>;
+  return (
+    <CatalogContext.Provider
+      value={{ products, categories, loading, error, connection, refresh }}
+    >
+      {children}
+    </CatalogContext.Provider>
+  );
 }

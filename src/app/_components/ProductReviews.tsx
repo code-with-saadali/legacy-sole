@@ -1,17 +1,29 @@
 "use client";
-
-import { FormEvent, useCallback, useEffect, useState } from "react";
-import { FiStar } from "react-icons/fi";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
-
-type Review = { id: string; customer_name: string; rating: number; body: string; created_at: string };
-
+import type { Review } from "../_data/reviews";
+import CustomSelect from "./CustomSelect";
+import ReviewSummary from "./ReviewSummary";
+import ReviewCard from "./ReviewCard";
+import ReviewForm from "./ReviewForm";
 export default function ProductReviews({ slug }: { slug: string }) {
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [message, setMessage] = useState("");
-  const load = useCallback(async () => { if (!supabase) return; const { data } = await supabase.from("reviews").select("id,customer_name,rating,body,created_at").eq("product_slug", slug).eq("approved", true).order("created_at", { ascending: false }); if (data) setReviews(data); }, [slug]);
-  useEffect(() => { void load(); }, [load]);
-  const average = reviews.length ? reviews.reduce((sum, item) => sum + item.rating, 0) / reviews.length : 0;
-  const submit = async (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); if (!supabase) return; const form = new FormData(event.currentTarget); const { error } = await supabase.from("reviews").insert({ product_slug: slug, customer_name: String(form.get("name")), rating: Number(form.get("rating")), body: String(form.get("body")) }); setMessage(error ? error.message : "Thanks, your review has been added."); if (!error) { event.currentTarget.reset(); await load(); } };
-  return <section className="mt-16 border-t border-black/10 pt-10" aria-labelledby="reviews-title"><div className="flex flex-wrap items-end justify-between gap-5"><div><p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Customer notes</p><h2 id="reviews-title" className="mt-3 text-4xl text-[#20211e]">Reviews & ratings</h2></div><div className="flex items-center gap-2 text-sm"><FiStar className="fill-[#b66b4d] text-[#b66b4d]" /><strong>{average ? average.toFixed(1) : "New"}</strong><span className="text-black/40">({reviews.length})</span></div></div><div className="mt-8 grid gap-10 lg:grid-cols-[1fr_320px]"><div className="divide-y divide-black/10">{reviews.length ? reviews.map(review => <article key={review.id} className="py-5 first:pt-0"><div className="flex items-center justify-between"><p className="text-xs font-medium">{review.customer_name}</p><span className="flex gap-0.5 text-[#b66b4d]">{[1,2,3,4,5].map(star => <FiStar key={star} size={13} className={star <= review.rating ? "fill-current" : ""} />)}</span></div><p className="mt-3 text-sm leading-6 text-black/55">{review.body}</p></article>) : <p className="py-8 text-sm text-black/45">Be the first to review this pair.</p>}</div><form onSubmit={submit} className="space-y-3 border border-black/10 bg-[#F8F6F1] p-5"><p className="text-[10px] uppercase tracking-[0.16em] text-black/45">Leave a review</p><input required name="name" placeholder="Your name" className="checkout-input" /><select name="rating" defaultValue="5" className="checkout-input"><option value="5">5 stars</option><option value="4">4 stars</option><option value="3">3 stars</option><option value="2">2 stars</option><option value="1">1 star</option></select><textarea required name="body" minLength={5} placeholder="How does it feel?" rows={4} className="checkout-input" /><button className="w-full bg-[#4b5a42] px-4 py-3 text-[10px] uppercase tracking-[0.14em] text-white hover:bg-[#b66b4d]">Submit review</button>{message && <p className="text-xs text-[#4b5a42]">{message}</p>}</form></div></section>;
+  const [reviews,setReviews]=useState<Review[]>([]);
+  const [loading,setLoading]=useState(true);
+  const [error,setError]=useState("");
+  const [sort,setSort]=useState("newest");
+  const [rating,setRating]=useState("all");
+  const [limit,setLimit]=useState(6);
+  const load=useCallback(async()=>{
+    if(!supabase){setError("Reviews are temporarily unavailable.");setLoading(false);return;}
+    const {data,error}=await supabase.from("reviews").select("*").eq("product_slug",slug).eq("approved",true).order("created_at",{ascending:false});
+    if(error)setError("Reviews could not be loaded. Please retry.");else{setReviews(data??[]);setError("");}setLoading(false);
+  },[slug]);
+  useEffect(()=>{void load();},[load]);
+  const filtered=reviews.filter(review=>rating==="all"||review.rating===Number(rating)).sort((a,b)=>sort==="highest"?b.rating-a.rating:sort==="lowest"?a.rating-b.rating:Date.parse(b.created_at)-Date.parse(a.created_at));
+  return <section className="mt-20 border-t border-black/10 pt-12" aria-labelledby="reviews-title">
+    <p className="text-[10px] uppercase tracking-[0.22em] text-[#b66b4d]">Worn. Walked. Reviewed.</p><div className="mt-3 flex flex-wrap items-end justify-between gap-4"><h2 id="reviews-title" className="text-4xl text-[#20211e] sm:text-5xl">From our community.</h2><p className="max-w-sm text-sm leading-6 text-black/50">Real opinions on everyday comfort, fit and style.</p></div>
+    <div className="mt-8 grid items-start gap-8 lg:grid-cols-[280px_1fr]"><ReviewSummary reviews={reviews}/><div className="min-w-0"><div className="mb-5 grid gap-3 sm:grid-cols-2"><CustomSelect label="Filter reviews by rating" value={rating} onChange={value=>{setRating(value);setLimit(6);}} options={[{value:"all",label:"All ratings"},...[5,4,3,2,1].map(value=>({value:String(value),label:value+" stars"}))]}/><CustomSelect label="Sort reviews" value={sort} onChange={setSort} options={[{value:"newest",label:"Most recent"},{value:"highest",label:"Highest rated"},{value:"lowest",label:"Lowest rated"}]}/></div>
+    {loading?<p role="status" className="py-10 text-sm">Loading reviews?</p>:error?<div role="alert" className="py-8 text-sm">{error}<button type="button" onClick={()=>void load()} className="ml-3 underline">Retry</button></div>:filtered.length?<div className="space-y-4">{filtered.slice(0,limit).map(review=><ReviewCard key={review.id} review={review}/>)}</div>:<div className="rounded-2xl border border-dashed border-black/15 px-6 py-12 text-center"><h3 className="text-xl">{reviews.length?"No reviews with this rating yet.":"Your experience could be the first."}</h3><p className="mt-3 text-sm text-black/50">Share a few details to help someone find their next pair.</p></div>}
+    {filtered.length>limit&&<button type="button" onClick={()=>setLimit(value=>value+6)} className="mt-5 rounded-full border border-black/20 px-5 py-3 text-sm">Show more reviews</button>}</div></div><div className="mt-8"><ReviewForm key={slug} slug={slug} onSubmitted={()=>void load()}/></div>
+  </section>;
 }

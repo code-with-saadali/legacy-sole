@@ -2,7 +2,7 @@
 
 :root {
   --ink: #252622;
-  --paper: #F4F1E9;
+  --paper: #f4f1e9;
   --orange: #ed682c;
 }
 
@@ -121,4 +121,125 @@ a:focus-visible {
     transition: none !important;
     animation: none !important;
   }
+}
+
+/* Store administration: scoped to the admin workspace. */
+.admin-workspace {
+  color: #20211e;
+}
+.admin-workspace h1,
+.admin-workspace h2,
+.admin-workspace h3,
+.admin-login h1 {
+  font-family: inherit;
+}
+.admin-welcome {
+  background-image: radial-gradient(
+    ellipse at 100% 0%,
+    #775442 0%,
+    transparent 65%
+  );
+}
+.admin-login {
+  background-image:
+    radial-gradient(ellipse at 10% 10%, #e9e2d7 0%, transparent 55%),
+    radial-gradient(ellipse at 100% 100%, #ece6dc 0%, transparent 50%);
+}
+.admin-login > div {
+  border-color: #20211e1a;
+  box-shadow: 0 24px 70px #20211e0d;
+  border-radius: 30px;
+}
+.admin-panel,
+.admin-metric {
+  background: #f8f6f1;
+  box-shadow: 0 3px 16px #20211e05;
+}
+.admin-metric {
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+.admin-metric:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px #20211e0a;
+}
+.admin-workspace table th {
+  padding: 14px 12px;
+  background: #e9e2d7;
+  font-weight: 500;
+}
+.admin-workspace table td {
+  padding: 18px 12px;
+}
+.admin-workspace table tbody tr:hover {
+  background: #f4f1e9;
+}
+.admin-status-pending {
+  background: #fff3dc;
+  color: #8c6117;
+}
+.admin-status-confirmed {
+  background: #eaf0fb;
+  color: #3b609a;
+}
+.admin-status-delivered {
+  background: #e9e2d7;
+  color: #20211e;
+}
+.admin-product-editor button {
+  border-radius: 9px;
+}
+.admin-workspace .admin-field {
+  color: #625951;
+}
+.admin-workspace .admin-field input,
+.admin-workspace .admin-field select,
+.admin-workspace .admin-field textarea {
+  border-radius: 9px;
+  background: white;
+}
+.admin-workspace .admin-field input[type="checkbox"] {
+  width: 16px;
+}
+.admin-workspace :is(input, select, textarea):focus-visible {
+  outline: 2px solid #b66b4d;
+  outline-offset: 3px;
+}
+
+.admin-status-dispatched {
+  background: #f0eafb;
+  color: #77549c;
+}
+
+.product-editor-dialog .admin-field {
+  min-width: 0;
+  gap: 0.65rem;
+  line-height: 1.5;
+}
+.product-editor-dialog .admin-field :is(input, select, textarea) {
+  min-width: 0;
+  font-size: 0.8125rem;
+}
+.product-editor-dialog .admin-field input:disabled {
+  background: #e9e2d7;
+  color: #625951;
+  cursor: not-allowed;
+}
+.product-editor-dialog .admin-field textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+.product-editor-dialog .admin-field:has(input[type="checkbox"]) {
+  flex-direction: row;
+  align-items: center;
+}
+
+.admin-status-cancelled {
+  background: #fce8e4;
+  color: #913d2c;
+}
+.admin-status-returned {
+  background: #ede5dc;
+  color: #71523e;
 }

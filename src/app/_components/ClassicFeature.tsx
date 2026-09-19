@@ -7,7 +7,7 @@ import { FiArrowUpRight } from "react-icons/fi";
 
 export default function ClassicFeature() {
   const { products } = useCatalog();
-  const product = products.find(item => item.slug === "court-classic");
+  const product = products.find((item) => item.slug === "court-classic");
   if (!product) return null;
   return (
     <section className="bg-[#F7F4EE] px-[5%] py-16 lg:py-24">

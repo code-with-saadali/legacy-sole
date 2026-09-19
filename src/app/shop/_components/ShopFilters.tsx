@@ -1,17 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { FiCheck, FiChevronDown } from "react-icons/fi";
+import CustomSelect from "../../_components/CustomSelect";
+import { FiCheck } from "react-icons/fi";
 
 export const colourSwatches = [
-  { name: "All colours", gradient: "conic-gradient(#ed682c, #4b5a42, #20211e, #d9d5cb, #ed682c)" },
-  { name: "Cloud / Graphite", gradient: "linear-gradient(135deg, #d9d5cb 50%, #4b4b4b 50%)" },
-  { name: "Cream / Forest", gradient: "linear-gradient(135deg, #efe3c8 50%, #3f4d3a 50%)" },
+  {
+    name: "All colours",
+    gradient: "conic-gradient(#ed682c, #4b5a42, #20211e, #d9d5cb, #ed682c)",
+  },
+  {
+    name: "Cloud / Graphite",
+    gradient: "linear-gradient(135deg, #d9d5cb 50%, #4b4b4b 50%)",
+  },
+  {
+    name: "Cream / Forest",
+    gradient: "linear-gradient(135deg, #efe3c8 50%, #3f4d3a 50%)",
+  },
   { name: "Triple Black", gradient: "#161616" },
 ];
 
 const MIN_PRICE = 0;
-
 
 type ShopFiltersProps = {
   category: string;
@@ -38,7 +46,8 @@ export default function ShopFilters({
   priceLimit,
   colours,
 }: ShopFiltersProps) {
-  const rangeProgress = ((maxPrice - MIN_PRICE) / (priceLimit - MIN_PRICE)) * 100;
+  const rangeProgress =
+    ((maxPrice - MIN_PRICE) / (priceLimit - MIN_PRICE)) * 100;
 
   return (
     <aside className="lg:sticky lg:top-28 lg:h-fit">
@@ -55,6 +64,7 @@ export default function ShopFilters({
                 key={item}
                 type="button"
                 onClick={() => onCategoryChange(item)}
+                aria-pressed={category === item}
                 className={`rounded-full px-4 py-2.5 text-[12px] font-medium transition-all duration-300 ${
                   category === item
                     ? "bg-[#20211e] text-white"
@@ -74,7 +84,9 @@ export default function ShopFilters({
           </legend>
 
           <div className="mt-4 flex items-center justify-between">
-            <span className="text-[12px] text-black/45">Rs. {MIN_PRICE.toLocaleString()}</span>
+            <span className="text-[12px] text-black/45">
+              Rs. {MIN_PRICE.toLocaleString()}
+            </span>
             <span className="rounded-full bg-[#20211e] px-3 py-1.5 text-[11px] font-medium text-white">
               Rs. {maxPrice.toLocaleString()}
             </span>
@@ -108,7 +120,16 @@ export default function ShopFilters({
           </legend>
 
           <div className="mt-4 flex flex-wrap gap-3">
-            {[colourSwatches[0], ...colours.filter(Boolean).map(name => colourSwatches.find(item => item.name === name) ?? { name, gradient: "#E9E2D7" })].map((item) => {
+            {[
+              colourSwatches[0],
+              ...colours.filter(Boolean).map(
+                (name) =>
+                  colourSwatches.find((item) => item.name === name) ?? {
+                    name,
+                    gradient: "#E9E2D7",
+                  },
+              ),
+            ].map((item) => {
               const isActive = colour === item.name;
 
               return (
@@ -125,13 +146,20 @@ export default function ShopFilters({
                       : "ring-1 ring-black/10 ring-offset-2 ring-offset-[#F4F1E9] hover:ring-black/30"
                   }`}
                 >
-                  <span className="h-full w-full rounded-full" style={{ background: item.gradient }} />
+                  <span
+                    className="h-full w-full rounded-full"
+                    style={{ background: item.gradient }}
+                  />
 
                   {isActive && (
                     <span className="absolute inset-0 flex items-center justify-center">
                       <FiCheck
                         size={14}
-                        className={item.name === "Triple Black" ? "text-white" : "text-[#20211e] mix-blend-difference invert"}
+                        className={
+                          item.name === "Triple Black"
+                            ? "text-white"
+                            : "text-[#20211e] mix-blend-difference invert"
+                        }
                       />
                     </span>
                   )}
@@ -157,52 +185,4 @@ export default function ShopFilters({
   );
 }
 
-export function SortDropdown({
-  sort,
-  onSortChange,
-  options,
-}: {
-  sort: string;
-  onSortChange: (value: string) => void;
-  options: string[];
-}) {
-  const [sortOpen, setSortOpen] = useState(false);
-
-  return (
-    <div className="relative">
-      <button
-        type="button"
-        onClick={() => setSortOpen((prev) => !prev)}
-        className="flex min-w-[190px] items-center justify-between gap-4 rounded-full border border-black/10 bg-white/25 px-4 py-2.5 text-[12px] text-[#20211e] transition-colors hover:border-black/20"
-      >
-        <span>
-          <span className="mr-2 text-black/40">Sort:</span>
-          {sort}
-        </span>
-
-        <FiChevronDown size={14} className={`transition-transform duration-300 ${sortOpen ? "rotate-180" : ""}`} />
-      </button>
-
-      <div
-        className={`absolute right-0 top-full z-30 mt-2 min-w-[220px] overflow-hidden rounded-[16px] border border-black/10 bg-[#F8F6F1] shadow-[0_18px_45px_rgba(0,0,0,0.08)] transition-all duration-300 ${
-          sortOpen ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-2 opacity-0"
-        }`}
-      >
-        {options.map((item) => (
-          <button
-            key={item}
-            type="button"
-            onClick={() => {
-              onSortChange(item);
-              setSortOpen(false);
-            }}
-            className="flex w-full items-center justify-between border-b border-black/[0.06] px-4 py-3 text-left text-[12px] text-black/60 transition-colors last:border-b-0 hover:bg-black/[0.035] hover:text-black"
-          >
-            {item}
-            {sort === item && <FiCheck size={14} className="text-[#ed682c]" />}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
+export function SortDropdown({sort,onSortChange,options}:{sort:string;onSortChange:(value:string)=>void;options:string[]}) { return <CustomSelect label="Sort products" value={sort} onChange={onSortChange} options={options.map(value=>({value,label:value}))} className="min-w-52"/>; }

@@ -1,11 +1,12 @@
 ﻿import type { Metadata } from "next";
 import { Cormorant_Garamond, DM_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import StoreSettingsProvider from "./_components/StoreSettingsProvider";
+import WhatsAppSupport from "./_components/WhatsAppSupport";
 import CatalogProvider from "./_components/CatalogProvider";
 import LenisScroll from "./_components/LenisScroll";
 import StoreChrome from "./_components/StoreChrome";
 import StoreFooter from "./_components/StoreFooter";
-
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -39,12 +40,12 @@ export default function RootLayout({
       <body
         className={`${dmSans.variable} ${cormorant.variable} ${geistMono.variable} antialiased`}
       >
-        <CatalogProvider>
-        <LenisScroll />
-        <StoreChrome />
-        {children}
-        <StoreFooter />
-        </CatalogProvider>
+        <CatalogProvider><StoreSettingsProvider>
+          <LenisScroll />
+          <StoreChrome />
+          {children}
+          <StoreFooter />
+        <WhatsAppSupport /></StoreSettingsProvider></CatalogProvider>
       </body>
     </html>
   );

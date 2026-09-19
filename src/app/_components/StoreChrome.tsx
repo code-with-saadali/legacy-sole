@@ -8,7 +8,5 @@ export default function StoreChrome() {
 
   if (pathname.startsWith("/admin")) return null;
 
-  return (
-    <Navbar />
-  );
+  return <Navbar />;
 }

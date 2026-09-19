@@ -5,7 +5,17 @@ export const ordersKey = "legacy-sole-orders";
 export type Order = {
   id: string;
   createdAt: string;
-  status: "Pending" | "Confirmed" | "Delivered";
+  status:
+    | "Pending"
+    | "Confirmed"
+    | "Dispatched"
+    | "Delivered"
+    | "Cancelled"
+    | "Returned";
+  closure_reason?: string;
+  stock_restored?: boolean;
+  courier_name?: string;
+  tracking_number?: string;
   customer: {
     name: string;
     email: string;

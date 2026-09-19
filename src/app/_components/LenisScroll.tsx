@@ -2,9 +2,14 @@
 
 import Lenis from "lenis";
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export default function LenisScroll() {
+  const pathname = usePathname();
+  const isAdmin = pathname === "/admin" || pathname.startsWith("/admin/");
   useEffect(() => {
+    // Admin tables and dialogs use native scrolling and document scroll locks.
+    if (isAdmin) return;
     const lenis = new Lenis({
       duration: 1.1,
       smoothWheel: true,
@@ -58,7 +63,7 @@ export default function LenisScroll() {
       lenis.stop();
       lenis.destroy();
     };
-  }, []);
+  }, [isAdmin]);
 
   return null;
 }
