@@ -5,6 +5,8 @@ import {
   FiBox,
   FiShoppingBag,
   FiPackage,
+  FiUsers,
+  FiSettings,
 } from "react-icons/fi";
 
 export type AdminTab = "Overview" | "Orders" | "Products" | "Customers" | "Settings";
@@ -43,7 +45,7 @@ export default function AdminNavigation({
                 ? FiBox
                 : item === "Orders"
                   ? FiShoppingBag
-                  : FiPackage;
+                  : item === "Customers" ? FiUsers : item === "Settings" ? FiSettings : FiPackage;
             return (
               <button
                 key={item}

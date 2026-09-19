@@ -1,9 +1,7 @@
 "use client";
 
-import DeliverySettings from "./DeliverySettings";
-import CouponManager from "./CouponManager";
-import ReviewModeration from "./ReviewModeration";
-import CustomerRequests from "./CustomerRequests";
+import AdminSettingsPanel from "./AdminSettingsPanel";
+import AdminCustomersPanel from "./AdminCustomersPanel";
 import { useState } from "react";
 import { useCatalog } from "./CatalogProvider";
 import AdminNavigation, { type AdminTab } from "./AdminNavigation";
@@ -76,8 +74,8 @@ export default function AdminDashboard() {
             {error || catalogError}
           </p>
         )}
-        {tab === "Settings" && <div className="mt-8 space-y-6"><DeliverySettings/><CouponManager/></div>}
-        {tab === "Customers" && <div className="mt-8 space-y-6"><CustomerRequests onOpenOrder={setSelectedOrderId}/><ReviewModeration/></div>}
+        {tab === "Settings" && <AdminSettingsPanel />}
+        {tab === "Customers" && <AdminCustomersPanel orders={orders} onOpenOrder={setSelectedOrderId} />}
         {tab === "Overview" && (
           <AdminOverview
             products={products}
