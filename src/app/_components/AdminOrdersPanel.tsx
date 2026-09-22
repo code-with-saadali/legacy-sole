@@ -39,13 +39,19 @@ export default function AdminOrdersPanel({
       <div className="flex items-center justify-between">
         <div>
           <p className="text-[10px] uppercase tracking-[0.16em] text-black/40">
-            Fulfilment
+            Manage orders
           </p>
           <h2 className="mt-2 text-3xl text-[#20211e]">All orders</h2>
         </div>
         <span className="text-xs text-black/45">{orders.length} total</span>
       </div>
-      <div className="mt-5"><OrderExport orders={filteredOrders}/></div>
+      <p className="mt-4 text-sm leading-6 text-black/60">
+        Start with Pending orders. Confirm the order, add courier details when
+        dispatched, then mark it Delivered after delivery.
+      </p>
+      <div className="mt-5">
+        <OrderExport orders={filteredOrders} />
+      </div>
       <div className="mt-6 flex flex-col gap-3 2xl:flex-row 2xl:justify-between">
         <label className="flex items-center gap-3 rounded-xl border border-black/10 bg-[#F4F1E9] px-4 py-3">
           <FiSearch className="shrink-0 text-black/40" />
@@ -74,7 +80,11 @@ export default function AdminOrdersPanel({
               onClick={() => setStatusFilter(status)}
               className={`rounded-lg px-3 py-2 text-xs ${statusFilter === status ? "bg-white font-semibold text-[#20211e] shadow-sm" : "text-black/50"}`}
             >
-              {status}
+              {status} (
+              {status === "All"
+                ? orders.length
+                : orders.filter((order) => order.status === status).length}
+              )
             </button>
           ))}
         </div>

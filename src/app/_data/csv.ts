@@ -1,2 +1,17 @@
-export function csvCell(value:unknown){const text=String(value??"");const safe=/^[\s]*[=+@-]/.test(text)?`'${text}`:text;return `"${safe.replaceAll('"','""')}"`;}
-export function downloadCsv(name:string,rows:unknown[][]){const blob=new Blob(["\uFEFF"+rows.map(row=>row.map(csvCell).join(",")).join("\r\n")],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const link=document.createElement("a");link.href=url;link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+export function csvCell(value: unknown) {
+  const text = String(value ?? "");
+  const safe = /^[\s]*[=+@-]/.test(text) ? `'${text}` : text;
+  return `"${safe.replaceAll('"', '""')}"`;
+}
+export function downloadCsv(name: string, rows: unknown[][]) {
+  const blob = new Blob(
+    ["\uFEFF" + rows.map((row) => row.map(csvCell).join(",")).join("\r\n")],
+    { type: "text/csv;charset=utf-8" },
+  );
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = name;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}

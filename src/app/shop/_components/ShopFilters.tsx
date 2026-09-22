@@ -2,6 +2,7 @@
 
 import CustomSelect from "../../_components/CustomSelect";
 import { FiCheck } from "react-icons/fi";
+import { colourSwatchBackground } from "../../_data/colour-swatches";
 
 export const colourSwatches = [
   {
@@ -93,10 +94,10 @@ export default function ShopFilters({
           </div>
 
           <div className="relative mt-5 h-5">
-            <div className="absolute left-0 top-1/2 h-[2px] w-full -translate-y-1/2 rounded-full bg-black/10" />
+            <div className="absolute left-0 top-1/2 h-0.5 w-full -translate-y-1/2 rounded-full bg-black/10" />
 
             <div
-              className="absolute left-0 top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-[#ed682c]"
+              className="absolute left-0 top-1/2 h-0.5 -translate-y-1/2 rounded-full bg-[#ed682c]"
               style={{ width: `${rangeProgress}%` }}
             />
 
@@ -126,7 +127,7 @@ export default function ShopFilters({
                 (name) =>
                   colourSwatches.find((item) => item.name === name) ?? {
                     name,
-                    gradient: "#E9E2D7",
+                    gradient: colourSwatchBackground(name),
                   },
               ),
             ].map((item) => {
@@ -140,33 +141,27 @@ export default function ShopFilters({
                   aria-label={item.name}
                   aria-pressed={isActive}
                   title={item.name}
-                  className={`group/swatch relative flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 ${
-                    isActive
-                      ? "ring-2 ring-[#20211e] ring-offset-2 ring-offset-[#F4F1E9]"
-                      : "ring-1 ring-black/10 ring-offset-2 ring-offset-[#F4F1E9] hover:ring-black/30"
-                  }`}
+                  className="relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full p-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#20211e]"
                 >
                   <span
-                    className="h-full w-full rounded-full"
+                    className="flex h-full w-full items-center justify-center rounded-full text-[10px] text-black/50"
                     style={{ background: item.gradient }}
-                  />
+                    aria-hidden="true"
+                  >
+                    {!item.gradient ? "?" : null}
+                  </span>
 
                   {isActive && (
-                    <span className="absolute inset-0 flex items-center justify-center">
+                    <span
+                      className="absolute inset-0 flex items-center justify-center"
+                      aria-hidden="true"
+                    >
                       <FiCheck
-                        size={14}
-                        className={
-                          item.name === "Triple Black"
-                            ? "text-white"
-                            : "text-[#20211e] mix-blend-difference invert"
-                        }
+                        size={18}
+                        className="rounded-full bg-[#20211e] p-0.5 text-white ring-1 ring-white"
                       />
                     </span>
                   )}
-
-                  <span className="pointer-events-none absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-[#20211e] px-2.5 py-1 text-[9px] font-medium text-white opacity-0 transition-opacity duration-200 group-hover/swatch:opacity-100">
-                    {item.name}
-                  </span>
                 </button>
               );
             })}
@@ -185,4 +180,22 @@ export default function ShopFilters({
   );
 }
 
-export function SortDropdown({sort,onSortChange,options}:{sort:string;onSortChange:(value:string)=>void;options:string[]}) { return <CustomSelect label="Sort products" value={sort} onChange={onSortChange} options={options.map(value=>({value,label:value}))} className="min-w-52"/>; }
+export function SortDropdown({
+  sort,
+  onSortChange,
+  options,
+}: {
+  sort: string;
+  onSortChange: (value: string) => void;
+  options: string[];
+}) {
+  return (
+    <CustomSelect
+      label="Sort products"
+      value={sort}
+      onChange={onSortChange}
+      options={options.map((value) => ({ value, label: value }))}
+      className="min-w-52"
+    />
+  );
+}

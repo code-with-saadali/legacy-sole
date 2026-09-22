@@ -143,7 +143,19 @@ export default function ProductEditorDialog({
               </label>
               <label className="admin-field">
                 Category
-                <CustomSelect label="Product category" value={draft.category} onChange={value => updateDraft("category", value)} options={[{value:"",label:"Select category"},...Array.from(new Set([...allCategories,draft.category].filter(Boolean))).map(value=>({value,label:value}))]} />
+                <CustomSelect
+                  label="Product category"
+                  value={draft.category}
+                  onChange={(value) => updateDraft("category", value)}
+                  options={[
+                    { value: "", label: "Select category" },
+                    ...Array.from(
+                      new Set(
+                        [...allCategories, draft.category].filter(Boolean),
+                      ),
+                    ).map((value) => ({ value, label: value })),
+                  ]}
+                />
               </label>
               <label className="admin-field">
                 Badge / tag
@@ -167,6 +179,17 @@ export default function ProductEditorDialog({
           </section>
           <section className="rounded-[22px] border border-black/10 bg-[#F8F6F1] p-4 sm:p-5">
             <h4 className="text-base font-semibold">Sizes & colour variants</h4>
+            <label className="mt-4 flex items-center gap-3 text-sm">
+              <input
+                type="checkbox"
+                checked={draft.one_size ?? false}
+                onChange={(event) => {
+                  updateDraft("one_size", event.target.checked);
+                  if (event.target.checked) updateDraft("size_stock", null);
+                }}
+              />
+              One size (accessories, shoe care, bags)
+            </label>
             <p className="mt-2 text-xs leading-6 text-black/50">
               Create a separate product for each colour, with its own image and
               price. Use the same group name to link their colour options.
@@ -181,11 +204,24 @@ export default function ProductEditorDialog({
                 }
               />
             </label>
-            <CustomSelect label="Existing colour groups" value={draft.variant_group ?? ""} onChange={value => updateDraft("variant_group",value)} placeholder="Or choose an existing colour group" options={Array.from(new Set(editableProducts.map(product=>product.variant_group).filter((value): value is string => Boolean(value)))).map(value=>({value,label:value}))} />
+            <CustomSelect
+              label="Existing colour groups"
+              value={draft.variant_group ?? ""}
+              onChange={(value) => updateDraft("variant_group", value)}
+              placeholder="Or choose an existing colour group"
+              options={Array.from(
+                new Set(
+                  editableProducts
+                    .map((product) => product.variant_group)
+                    .filter((value): value is string => Boolean(value)),
+                ),
+              ).map((value) => ({ value, label: value }))}
+            />
             <label className="mt-5 flex items-center gap-3 text-sm">
               <input
                 type="checkbox"
                 checked={!!draft.size_stock}
+                disabled={draft.one_size}
                 onChange={(event) =>
                   updateDraft(
                     "size_stock",
@@ -229,6 +265,46 @@ export default function ProductEditorDialog({
             )}
           </section>
           <section className="rounded-[22px] border border-black/10 bg-[#F8F6F1] p-4 sm:p-5">
+            <h4 className="text-base font-semibold">Complete the look</h4>
+            <p className="mt-2 text-xs text-black/50">
+              Choose up to four matching products. Only available products
+              appear on the storefront.
+            </p>
+            <div className="my-5 max-h-48 space-y-3 overflow-y-auto">
+              {editableProducts
+                .filter((item) => item.slug !== draft.slug)
+                .map((item) => (
+                  <label
+                    key={item.slug}
+                    className="flex items-center gap-3 text-sm"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={
+                        draft.complete_the_look?.includes(item.slug) ?? false
+                      }
+                      disabled={
+                        !draft.complete_the_look?.includes(item.slug) &&
+                        (draft.complete_the_look?.length ?? 0) >= 4
+                      }
+                      onChange={(event) =>
+                        updateDraft(
+                          "complete_the_look",
+                          event.target.checked
+                            ? [...(draft.complete_the_look ?? []), item.slug]
+                            : (draft.complete_the_look ?? []).filter(
+                                (slug) => slug !== item.slug,
+                              ),
+                        )
+                      }
+                    />
+                    {item.name}{" "}
+                    <span className="text-xs text-black/40">
+                      {item.category}
+                    </span>
+                  </label>
+                ))}
+            </div>
             <h4 className="flex items-center gap-2 text-base font-semibold">
               <FiImage size={17} /> Product images
             </h4>

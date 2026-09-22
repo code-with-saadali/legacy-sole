@@ -22,7 +22,26 @@ export default function OrderStatusSelect({
       >
         Status
       </label>
-      <CustomSelect id={`order-status-${order.id}`} label={`Status for order ${order.id}`} value={order.status} disabled={disabled || order.status === "Cancelled" || order.status === "Returned"} onChange={value => void onChange(order.id,value as Order["status"])} options={["Pending","Confirmed","Dispatched","Delivered",...(["Cancelled","Returned"].includes(order.status)?[order.status]:[])].map(value=>({value,label:value}))} />
+      <CustomSelect
+        id={`order-status-${order.id}`}
+        label={`Status for order ${order.id}`}
+        value={order.status}
+        disabled={
+          disabled ||
+          order.status === "Cancelled" ||
+          order.status === "Returned"
+        }
+        onChange={(value) => void onChange(order.id, value as Order["status"])}
+        options={[
+          "Pending",
+          "Confirmed",
+          "Dispatched",
+          "Delivered",
+          ...(["Cancelled", "Returned"].includes(order.status)
+            ? [order.status]
+            : []),
+        ].map((value) => ({ value, label: value }))}
+      />
     </div>
   );
 }

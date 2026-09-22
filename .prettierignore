@@ -1,0 +1,14 @@
+node_modules/
+.next/
+.next-verify/
+.vercel/
+out/
+build/
+coverage/
+.git/
+.codex/
+.agents/
+.env*
+package-lock.json
+pnpm-lock.yaml
+*.tsbuildinfo

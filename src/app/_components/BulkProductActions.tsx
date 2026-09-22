@@ -1,11 +1,155 @@
 "use client";
-import {useState} from "react";
-import type {Product} from "../_data/products";
-import {supabase} from "../../lib/supabase";
+import { useState } from "react";
+import type { Product } from "../_data/products";
+import { supabase } from "../../lib/supabase";
 import CustomSelect from "./CustomSelect";
-export default function BulkProductActions({products,onSaved}:{products:Product[];onSaved:()=>void}){
- const [selected,setSelected]=useState<string[]>([]);const [action,setAction]=useState("featured");const [amount,setAmount]=useState("1");const [busy,setBusy]=useState(false);const [message,setMessage]=useState("");
- const valid=selected.filter(slug=>products.some(product=>product.slug===slug));
- const apply=async()=>{if(!supabase||busy||!valid.length)return;if(!window.confirm(`Apply this change to ${valid.length} selected products?`))return;setBusy(true);setMessage("");try{const {data,error}=await supabase.rpc("bulk_update_products",{product_slugs:valid,action,amount:Number(amount)});if(error)throw error;setSelected([]);setMessage(`${data} products updated.`);onSaved();}catch(cause){setMessage((cause as Error).message||"Update failed.");}finally{setBusy(false);}};
- return <details className="mt-5 rounded-2xl border border-black/10 bg-[#F8F6F1] p-5"><summary className="cursor-pointer text-sm font-medium">Bulk product updates</summary><div className="mt-4 grid gap-3 sm:grid-cols-3"><CustomSelect label="Bulk product action" value={action} disabled={busy} onChange={value=>{setAction(value);setAmount(value==="featured"?"1":"0");}} options={[{value:"featured",label:"Featured status"},{value:"price",label:"Adjust prices (%)"},{value:"stock",label:"Set shared stock"}]}/>{action==="featured"?<CustomSelect label="Featured value" value={amount} disabled={busy} onChange={setAmount} options={[{value:"1",label:"Featured"},{value:"0",label:"Not featured"}]}/>:<label className="admin-field">{action==="price"?"Change (-90% to +100%)":"Stock units"}<input type="number" value={amount} min={action==="price"?-90:0} max={action==="price"?100:100000} step="1" disabled={busy} onChange={event=>setAmount(event.target.value)}/></label>}<button type="button" disabled={busy||!valid.length||!amount.trim()||!Number.isSafeInteger(Number(amount))} onClick={()=>void apply()} className="rounded-xl bg-[#20211e] px-4 py-3 text-xs text-white disabled:opacity-40">{busy?"Updating…":`Apply to ${valid.length} products`}</button></div><p className="mt-3 text-xs text-black/50">Size-specific stock is managed in each product editor. Price changes apply to future orders.</p><div className="mt-4 flex flex-wrap gap-2"><button type="button" disabled={busy} onClick={()=>setSelected(products.map(product=>product.slug))} className="text-xs underline">Select visible products</button><button type="button" disabled={busy} onClick={()=>setSelected([])} className="ml-3 text-xs underline">Clear</button></div><div className="mt-3 grid max-h-48 gap-2 overflow-y-auto sm:grid-cols-2" data-lenis-prevent>{products.map(product=><label key={product.slug} className="flex items-center gap-2 text-xs"><input type="checkbox" disabled={busy} checked={valid.includes(product.slug)} onChange={event=>setSelected(current=>event.target.checked?[...current,product.slug]:current.filter(slug=>slug!==product.slug))}/>{product.name}</label>)}</div>{message&&<p role="status" className="mt-4 text-sm">{message}</p>}</details>;
+export default function BulkProductActions({
+  products,
+  onSaved,
+}: {
+  products: Product[];
+  onSaved: () => void;
+}) {
+  const [selected, setSelected] = useState<string[]>([]);
+  const [action, setAction] = useState("featured");
+  const [amount, setAmount] = useState("1");
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+  const valid = selected.filter((slug) =>
+    products.some((product) => product.slug === slug),
+  );
+  const apply = async () => {
+    if (!supabase || busy || !valid.length) return;
+    if (
+      !window.confirm(`Apply this change to ${valid.length} selected products?`)
+    )
+      return;
+    setBusy(true);
+    setMessage("");
+    try {
+      const { data, error } = await supabase.rpc("bulk_update_products", {
+        product_slugs: valid,
+        action,
+        amount: Number(amount),
+      });
+      if (error) throw error;
+      setSelected([]);
+      setMessage(`${data} products updated.`);
+      onSaved();
+    } catch (cause) {
+      setMessage((cause as Error).message || "Update failed.");
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <details className="mt-5 rounded-2xl border border-black/10 bg-[#F8F6F1] p-5">
+      <summary className="cursor-pointer text-sm font-medium">
+        Bulk product updates
+      </summary>
+      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        <CustomSelect
+          label="Bulk product action"
+          value={action}
+          disabled={busy}
+          onChange={(value) => {
+            setAction(value);
+            setAmount(value === "featured" ? "1" : "0");
+          }}
+          options={[
+            { value: "featured", label: "Featured status" },
+            { value: "price", label: "Adjust prices (%)" },
+            { value: "stock", label: "Set shared stock" },
+          ]}
+        />
+        {action === "featured" ? (
+          <CustomSelect
+            label="Featured value"
+            value={amount}
+            disabled={busy}
+            onChange={setAmount}
+            options={[
+              { value: "1", label: "Featured" },
+              { value: "0", label: "Not featured" },
+            ]}
+          />
+        ) : (
+          <label className="admin-field">
+            {action === "price" ? "Change (-90% to +100%)" : "Stock units"}
+            <input
+              type="number"
+              value={amount}
+              min={action === "price" ? -90 : 0}
+              max={action === "price" ? 100 : 100000}
+              step="1"
+              disabled={busy}
+              onChange={(event) => setAmount(event.target.value)}
+            />
+          </label>
+        )}
+        <button
+          type="button"
+          disabled={
+            busy ||
+            !valid.length ||
+            !amount.trim() ||
+            !Number.isSafeInteger(Number(amount))
+          }
+          onClick={() => void apply()}
+          className="rounded-xl bg-[#20211e] px-4 py-3 text-xs text-white disabled:opacity-40"
+        >
+          {busy ? "Updating…" : `Apply to ${valid.length} products`}
+        </button>
+      </div>
+      <p className="mt-3 text-xs text-black/50">
+        Size-specific stock is managed in each product editor. Price changes
+        apply to future orders.
+      </p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => setSelected(products.map((product) => product.slug))}
+          className="text-xs underline"
+        >
+          Select visible products
+        </button>
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => setSelected([])}
+          className="ml-3 text-xs underline"
+        >
+          Clear
+        </button>
+      </div>
+      <div
+        className="mt-3 grid max-h-48 gap-2 overflow-y-auto sm:grid-cols-2"
+        data-lenis-prevent
+      >
+        {products.map((product) => (
+          <label key={product.slug} className="flex items-center gap-2 text-xs">
+            <input
+              type="checkbox"
+              disabled={busy}
+              checked={valid.includes(product.slug)}
+              onChange={(event) =>
+                setSelected((current) =>
+                  event.target.checked
+                    ? [...current, product.slug]
+                    : current.filter((slug) => slug !== product.slug),
+                )
+              }
+            />
+            {product.name}
+          </label>
+        ))}
+      </div>
+      {message && (
+        <p role="status" className="mt-4 text-sm">
+          {message}
+        </p>
+      )}
+    </details>
+  );
 }

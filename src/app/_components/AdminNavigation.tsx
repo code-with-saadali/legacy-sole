@@ -9,7 +9,8 @@ import {
   FiSettings,
 } from "react-icons/fi";
 
-export type AdminTab = "Overview" | "Orders" | "Products" | "Customers" | "Settings";
+export type AdminTab =
+  "Overview" | "Orders" | "Products" | "Customers" | "Profit" | "Settings";
 
 export default function AdminNavigation({
   tab,
@@ -39,35 +40,53 @@ export default function AdminNavigation({
           Manage store
         </p>
         <nav className="mt-4 space-y-2" aria-label="Dashboard sections">
-          {(["Overview", "Orders", "Products", "Customers", "Settings"] as AdminTab[]).map((item) => {
+          {(
+            [
+              "Overview",
+              "Orders",
+              "Products",
+              "Customers",
+              "Profit",
+              "Settings",
+            ] as AdminTab[]
+          ).map((item) => {
             const Icon =
               item === "Overview"
                 ? FiBox
                 : item === "Orders"
                   ? FiShoppingBag
-                  : item === "Customers" ? FiUsers : item === "Settings" ? FiSettings : FiPackage;
+                  : item === "Customers"
+                    ? FiUsers
+                    : item === "Settings"
+                      ? FiSettings
+                      : FiPackage;
             return (
               <button
                 key={item}
                 type="button"
                 onClick={() => setTab(item)}
                 aria-current={tab === item ? "page" : undefined}
-                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left text-[11px] font-medium uppercase tracking-[0.12em] transition-colors ${tab === item ? "bg-[#E9E2D7] text-[#20211e]" : "text-white/50 hover:bg-white/5 hover:text-white"}`}
+                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left text-sm font-medium transition-colors ${tab === item ? "bg-[#E9E2D7] text-[#20211e]" : "text-white/75 hover:bg-white/5 hover:text-white"}`}
               >
-                <Icon size={16} /> {item}
+                <Icon size={18} />{" "}
+                {item === "Overview"
+                  ? "Dashboard"
+                  : item === "Products"
+                    ? "Products & stock"
+                    : item}
               </button>
             );
           })}
         </nav>
         <div className="mt-auto border-t border-white/10 pt-6">
           <p className="text-[9px] uppercase tracking-[0.18em] text-white/30">
-            Live connection
+            Store connection
           </p>
           <p className="mt-2 flex items-center gap-2 text-xs text-white/70">
             <span
               className={`h-1.5 w-1.5 rounded-full ${connection === "Live" ? "bg-[#ed682c]" : "bg-amber-400"}`}
             />{" "}
-            {connection === "Live" ? "Supabase connected" : connection}
+            {connection === "Live" ? "Connected" : connection}
           </p>
           <Link
             href="/"
@@ -86,16 +105,29 @@ export default function AdminNavigation({
             Admin workspace
           </span>
         </div>
-        <div className="mt-3 flex gap-2 overflow-x-auto">
-          {(["Overview", "Orders", "Products", "Customers", "Settings"] as AdminTab[]).map((item) => (
+        <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {(
+            [
+              "Overview",
+              "Orders",
+              "Products",
+              "Customers",
+              "Profit",
+              "Settings",
+            ] as AdminTab[]
+          ).map((item) => (
             <button
               key={item}
               type="button"
               onClick={() => setTab(item)}
               aria-current={tab === item ? "page" : undefined}
-              className={`whitespace-nowrap rounded-lg px-3 py-2 text-[10px] uppercase tracking-[0.1em] ${tab === item ? "bg-[#E9E2D7] text-[#20211e]" : "text-white/50"}`}
+              className={`min-h-11 rounded-lg px-3 py-2 text-sm ${tab === item ? "bg-[#E9E2D7] text-[#20211e]" : "bg-white/5 text-white/75"}`}
             >
-              {item}
+              {item === "Overview"
+                ? "Dashboard"
+                : item === "Products"
+                  ? "Products & stock"
+                  : item}
             </button>
           ))}
         </div>

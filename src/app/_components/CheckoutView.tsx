@@ -5,34 +5,46 @@ import { FormEvent, useRef, useState } from "react";
 import { FiArrowLeft, FiCheck } from "react-icons/fi";
 import useCart from "../_hooks/useCart";
 import CheckoutCoupon from "./CheckoutCoupon";
+import CheckoutRewards from "./CheckoutRewards";
 import CheckoutCity from "./CheckoutCity";
-import useCheckoutQuote from "../_hooks/useCheckoutQuote";
-import {useStoreSettings} from "./StoreSettingsProvider";
-import {deliveryCharge} from "../_data/store-settings";
+import SavedAddresses from "./SavedAddresses";
+import useRewardsQuote from "../_hooks/useRewardsQuote";
+import { useStoreSettings } from "./StoreSettingsProvider";
+import { deliveryCharge } from "../_data/store-settings";
 import { cartKey } from "../_data/cart";
 
 import { supabase } from "../../lib/supabase";
 
 export default function CheckoutView() {
   const { items, issues, ready, error: catalogError } = useCart();
-  const {settings} = useStoreSettings();
-  const [city,setCity]=useState("");
-  const [cityChoice,setCityChoice]=useState("");
-  const [coupon,setCoupon]=useState("");
-  const {quote,quoteError,quoting}=useCheckoutQuote(items,city,coupon);
-  const [confirmedTotal,setConfirmedTotal]=useState(0);
+  const { settings } = useStoreSettings();
+  const [city, setCity] = useState("");
+  const [cityChoice, setCityChoice] = useState("");
+  const [coupon, setCoupon] = useState("");
+  const [email, setEmail] = useState("");
+  const [reward, setReward] = useState({ reference: "", points: 0 });
+  const { quote, quoteError, quoting } = useRewardsQuote(
+    items,
+    city,
+    coupon,
+    email,
+    reward.reference,
+    reward.points,
+  );
+  const [confirmedTotal, setConfirmedTotal] = useState(0);
   const [placed, setPlaced] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [orderId, setOrderId] = useState("");
   const requestId = useRef<string | null>(null);
   const inFlight = useRef(false);
+  const checkoutForm = useRef<HTMLFormElement>(null);
 
   const subtotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0,
   );
-  const shipping = quote?.shipping ?? deliveryCharge(subtotal,city,settings);
+  const shipping = quote?.shipping ?? deliveryCharge(subtotal, city, settings);
   const discount = quote?.discount ?? 0;
   const total = quote?.total ?? subtotal + shipping;
 
@@ -46,8 +58,14 @@ export default function CheckoutView() {
       !items.length
     )
       return;
-    if (!city.trim()) {setError("Please choose your delivery city.");return;}
-    if (quoting || quoteError || !quote) {setError(quoteError || "Please wait for the updated total.");return;}
+    if (!city.trim()) {
+      setError("Please choose your delivery city.");
+      return;
+    }
+    if (quoting || quoteError || !quote) {
+      setError(quoteError || "Please wait for the updated total.");
+      return;
+    }
     if (!supabase) {
       setError("Checkout is temporarily unavailable.");
       return;
@@ -63,9 +81,11 @@ export default function CheckoutView() {
           (key) => [key, String(form.get(key) || "").trim()],
         ),
       );
-      const { data, error } = await supabase.rpc("place_order", {
+      const { data, error } = await supabase.rpc("place_rewards_order", {
         request_id: requestId.current,
         coupon_code: coupon,
+        reward_reference: reward.reference,
+        reward_points: reward.points,
         customer,
         items: items.map((item) => ({
           slug: item.slug,
@@ -116,7 +136,16 @@ export default function CheckoutView() {
             Your Legacy Sole order has been placed. We will contact you shortly
             to confirm delivery details.
           </p>
-          <p className="mt-4 break-all text-xs">Order reference: {orderId}</p><p className="mt-3 text-sm">Total payable: Rs. {confirmedTotal.toLocaleString()}</p><Link href="/track-order" className="mt-4 inline-block text-sm underline">Track or manage your order</Link>
+          <p className="mt-4 break-all text-xs">Order reference: {orderId}</p>
+          <p className="mt-3 text-sm">
+            Total payable: Rs. {confirmedTotal.toLocaleString()}
+          </p>
+          <Link
+            href="/track-order"
+            className="mt-4 inline-block text-sm underline"
+          >
+            Track or manage your order
+          </Link>
           <Link
             href="/"
             className="mt-8 inline-flex bg-[#4b5a42] px-6 py-4 text-[11px] font-medium uppercase tracking-[0.14em] text-white hover:bg-[#b66b4d]"
@@ -180,10 +209,19 @@ export default function CheckoutView() {
           </p>
         ))}
         <form
+          ref={checkoutForm}
           onSubmit={placeOrder}
           className="grid gap-12 py-10 lg:grid-cols-[1fr_360px] lg:gap-20"
         >
           <div className="space-y-9">
+            <SavedAddresses
+              formRef={checkoutForm}
+              disabled={submitting}
+              onCity={(value) => {
+                setCityChoice("Other");
+                setCity(value);
+              }}
+            />
             <fieldset disabled={submitting}>
               <legend className="text-[10px] font-medium uppercase tracking-[0.18em] text-black/45">
                 Contact details
@@ -199,6 +237,11 @@ export default function CheckoutView() {
                 <input
                   required
                   name="email"
+                  value={email}
+                  onChange={(event) => {
+                    setEmail(event.target.value);
+                    setReward({ reference: "", points: 0 });
+                  }}
                   type="email"
                   placeholder="Email address"
                   className="checkout-input"
@@ -224,7 +267,13 @@ export default function CheckoutView() {
                   placeholder="Address"
                   className="checkout-input sm:col-span-2"
                 />
-                <CheckoutCity choice={cityChoice} city={city} onChoiceChange={setCityChoice} onCityChange={setCity} disabled={submitting} />
+                <CheckoutCity
+                  choice={cityChoice}
+                  city={city}
+                  onChoiceChange={setCityChoice}
+                  onCityChange={setCity}
+                  disabled={submitting}
+                />
                 <input
                   required
                   name="postalCode"
@@ -249,7 +298,28 @@ export default function CheckoutView() {
           </div>
 
           <aside className="h-fit border-t border-black/10 pt-5 lg:border-l lg:border-t-0 lg:pl-8">
-            <h2 className="text-2xl text-[#20211e]">Order summary</h2><CheckoutCoupon code={coupon} onChange={setCoupon} disabled={submitting} />{quoteError && <p role="alert" className="mt-3 text-xs text-red-700">{quoteError}</p>}{quoting && <p role="status" className="mt-3 text-xs text-black/50">Updating your total?</p>}
+            <h2 className="text-2xl text-[#20211e]">Order summary</h2>
+            <CheckoutCoupon
+              code={coupon}
+              onChange={setCoupon}
+              disabled={submitting}
+            />
+            {quoteError && (
+              <p role="alert" className="mt-3 text-xs text-red-700">
+                {quoteError}
+              </p>
+            )}
+            {quoting && (
+              <p role="status" className="mt-3 text-xs text-black/50">
+                Updating your total?
+              </p>
+            )}
+            <CheckoutRewards
+              email={email}
+              disabled={submitting}
+              applied={reward.points}
+              onApply={(reference, points) => setReward({ reference, points })}
+            />
             <div className="mt-5 divide-y divide-black/10">
               {items.map((item) => (
                 <div
@@ -271,11 +341,23 @@ export default function CheckoutView() {
                 <span>Subtotal</span>
                 <span>Rs. {subtotal.toLocaleString()}</span>
               </div>
+              {(quote?.loyalty_discount ?? 0) > 0 && (
+                <div className="flex justify-between text-[#4b5a42]">
+                  <span>Loyalty points</span>
+                  <span>− Rs. {quote!.loyalty_discount.toLocaleString()}</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span>Delivery</span>
                 <span>{shipping ? `Rs. ${shipping}` : "Free"}</span>
               </div>
-              {discount>0&&<div className="flex justify-between text-[#4b5a42]"><span>Discount ({coupon})</span><span>? Rs. {discount.toLocaleString()}</span></div>}<div className="flex justify-between border-t border-black/10 pt-4 text-sm font-medium">
+              {discount > 0 && (
+                <div className="flex justify-between text-[#4b5a42]">
+                  <span>Discount ({coupon})</span>
+                  <span>? Rs. {discount.toLocaleString()}</span>
+                </div>
+              )}
+              <div className="flex justify-between border-t border-black/10 pt-4 text-sm font-medium">
                 <span>Total</span>
                 <span>Rs. {total.toLocaleString()}</span>
               </div>
@@ -283,7 +365,12 @@ export default function CheckoutView() {
             <button
               type="submit"
               disabled={
-                submitting || quoting || !quote || Boolean(quoteError) || Boolean(catalogError) || issues.length > 0
+                submitting ||
+                quoting ||
+                !quote ||
+                Boolean(quoteError) ||
+                Boolean(catalogError) ||
+                issues.length > 0
               }
               className="mt-7 w-full bg-[#4b5a42] px-5 py-4 text-[11px] font-medium uppercase tracking-[0.14em] text-white hover:bg-[#b66b4d]"
             >

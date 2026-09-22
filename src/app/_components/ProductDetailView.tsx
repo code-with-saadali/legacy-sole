@@ -3,7 +3,8 @@
 import ProductGallery from "./ProductGallery";
 import SizeGuide from "./SizeGuide";
 import RelatedProducts from "./RelatedProducts";
-import CompareButton from "./CompareButton";
+import CompleteTheLook from "./CompleteTheLook";
+
 import Link from "next/link";
 import { FiArrowLeft, FiCheck } from "react-icons/fi";
 import ProductActions from "./ProductActions";
@@ -12,6 +13,7 @@ import WishlistButton from "./WishlistButton";
 import { useCatalog } from "./CatalogProvider";
 import ProductReviews from "./ProductReviews";
 import { colourSwatches } from "../shop/_components/ShopFilters";
+import { availableSizes, sizeStock } from "../_data/inventory";
 
 export default function ProductDetailView({ slug }: { slug: string }) {
   const { products, loading, error } = useCatalog();
@@ -36,6 +38,9 @@ export default function ProductDetailView({ slug }: { slug: string }) {
       </main>
     );
 
+  const soldOut =
+    (product.stock ?? 0) < 1 ||
+    !availableSizes(product).some((size) => sizeStock(product, size) > 0);
   return (
     <main className="bg-[#F4F1E9] px-[5%] pb-20 pt-10 lg:pb-28 lg:pt-16">
       <RecentlyViewedTracker slug={product.slug} />
@@ -47,7 +52,7 @@ export default function ProductDetailView({ slug }: { slug: string }) {
       </Link>
 
       <div className="mt-10 grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-stretch lg:gap-20">
-<ProductGallery key={product.slug} product={product} />
+        <ProductGallery key={product.slug} product={product} />
         <div className="max-w-xl">
           <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-black/40">
             {product.category} / Legacy Sole
@@ -67,6 +72,18 @@ export default function ProductDetailView({ slug }: { slug: string }) {
               Rs. {product.price.toLocaleString()}
             </strong>
           </div>
+          {soldOut && (
+            <div
+              role="status"
+              className="mt-5 rounded-xl border border-[#a04c2a]/20 bg-[#a04c2a]/5 px-4 py-3"
+            >
+              <p className="text-sm font-semibold text-[#a04c2a]">Sold out</p>
+              <p className="mt-1 text-xs leading-5 text-black/60">
+                This pair is currently out of stock. Browse other styles in the
+                shop.
+              </p>
+            </div>
+          )}
           <div className="mt-6">
             <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-black/55">
               Colour
@@ -125,8 +142,8 @@ export default function ProductDetailView({ slug }: { slug: string }) {
           <p className="mt-7 max-w-lg text-sm leading-7 text-black/55">
             {product.description}
           </p>
-          <SizeGuide product={product} />
-          <ProductActions key={product.slug} product={product} /><CompareButton slug={product.slug} />
+          {!product.one_size && <SizeGuide product={product} />}
+          <ProductActions key={product.slug} product={product} />
           <div className="mt-7 grid gap-3 border-t border-black/10 pt-6 sm:grid-cols-3">
             {product.details.map((detail) => (
               <div
@@ -140,7 +157,9 @@ export default function ProductDetailView({ slug }: { slug: string }) {
           </div>
         </div>
       </div>
-      <RelatedProducts product={product} products={products} /><ProductReviews key={product.slug} slug={product.slug} />
+      <CompleteTheLook product={product} products={products} />
+      <RelatedProducts product={product} products={products} />
+      <ProductReviews key={product.slug} slug={product.slug} />
     </main>
   );
 }

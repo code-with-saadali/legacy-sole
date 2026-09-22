@@ -3,7 +3,7 @@
 import { sizeStock } from "./inventory";
 export type CartItem = Product & { quantity: number; size: string };
 export const cartKey = "legacy-sole-cart";
-export const sizes = ["UK 6", "UK 7", "UK 8", "UK 9", "UK 10"];
+export const sizes = ["UK 6", "UK 7", "UK 8", "UK 9", "UK 10", "One size"];
 
 export function parseCart(stored: string | null): CartItem[] {
   try {
@@ -39,7 +39,7 @@ export function cartIssues(items: CartItem[], products: Product[]): string[] {
   for (const item of items) {
     const product = products.find((product) => product.slug === item.slug);
     if (
-      product?.size_stock &&
+      product &&
       (sizeQuantities.get(`${item.slug}:${item.size}`) ?? 0) >
         sizeStock(product, item.size)
     )

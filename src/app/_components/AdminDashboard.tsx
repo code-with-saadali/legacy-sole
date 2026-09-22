@@ -1,6 +1,7 @@
 "use client";
 
 import AdminSettingsPanel from "./AdminSettingsPanel";
+import ProfitReport from "./ProfitReport";
 import AdminCustomersPanel from "./AdminCustomersPanel";
 import { useState } from "react";
 import { useCatalog } from "./CatalogProvider";
@@ -75,15 +76,24 @@ export default function AdminDashboard() {
           </p>
         )}
         {tab === "Settings" && <AdminSettingsPanel />}
-        {tab === "Customers" && <AdminCustomersPanel orders={orders} onOpenOrder={setSelectedOrderId} />}
+        {tab === "Profit" && <ProfitReport products={products} />}
+        {tab === "Customers" && (
+          <AdminCustomersPanel
+            orders={orders}
+            onOpenOrder={setSelectedOrderId}
+          />
+        )}
         {tab === "Overview" && (
           <AdminOverview
             products={products}
             orders={orders}
             catalogError={catalogError}
-            onManageProducts={() => setTab("Products")}
+            onManageProducts={() => {
+              setStockOnly(false);
+              setTab("Products");
+            }}
             onManageStock={manageStock}
-            onViewOrders={() => setTab("Orders")}
+            onViewOrders={viewNewOrders}
             onOpenOrder={setSelectedOrderId}
           />
         )}

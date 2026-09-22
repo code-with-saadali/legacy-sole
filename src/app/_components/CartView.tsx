@@ -3,10 +3,13 @@
 import Image from "./ProductImage";
 import Link from "next/link";
 import useCart from "../_hooks/useCart";
-import { FiArrowLeft, FiTrash2 } from "react-icons/fi";
+import { FiArrowLeft, FiTrash2, FiMessageCircle } from "react-icons/fi";
+import { useStoreSettings } from "./StoreSettingsProvider";
+import { supportLink } from "../_data/store-settings";
 
 export default function CartView() {
   const { items, updateCart, issues, ready, error } = useCart();
+  const { settings } = useStoreSettings();
   if (!ready)
     return (
       <main className="p-12" role="status">
@@ -126,6 +129,30 @@ export default function CartView() {
                   ? "Review available products"
                   : "Proceed to checkout"}
               </Link>
+              <button
+                type="button"
+                disabled={!!error || issues.length > 0}
+                onClick={() => {
+                  if (error || issues.length || !items.length) return;
+                  const lines = items.map(
+                    (item) =>
+                      `${item.name} (${item.color})\nSize: ${item.size} | Quantity: ${item.quantity}\nRs. ${(item.price * item.quantity).toLocaleString("en-PK")}\n${window.location.origin}/products/${encodeURIComponent(item.slug)}`,
+                  );
+                  const message = `Assalam o Alaikum, I would like to order:\n\n${lines.join("\n\n")}\n\nSubtotal: Rs. ${total.toLocaleString("en-PK")}\nPlease confirm availability, delivery charges and final total.`;
+                  window.open(
+                    supportLink(settings.whatsapp, message),
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
+                }}
+                className="mt-3 flex min-h-12 w-full items-center justify-center gap-2 border border-[#168b43] px-4 py-3 text-xs font-medium text-[#168b43] transition-colors hover:bg-[#168b43] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <FiMessageCircle size={18} /> Order on WhatsApp
+              </button>
+              <p className="mt-3 text-xs leading-5 text-black/50">
+                Send your bag details on WhatsApp. Our team will confirm your
+                order and delivery charges there.
+              </p>
             </aside>
           </div>
         )}

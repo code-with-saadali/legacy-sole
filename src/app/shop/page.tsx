@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ShopClient from "../_components/ShopClient";
+import RecentlyViewed from "../_components/RecentlyViewed";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
@@ -17,6 +18,7 @@ export default function ShopPage() {
       }
     >
       <ShopClient />
+      <RecentlyViewed />
     </Suspense>
   );
 }

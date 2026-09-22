@@ -16,6 +16,8 @@ export type Product = {
   gallery: string[];
   sizeGuide: { size: string; footLength: string }[];
   featured: boolean;
+  one_size?: boolean;
+  complete_the_look?: string[];
 };
 
 export function normalizeProduct(row: Record<string, unknown>): Product {
@@ -40,6 +42,10 @@ export function normalizeProduct(row: Record<string, unknown>): Product {
       ? (row.size_guide as { size: string; footLength: string }[])
       : [],
     featured: Boolean(row.featured),
+    one_size: Boolean(row.one_size),
+    complete_the_look: Array.isArray(row.complete_the_look)
+      ? row.complete_the_look.map(String)
+      : [],
   };
 }
 

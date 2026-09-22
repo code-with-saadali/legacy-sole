@@ -205,7 +205,27 @@ export default function AdminOrderDetails({
         </section>
         <label className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-[22px] border border-black/10 bg-[#F8F6F1] p-5 text-sm font-medium">
           Order status
-          <CustomSelect label={`Status for order ${order.id}`} value={order.status} disabled={updating || order.status === "Cancelled" || order.status === "Returned"} onChange={value => void onStatusChange(order.id,value as Order["status"])} options={["Pending","Confirmed","Dispatched","Delivered",...(["Cancelled","Returned"].includes(order.status)?[order.status]:[])].map(value=>({value,label:value}))} />
+          <CustomSelect
+            label={`Status for order ${order.id}`}
+            value={order.status}
+            disabled={
+              updating ||
+              order.status === "Cancelled" ||
+              order.status === "Returned"
+            }
+            onChange={(value) =>
+              void onStatusChange(order.id, value as Order["status"])
+            }
+            options={[
+              "Pending",
+              "Confirmed",
+              "Dispatched",
+              "Delivered",
+              ...(["Cancelled", "Returned"].includes(order.status)
+                ? [order.status]
+                : []),
+            ].map((value) => ({ value, label: value }))}
+          />
         </label>
         <form
           onSubmit={(event) => {

@@ -2,23 +2,29 @@
 
 import { FormEvent, useState } from "react";
 import OrderHelpForm from "./OrderHelpForm";
-import type {TrackedOrder} from "../_data/order-requests";
+import BuyAgain from "./BuyAgain";
+import LoyaltyBalance from "./LoyaltyBalance";
+import type { TrackedOrder } from "../_data/order-requests";
 import { FiCheck, FiSearch } from "react-icons/fi";
 import { supabase } from "../../lib/supabase";
 
 const steps = ["Pending", "Confirmed", "Dispatched", "Delivered"];
 export default function OrderTracker() {
-  const [order,setOrder]=useState<TrackedOrder|null>(null);
-  const [email,setEmail]=useState("");
-  const [busy,setBusy]=useState(false);
+  const [order, setOrder] = useState<TrackedOrder | null>(null);
+  const [email, setEmail] = useState("");
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if(busy)return;
+    if (busy) return;
     setBusy(true);
     setError("");
     setOrder(null);
-    if (!supabase) {setError("Tracking is temporarily unavailable.");setBusy(false);return;}
+    if (!supabase) {
+      setError("Tracking is temporarily unavailable.");
+      setBusy(false);
+      return;
+    }
     const form = new FormData(event.currentTarget);
     setEmail(String(form.get("email")).trim());
     const { data, error: requestError } = await supabase.rpc("track_order", {
@@ -57,7 +63,10 @@ export default function OrderTracker() {
               placeholder="you@example.com"
             />
           </label>
-          <button disabled={busy} className="flex h-11 items-center justify-center gap-2 bg-[#4b5a42] px-5 text-[10px] uppercase tracking-[0.14em] text-white hover:bg-[#b66b4d]">
+          <button
+            disabled={busy}
+            className="flex h-11 items-center justify-center gap-2 bg-[#4b5a42] px-5 text-[10px] uppercase tracking-[0.14em] text-white hover:bg-[#b66b4d]"
+          >
             <FiSearch size={14} /> Track
           </button>
         </form>
@@ -110,6 +119,12 @@ export default function OrderTracker() {
                 </p>
               </div>
             )}
+            <BuyAgain key={order.id} items={order.items} />
+            <LoyaltyBalance
+              key={`${order.id}-${order.status}`}
+              reference={order.id}
+              email={email}
+            />
             <div className="mt-8 border-t border-black/10 pt-5 text-xs text-black/55">
               {order.items.map((item, index) => (
                 <p key={index} className="flex justify-between py-2">
@@ -118,7 +133,21 @@ export default function OrderTracker() {
                 </p>
               ))}
             </div>
-            <OrderHelpForm key={`${order.id}-${order.status}`} order={order} email={email} onSubmitted={()=>{void supabase?.rpc("track_order",{order_reference:order.id,customer_email:email}).then(({data})=>{if(data)setOrder(data);});}} />
+            <OrderHelpForm
+              key={`${order.id}-${order.status}`}
+              order={order}
+              email={email}
+              onSubmitted={() => {
+                void supabase
+                  ?.rpc("track_order", {
+                    order_reference: order.id,
+                    customer_email: email,
+                  })
+                  .then(({ data }) => {
+                    if (data) setOrder(data);
+                  });
+              }}
+            />
           </section>
         )}
       </div>

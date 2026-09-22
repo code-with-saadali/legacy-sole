@@ -16,12 +16,14 @@ export default function ProductLineup() {
     ...Array.from(new Set(products.map((product) => product.category))),
   ];
 
-  const visible = products.filter(
-    (product) =>
-      filter === "All shoes" ||
-      !filters.includes(filter) ||
-      product.category === filter,
-  );
+  const visible = products
+    .filter(
+      (product) =>
+        filter === "All shoes" ||
+        !filters.includes(filter) ||
+        product.category === filter,
+    )
+    .slice(0, 6);
 
   return (
     <section
@@ -164,6 +166,14 @@ export default function ProductLineup() {
             </Link>
           </article>
         ))}
+      </div>
+      <div className="mt-10 flex justify-center">
+        <Link
+          href="/shop"
+          className="inline-flex min-h-11 items-center gap-3 rounded-full border border-[#20211e] px-6 py-3 text-xs font-medium text-[#20211e] transition-colors hover:bg-[#20211e] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#20211e]"
+        >
+          View all <FiArrowUpRight aria-hidden="true" size={16} />
+        </Link>
       </div>
     </section>
   );

@@ -40,12 +40,15 @@ export default function RootLayout({
       <body
         className={`${dmSans.variable} ${cormorant.variable} ${geistMono.variable} antialiased`}
       >
-        <CatalogProvider><StoreSettingsProvider>
-          <LenisScroll />
-          <StoreChrome />
-          {children}
-          <StoreFooter />
-        <WhatsAppSupport /></StoreSettingsProvider></CatalogProvider>
+        <CatalogProvider>
+          <StoreSettingsProvider>
+            <LenisScroll />
+            <StoreChrome />
+            {children}
+            <StoreFooter />
+            <WhatsAppSupport />
+          </StoreSettingsProvider>
+        </CatalogProvider>
       </body>
     </html>
   );

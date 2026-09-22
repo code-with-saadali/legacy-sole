@@ -314,7 +314,11 @@ export default function AdminProductEditor({
   };
 
   return (
-    <div className="admin-product-editor mt-6"><BulkProductActions products={visibleProducts} onSaved={()=>onProductsChange?.(editableProducts)}/>
+    <div className="admin-product-editor mt-6">
+      <BulkProductActions
+        products={visibleProducts}
+        onSaved={() => onProductsChange?.(editableProducts)}
+      />
       <div className="flex flex-col gap-3 rounded-[22px] border border-black/10 bg-[#F4F1E9] p-4 sm:flex-row sm:items-center">
         <label className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-black/10 bg-[#F8F6F1] px-4 py-3">
           <FiSearch aria-hidden="true" className="shrink-0 text-black/40" />

@@ -1,2 +1,24 @@
-export type OrderRequest={id:string;order_id:string;kind:"Cancellation"|"Return"|"Exchange";reason:string;requested_size:string;status:string;admin_note:string;created_at:string};
-export type TrackedOrder={id:string;status:string;created_at:string;delivered_at?:string;courier_name?:string;tracking_number?:string;total:number;subtotal?:number;shipping?:number;discount?:number;items:{name:string;quantity:number;size?:string}[];requests?:OrderRequest[]};
+export type OrderRequest = {
+  id: string;
+  order_id: string;
+  kind: "Cancellation" | "Return" | "Exchange";
+  reason: string;
+  requested_size: string;
+  status: string;
+  admin_note: string;
+  created_at: string;
+};
+export type TrackedOrder = {
+  id: string;
+  status: string;
+  created_at: string;
+  delivered_at?: string;
+  courier_name?: string;
+  tracking_number?: string;
+  total: number;
+  subtotal?: number;
+  shipping?: number;
+  discount?: number;
+  items: { name: string; quantity: number; size?: string }[];
+  requests?: OrderRequest[];
+};

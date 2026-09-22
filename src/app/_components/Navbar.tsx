@@ -132,12 +132,15 @@ export default function Navbar() {
                 setMenuOpen(false);
                 setSearchOpen((prev) => !prev);
               }}
-              className="group flex h-10 w-10 items-center justify-center rounded-full text-[#20211e] transition-all duration-300 hover:bg-white/60 sm:h-11 sm:w-11"
+              className="group flex h-10 w-10 items-center justify-center gap-2 rounded-full text-[#20211e] transition-all duration-300 hover:bg-white/60 sm:h-11 sm:w-auto sm:px-3"
             >
               <FiSearch
                 size={18}
                 className="transition-transform duration-300 group-hover:scale-105"
               />
+              <span className="hidden font-serif text-lg sm:inline">
+                Search
+              </span>
             </button>
           </div>
 
