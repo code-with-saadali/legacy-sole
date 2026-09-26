@@ -22,7 +22,7 @@ export default function AdminOrderResolution({
       ? "Cancelled"
       : "Returned";
   return (
-    <section className="mt-5 rounded-[22px] border border-black/10 bg-[#F8F6F1] p-5">
+    <section className="mt-5 rounded-[22px] border border-black/10 bg-white p-5">
       <h3 className="text-sm font-semibold">Cancellation & returns</h3>
       {closed ? (
         <div className="mt-3 text-sm">
@@ -93,14 +93,14 @@ export default function AdminOrderResolution({
                 type="checkbox"
                 checked={restore}
                 onChange={(event) => setRestore(event.target.checked)}
-                className="mt-1 accent-[#b66b4d]"
+                className="mt-1 accent-[#4b5b40]"
               />{" "}
               Return all ordered quantities to stock (only if the items are
               available to sell again).
             </label>
             <button
               type="submit"
-              className="rounded-xl bg-[#20211e] px-5 py-3 text-xs text-white hover:bg-[#b66b4d]"
+              className="rounded-xl bg-[#20211e] px-5 py-3 text-xs text-white hover:bg-[#4b5b40]"
             >
               {busy
                 ? "Saving..."

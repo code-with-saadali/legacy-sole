@@ -24,7 +24,7 @@ export default function RecentOrders({
           <button
             type="button"
             onClick={onViewAll}
-            className="text-[10px] uppercase tracking-[0.14em] text-[#b66b4d]"
+            className="text-[10px] uppercase tracking-[0.14em] text-[#4b5b40]"
           >
             View all
           </button>

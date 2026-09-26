@@ -30,7 +30,7 @@ export default function OrderRow({
   const [confirmDelete, setConfirmDelete] = useState(false);
   return (
     <li
-      className={`grid min-w-0 grid-cols-2 items-start gap-x-4 gap-y-4 bg-[#F8F6F1] px-5 py-4 transition-colors hover:bg-[#F4F1E9] xl:items-center ${onDelete && onStatusChange ? "xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_48px_100px_140px_80px]" : onDelete ? "xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_100px_140px_80px]" : onStatusChange ? "xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_60px_110px_145px]" : "xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_110px_130px]"}`}
+      className={`grid min-w-0 grid-cols-2 items-start gap-x-4 gap-y-4 bg-white px-5 py-4 transition-colors hover:bg-[#F4F1E9] xl:items-center ${onDelete && onStatusChange ? "xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_48px_100px_140px_80px]" : onDelete ? "xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_100px_140px_80px]" : onStatusChange ? "xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_60px_110px_145px]" : "xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_110px_130px]"}`}
     >
       <div className="col-span-2 min-w-0 xl:col-span-1">
         <button
@@ -45,7 +45,7 @@ export default function OrderRow({
           >
             {order.id}
           </span>
-          <span className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-medium text-[#b66b4d] group-hover:underline">
+          <span className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-medium text-[#4b5b40] group-hover:underline">
             View details <FiArrowUpRight size={13} />
           </span>
         </button>

@@ -1,4 +1,5 @@
 "use client";
+import { FaAngleDown } from "react-icons/fa";
 
 import { formFieldClasses } from "../_styles/form-classes";
 import BulkProductActions from "./BulkProductActions";
@@ -193,16 +194,18 @@ export default function AdminProductEditor({
     setSaving(true);
     setError("");
     try {
-      const extension =
-        file.type === "image/jpeg" ? "jpg" : file.type.split("/")[1];
-      const path = crypto.randomUUID() + "." + extension;
-      const { error } = await supabase.storage
-        .from("product-images")
-        .upload(path, file, { contentType: file.type, upsert: false });
-      if (error) throw error;
-      const { data } = supabase.storage
-        .from("product-images")
-        .getPublicUrl(path);
+      const { data: session } = await supabase.auth.getSession();
+      const form = new FormData();
+      form.append("file", file);
+      const response = await fetch("/api/admin/images", {
+        method: "POST",
+        headers: { Authorization: "Bearer " + session.session?.access_token },
+        body: form,
+      });
+      const uploaded = await response.json();
+      if (!response.ok)
+        throw new Error(uploaded.error || "Image upload failed.");
+      const data = { publicUrl: uploaded.url as string };
       setDraft((current) => {
         if (!current) return current;
         if (slot === 0) return { ...current, image: data.publicUrl };
@@ -220,6 +223,22 @@ export default function AdminProductEditor({
     }
   };
 
+  const cleanupImages = async (urls: string[]) => {
+    if (!supabase || !urls.length) return;
+    const { data } = await supabase.auth.getSession();
+    const response = await fetch("/api/admin/images", {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + data.session?.access_token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ urls }),
+    });
+    if (!response.ok)
+      throw new Error(
+        "Product saved, but unused image cleanup failed. Please retry removing the image later.",
+      );
+  };
   const saveProduct = async () => {
     if (!draft || saving) return;
     setError("");
@@ -300,6 +319,20 @@ export default function AdminProductEditor({
         : supabase.from("products").update(payload).eq("slug", editingSlug);
       const { error } = await query.select("slug").single();
       if (error) throw error;
+      const previous = editableProducts.find(
+        (product) => product.slug === editingSlug,
+      );
+      const removedImages = previous
+        ? [previous.image, ...previous.gallery].filter(
+            (url) =>
+              url !== savedDraft.image && !savedDraft.gallery.includes(url),
+          )
+        : [];
+      await cleanupImages(removedImages).catch(() =>
+        setError(
+          "Product saved. Some old images could not be removed from storage.",
+        ),
+      );
       const next = isNew
         ? [...editableProducts, savedDraft]
         : editableProducts.map((product) =>
@@ -336,6 +369,11 @@ export default function AdminProductEditor({
         .select("slug")
         .single();
       if (error) throw error;
+      await cleanupImages([product.image, ...product.gallery]).catch(() =>
+        setError(
+          "Product deleted. Some images could not be removed from storage.",
+        ),
+      );
       const next = editableProducts.filter(
         (item) => item.slug !== product.slug,
       );
@@ -355,7 +393,7 @@ export default function AdminProductEditor({
   return (
     <div className="[&_button]:rounded-[9px] mt-6">
       <div className="flex flex-col gap-3 rounded-[22px] border border-black/10 bg-[#F4F1E9] p-4 sm:flex-row sm:items-center">
-        <label className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-black/10 bg-[#F8F6F1] px-4 py-3">
+        <label className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-black/10 bg-white px-4 py-3">
           <FiSearch aria-hidden="true" className="shrink-0 text-black/40" />
           <span className="sr-only">Search products</span>
           <input
@@ -369,7 +407,7 @@ export default function AdminProductEditor({
         <button
           type="button"
           onClick={startAdding}
-          className="inline-flex shrink-0 items-center justify-center gap-2 bg-[#20211e] px-5 py-3 text-xs font-medium text-white transition-colors hover:bg-[#b66b4d]"
+          className="inline-flex shrink-0 items-center justify-center gap-2 bg-[#20211e] px-5 py-3 text-xs font-medium text-white transition-colors hover:bg-[#4b5b40]"
         >
           <FiPlus size={16} /> Add new product
         </button>
@@ -383,7 +421,7 @@ export default function AdminProductEditor({
           <button
             type="button"
             onClick={() => setSearch("")}
-            className="inline-flex items-center gap-1 text-xs text-[#b66b4d]"
+            className="inline-flex items-center gap-1 text-xs text-[#4b5b40]"
           >
             <FiX size={13} /> Clear search
           </button>
@@ -391,7 +429,7 @@ export default function AdminProductEditor({
       </div>
       {!visibleProducts.length && (
         <div className="mb-5 flex flex-col items-center rounded-[24px] border border-dashed border-black/15 bg-[#F4F1E9] px-5 py-12 text-center">
-          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#E9E2D7] text-[#b66b4d]">
+          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#E9E2D7] text-[#4b5b40]">
             {stockOnly && !search.trim() ? (
               <FiCheckCircle size={24} />
             ) : (
@@ -419,7 +457,7 @@ export default function AdminProductEditor({
                 setSearch("");
                 onShowAll();
               }}
-              className="mt-5 border border-black/15 bg-[#F8F6F1] px-5 py-3 text-xs font-medium hover:bg-[#E9E2D7]"
+              className="mt-5 border border-black/15 bg-white px-5 py-3 text-xs font-medium hover:bg-[#E9E2D7]"
             >
               View all products
             </button>
@@ -442,7 +480,7 @@ export default function AdminProductEditor({
           {error}
         </p>
       )}
-      {saved && <p className="mt-5 text-xs text-[#b66b4d]">{saved}</p>}
+      {saved && <p className="mt-5 text-xs text-[#4b5b40]">{saved}</p>}
 
       <BulkProductActions
         products={visibleProducts}
@@ -450,11 +488,15 @@ export default function AdminProductEditor({
       />
 
       <details className="mt-8 rounded-2xl border border-black/10 bg-white p-5 sm:p-6">
-        <summary className="cursor-pointer text-sm font-semibold">
+        <summary className="flex items-center justify-between gap-3 list-none [&::-webkit-details-marker]:hidden cursor-pointer text-sm font-semibold">
           Manage categories{" "}
           <span className="ml-2 font-normal text-black/45">
             ({allCategories.length})
           </span>
+          <FaAngleDown
+            aria-hidden="true"
+            className="ml-auto shrink-0 transition-transform duration-150 [[open]>summary>&]:rotate-180"
+          />
         </summary>
         <div className="flex items-center justify-between gap-3">
           <h3 className="text-xl font-medium">Categories</h3>
@@ -483,7 +525,7 @@ export default function AdminProductEditor({
           <button
             type="submit"
             disabled={!newCategory.trim()}
-            className="inline-flex min-h-10 items-center justify-center gap-2 bg-[#20211e] px-5 py-3 text-xs font-medium text-white hover:bg-[#b66b4d] disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex min-h-10 items-center justify-center gap-2 bg-[#20211e] px-5 py-3 text-xs font-medium text-white hover:bg-[#4b5b40] disabled:cursor-not-allowed disabled:opacity-40"
           >
             <FiPlus size={14} /> Add category
           </button>
@@ -493,7 +535,7 @@ export default function AdminProductEditor({
             {allCategories.map((category) => (
               <span
                 key={category}
-                className="inline-flex max-w-full items-center gap-3 rounded-full border border-black/10 bg-[#F8F6F1] py-2 pl-4 pr-3 text-xs text-[#20211e]"
+                className="inline-flex max-w-full items-center gap-3 rounded-full border border-black/10 bg-white py-2 pl-4 pr-3 text-xs text-[#20211e]"
               >
                 <span className="break-words">{category}</span>
                 {categories.includes(category) && (
@@ -501,7 +543,7 @@ export default function AdminProductEditor({
                     type="button"
                     onClick={() => void deleteCategory(category)}
                     aria-label={`Delete ${category} category`}
-                    className="flex h-6 w-6 shrink-0 items-center justify-center text-black/40 hover:bg-[#E9E2D7] hover:text-[#b66b4d]"
+                    className="flex h-6 w-6 shrink-0 items-center justify-center text-black/40 hover:bg-[#E9E2D7] hover:text-[#4b5b40]"
                   >
                     <FiX size={13} />
                   </button>

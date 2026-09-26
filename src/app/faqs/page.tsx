@@ -1,12 +1,12 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "../../lib/seo";
 import Link from "next/link";
 import CarePage from "../_components/CarePage";
 
-export const metadata: Metadata = {
-  title: "FAQs | Legacy Sole",
-  description:
-    "Answers to common questions about Legacy Sole footwear, sizing, shipping and orders.",
-};
+export const metadata = pageMetadata(
+  "FAQs | Legacy Sole",
+  "Answers to common questions about Legacy Sole footwear, sizing, shipping and orders.",
+  "/faqs",
+);
 
 const questions = [
   {

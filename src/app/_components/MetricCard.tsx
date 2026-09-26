@@ -18,7 +18,7 @@ export default function MetricCard({ label, value, icon, note }: Props) {
           {label}
         </p>
         <span className="rounded-xl bg-[#E9E2D7] p-2.5">
-          <Icon className="text-[#b66b4d]" size={17} />
+          <Icon className="text-[#4b5b40]" size={17} />
         </span>
       </div>
       <p className="mt-5 break-words text-2xl font-semibold tracking-tight text-[#20211e]">

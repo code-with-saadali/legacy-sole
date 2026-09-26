@@ -203,7 +203,7 @@ export default function ShopClient() {
               src={
                 categoryProducts[0]?.image ||
                 categoryImages[category] ||
-                "/images/shoes/runner-cutout.png"
+                "https://pub-bbec48a9985d48a988fd956df7da148b.r2.dev/legacy-sole/images/shoes/runner-cutout.png"
               }
               alt={categoryProducts[0]?.name || `${category} collection`}
               fill
@@ -334,7 +334,7 @@ export default function ShopClient() {
                 products.find((product) => product.category === category)
                   ?.image ||
                 categoryImages[category] ||
-                "/images/shoes/runner-cutout.png"
+                "https://pub-bbec48a9985d48a988fd956df7da148b.r2.dev/legacy-sole/images/shoes/runner-cutout.png"
               }
               products={visibleProducts}
               totalCount={categoryProducts.length}

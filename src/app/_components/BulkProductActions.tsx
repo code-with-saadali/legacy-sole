@@ -1,4 +1,5 @@
 "use client";
+import { FaAngleDown } from "react-icons/fa";
 import { formFieldClasses } from "../_styles/form-classes";
 import { useState } from "react";
 import type { Product } from "../_data/products";
@@ -44,9 +45,13 @@ export default function BulkProductActions({
     }
   };
   return (
-    <details className="mt-5 rounded-2xl border border-black/10 bg-[#F8F6F1] p-5">
-      <summary className="cursor-pointer text-sm font-medium">
+    <details className="mt-5 rounded-2xl border border-black/10 bg-white p-5">
+      <summary className="flex items-center justify-between gap-3 list-none [&::-webkit-details-marker]:hidden cursor-pointer text-sm font-medium">
         Bulk product updates
+        <FaAngleDown
+          aria-hidden="true"
+          className="ml-auto shrink-0 transition-transform duration-150 [[open]>summary>&]:rotate-180"
+        />
       </summary>
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
         <CustomSelect

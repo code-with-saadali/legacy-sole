@@ -15,7 +15,7 @@ export default function NewArrivals() {
     <section
       id="new-arrivals"
       aria-labelledby="arrivals-title"
-      className="scroll-mt-28 bg-[#F4F1E9] px-[5%] py-16 lg:py-24"
+      className="scroll-mt-28 bg-[#F4F1E9] px-[5%] pb-16 pt-0 lg:pb-24"
     >
       <div className="mb-8 flex items-center justify-between border-b border-black/10 pb-5">
         <div className="flex items-center gap-3">

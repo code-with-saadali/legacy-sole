@@ -29,12 +29,16 @@ export function useCatalog() {
 
 export default function CatalogProvider({
   children,
+  initialProducts,
 }: {
   children: React.ReactNode;
+  initialProducts?: Product[];
 }) {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>(initialProducts ?? []);
+  const [categories, setCategories] = useState<string[]>([
+    ...new Set((initialProducts ?? []).map((p) => p.category)),
+  ]);
+  const [loading, setLoading] = useState(!initialProducts);
   const [error, setError] = useState("");
   const [connection, setConnection] = useState("Connecting");
   const request = useRef(0);

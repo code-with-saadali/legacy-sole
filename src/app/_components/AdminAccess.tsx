@@ -96,7 +96,7 @@ export default function AdminAccess({
   if (checking)
     return (
       <main
-        className="flex min-h-screen items-center justify-center bg-[#F4F1E9] text-sm text-[#b66b4d]"
+        className="flex min-h-screen items-center justify-center bg-[#F4F1E9] text-sm text-[#4b5b40]"
         role="status"
       >
         Checking admin access...
@@ -117,8 +117,8 @@ export default function AdminAccess({
       </>
     );
   return (
-    <main className="bg-[radial-gradient(ellipse_at_10%_10%,#e9e2d7_0%,transparent_55%),radial-gradient(ellipse_at_100%_100%,#ece6dc_0%,transparent_50%)] [&_h1]:font-[inherit] [&>div]:border-[#20211e1a] [&>div]:shadow-[0_24px_70px_#20211e0d] [&>div]:rounded-[30px] flex min-h-screen items-center justify-center bg-[#F4F1E9] px-5 py-16">
-      <div className="w-full max-w-md rounded-3xl border border-white/20 bg-[#F8F6F1] p-7 shadow-2xl sm:p-10">
+    <main className="[&_h1]:font-[inherit] [&>div]:border-[#20211e1a] [&>div]:shadow-[0_24px_70px_#20211e0d] [&>div]:rounded-[30px] flex min-h-screen items-center justify-center bg-[#F4F1E9] px-5 py-16">
+      <div className="w-full max-w-md rounded-3xl border border-white/20 bg-white p-7 shadow-2xl sm:p-10">
         <Link
           href="/"
           className="text-xs font-bold tracking-[0.2em] text-[#20211e]"
@@ -126,7 +126,7 @@ export default function AdminAccess({
           LEGACY SOLE <span className="font-normal text-black/40">/ ADMIN</span>
         </Link>
         <div className="my-8 h-px bg-black/10" />
-        <p className="text-[10px] uppercase tracking-[0.2em] text-[#b66b4d]">
+        <p className="text-[10px] uppercase tracking-[0.2em] text-[#4b5b40]">
           YOUR STORE STARTS HERE
         </p>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight">
@@ -144,7 +144,7 @@ export default function AdminAccess({
               type="email"
               name="email"
               autoComplete="username"
-              className="mt-2 block w-full rounded-xl border border-black/15 bg-white p-3 outline-none focus:border-[#b66b4d] focus:ring-2 focus:ring-[#b66b4d]/15"
+              className="mt-2 block w-full rounded-xl border border-black/15 bg-white p-3 outline-none focus:border-[#4b5b40] focus:ring-2 focus:ring-[#4b5b40]/15"
             />
           </label>
           <div>
@@ -158,7 +158,7 @@ export default function AdminAccess({
                 type={showPassword ? "text" : "password"}
                 name="password"
                 autoComplete="current-password"
-                className="block w-full rounded-xl border border-black/15 bg-white p-3 pr-12 outline-none focus:border-[#b66b4d] focus:ring-2 focus:ring-[#b66b4d]/15"
+                className="block w-full rounded-xl border border-black/15 bg-white p-3 pr-12 outline-none focus:border-[#4b5b40] focus:ring-2 focus:ring-[#4b5b40]/15"
               />
               <button
                 type="button"
@@ -166,7 +166,7 @@ export default function AdminAccess({
                 aria-pressed={showPassword}
                 aria-controls="admin-password"
                 onClick={() => setShowPassword((value) => !value)}
-                className="absolute inset-y-0 right-0 flex w-12 items-center justify-center rounded-r-xl text-black/50 transition-colors hover:text-[#b66b4d]"
+                className="absolute inset-y-0 right-0 flex w-12 items-center justify-center rounded-r-xl text-black/50 transition-colors hover:text-[#4b5b40]"
               >
                 {showPassword ? (
                   <FiEyeOff size={18} aria-hidden="true" />
@@ -183,7 +183,7 @@ export default function AdminAccess({
           )}
           <button
             disabled={busy}
-            className="w-full rounded-xl bg-[#20211e] p-3.5 text-sm font-medium text-white transition-colors hover:bg-[#b66b4d] disabled:opacity-50"
+            className="w-full rounded-xl bg-[#20211e] p-3.5 text-sm font-medium text-white transition-colors hover:bg-[#4b5b40] disabled:opacity-50"
           >
             {busy ? "Signing in..." : "Sign in"}
           </button>

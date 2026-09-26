@@ -13,22 +13,22 @@ export default function AdminSettingsPanel() {
   const { settings } = useStoreSettings();
   return (
     <div className="mt-7 space-y-6">
-      <div className="bg-[radial-gradient(ellipse_at_100%_0%,#775442_0%,transparent_65%)] flex items-center justify-between gap-6 rounded-[28px] bg-[#20211e] p-6 text-white sm:p-8">
+      <div className="border border-black/10 flex items-center justify-between gap-6 rounded-[28px] bg-[#E9E2D7] p-6 text-[#20211e] sm:p-8">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-[#E9E2D7]">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-[#796452]">
             The little details, taken care of
           </p>
           <h2 className="mt-3 text-2xl font-medium tracking-tight">
             Your store. Your way.
           </h2>
-          <p className="mt-2 max-w-xl text-sm leading-6 text-white/65">
+          <p className="mt-2 max-w-xl text-sm leading-6 text-black/55">
             Fine-tune delivery, stay close to your customers and create offers
             that bring them back.
           </p>
         </div>
         <FiSliders
           size={36}
-          className="hidden shrink-0 text-[#E9E2D7] sm:block"
+          className="hidden shrink-0 text-[#796452] sm:block"
         />
       </div>
       <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-4">

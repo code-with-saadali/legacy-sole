@@ -1,3 +1,4 @@
+import { pageMetadata, siteUrl, jsonLd } from "../lib/seo";
 import Hero from "./_components/Hero";
 import RecentlyViewed from "./_components/RecentlyViewed";
 import ShopByCategory from "./_components/ShopByCategory";
@@ -6,9 +7,27 @@ import ProductLineup from "./_components/ProductLineup";
 import ClassicFeature from "./_components/ClassicFeature";
 import StyleGuide from "./_components/StyleGuide";
 
+export const metadata = pageMetadata(
+  "Legacy Sole | Shoes & Sneakers in Pakistan",
+  "Shop sneakers, boots, formal shoes, gym and running footwear at Legacy Sole. Explore colours, available sizes and delivery across Pakistan.",
+  "/",
+);
 export default function Home() {
   return (
     <main>
+      {siteUrl && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: jsonLd({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "Legacy Sole",
+              url: siteUrl,
+            }),
+          }}
+        />
+      )}
       <Hero />
       <ShopByCategory />
       <NewArrivals />

@@ -69,7 +69,7 @@ export default function AdminNavigation({
                 type="button"
                 onClick={() => setTab(item)}
                 aria-current={tab === item ? "page" : undefined}
-                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left text-sm font-medium transition-colors ${tab === item ? "bg-[#20211e] text-white" : "text-black/60 hover:bg-[#F4F3EF] hover:text-black"}`}
+                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left text-sm font-medium transition-colors ${tab === item ? "bg-[#20211e] text-white" : "text-black/60 hover:bg-[#F4F1E9] hover:text-black"}`}
               >
                 <Icon size={18} />{" "}
                 {item === "Overview"
@@ -124,7 +124,7 @@ export default function AdminNavigation({
               type="button"
               onClick={() => setTab(item)}
               aria-current={tab === item ? "page" : undefined}
-              className={`min-h-11 shrink-0 rounded-xl px-4 py-2 text-xs font-medium ${tab === item ? "bg-[#20211e] text-white" : "bg-[#F4F3EF] text-black/60"}`}
+              className={`min-h-11 shrink-0 rounded-xl px-4 py-2 text-xs font-medium ${tab === item ? "bg-[#20211e] text-white" : "bg-[#F4F1E9] text-black/60"}`}
             >
               {item === "Overview"
                 ? "Dashboard"

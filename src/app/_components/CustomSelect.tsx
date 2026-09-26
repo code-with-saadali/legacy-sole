@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
-import { FiCheck, FiChevronDown } from "react-icons/fi";
+import { FiCheck } from "react-icons/fi";
+import { FaAngleDown } from "react-icons/fa";
 
 export type SelectOption = { value: string; label: string; disabled?: boolean };
 type Props = {
@@ -181,7 +182,7 @@ export default function CustomSelect({
         className="custom-select-trigger flex min-h-11 w-full items-center justify-between gap-3 rounded-xl border border-black/15 bg-[#F8F6F1] px-4 py-3 text-left text-sm font-normal normal-case tracking-normal text-[#20211e] outline-none transition hover:border-[#b66b4d] focus-visible:ring-2 focus-visible:ring-[#b66b4d]/50 disabled:cursor-not-allowed disabled:opacity-50"
       >
         <span className="truncate">{selected?.label ?? placeholder}</span>
-        <FiChevronDown
+        <FaAngleDown
           aria-hidden
           className={`shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
         />

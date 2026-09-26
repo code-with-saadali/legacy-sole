@@ -32,7 +32,7 @@ export default function AdminProductCard({ product, onEdit, onDelete }: Props) {
             type="button"
             onClick={() => onEdit(product)}
             aria-label={`Edit ${product.name} photo ${index + 1}`}
-            className="relative h-14 w-14 shrink-0 rounded-lg border border-black/10 bg-[#E9E2D7] hover:border-[#b66b4d]"
+            className="relative h-14 w-14 shrink-0 rounded-lg border border-black/10 bg-[#E9E2D7] hover:border-[#4b5b40]"
           >
             <Image
               src={image}
@@ -68,7 +68,7 @@ export default function AdminProductCard({ product, onEdit, onDelete }: Props) {
         <button
           type="button"
           onClick={() => void onDelete(product)}
-          className="border border-[#b66b4d]/30 px-3 py-3 text-[10px] font-medium uppercase tracking-[0.1em] text-[#b66b4d] hover:bg-[#b66b4d] hover:text-white"
+          className="border border-red-200 px-3 py-3 text-[10px] font-medium uppercase tracking-[0.1em] text-red-700 hover:bg-red-50"
         >
           Delete
         </button>

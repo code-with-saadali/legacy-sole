@@ -1,4 +1,5 @@
 "use client";
+import { FaAngleDown } from "react-icons/fa";
 
 import { FiArrowUpRight } from "react-icons/fi";
 import type { Order } from "../_data/orders";
@@ -34,9 +35,9 @@ export default function AdminOverview({
   const stockCount = stockAlerts(products).length;
   return (
     <>
-      <div className="bg-[radial-gradient(ellipse_at_100%_0%,#775442_0%,transparent_65%)] mt-7 flex flex-wrap items-center justify-between gap-5 rounded-[28px] bg-[#20211e] p-6 text-white sm:p-8">
+      <div className="border border-black/10 mt-7 flex flex-wrap items-center justify-between gap-5 rounded-[28px] bg-[#E9E2D7] p-6 text-[#20211e] sm:p-8">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-[#E9E2D7]">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-[#796452]">
             Start here
           </p>
           <h2 className="mt-3 text-2xl font-medium tracking-tight">
@@ -44,7 +45,7 @@ export default function AdminOverview({
               ? `${pendingCount} orders awaiting confirmation`
               : "Your daily store tasks"}
           </h2>
-          <p className="mt-2 max-w-lg text-sm leading-6 text-white/65">
+          <p className="mt-2 max-w-lg text-sm leading-6 text-black/55">
             Check new orders first, then keep product prices and stock up to
             date.
           </p>
@@ -52,7 +53,7 @@ export default function AdminOverview({
         <button
           type="button"
           onClick={onViewOrders}
-          className="flex items-center gap-3 rounded-xl bg-[#E9E2D7] px-5 py-3 text-xs font-semibold text-[#20211e]"
+          className="flex items-center gap-3 rounded-xl bg-[#4b5b40] px-5 py-3 text-xs font-semibold text-white hover:bg-[#36432d]"
         >
           View orders <FiArrowUpRight size={16} />
         </button>
@@ -102,8 +103,12 @@ export default function AdminOverview({
         onManageStock={onManageStock}
       />
       <details className="mt-7 rounded-2xl border border-black/10 bg-white p-5">
-        <summary className="cursor-pointer text-base font-semibold">
+        <summary className="flex items-center justify-between gap-3 list-none [&::-webkit-details-marker]:hidden cursor-pointer text-base font-semibold">
           Sales chart — last 7 days
+          <FaAngleDown
+            aria-hidden="true"
+            className="ml-auto shrink-0 transition-transform duration-150 [[open]>summary>&]:rotate-180"
+          />
         </summary>
         <SalesAnalytics orders={orders} />
       </details>

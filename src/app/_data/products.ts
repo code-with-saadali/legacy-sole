@@ -27,7 +27,7 @@ export function normalizeProduct(row: Record<string, unknown>): Product {
     category: String(row.category ?? "Uncategorised"),
     color: String(row.color ?? ""),
     price: Number(row.price ?? 0),
-    image: String(row.image || "/images/shoes/runner-cutout.png"),
+    image: String(row.image || "https://pub-bbec48a9985d48a988fd956df7da148b.r2.dev/legacy-sole/images/shoes/runner-cutout.png"),
     tag: String(row.tag ?? ""),
     description: String(row.description ?? ""),
     details: Array.isArray(row.details) ? row.details.map(String) : [],

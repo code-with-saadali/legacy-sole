@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import Image from "./ProductImage";
@@ -35,7 +35,7 @@ export default function ShopByCategory() {
     <section
       id="collections"
       aria-labelledby="collections-title"
-      className="scroll-mt-28 bg-[#F4F1E9] px-5 pb-16 pt-10 sm:px-[5%]"
+      className="scroll-mt-28 bg-[#F4F1E9] px-5 py-10 sm:px-[5%]"
     >
       <h2 id="collections-title" className="sr-only">
         Shop by category
@@ -44,14 +44,14 @@ export default function ShopByCategory() {
       {loading && !collections.length && (
         <div
           role="status"
-          className="flex flex-nowrap justify-start gap-5 overflow-x-auto scrollbar-none [&::-webkit-scrollbar]:hidden"
+          className="flex flex-nowrap justify-start gap-8 sm:gap-10 overflow-x-auto scrollbar-none [&::-webkit-scrollbar]:hidden"
         >
           <span className="sr-only">Loading categories</span>
           {[0, 1, 2, 3, 4, 5].map((index) => (
             <div
               key={index}
               aria-hidden="true"
-              className="flex w-22.5 shrink-0 animate-pulse flex-col items-center gap-2"
+              className="flex w-22.5 shrink-0 animate-pulse flex-col items-center gap-2 first-of-type:ml-auto last:mr-auto"
             >
               <div className="size-22.5 rounded-full bg-black/5" />
               <div className="h-3 w-14 rounded bg-black/5" />
@@ -73,17 +73,17 @@ export default function ShopByCategory() {
       <ul
         aria-labelledby="collections-title"
         tabIndex={0}
-        className="-my-2 flex w-full flex-nowrap justify-start gap-5 overflow-x-auto overscroll-x-contain py-2 scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ed682c]"
+        className="-my-2 flex w-full flex-nowrap justify-start gap-8 sm:gap-10 overflow-x-auto overscroll-x-contain py-2 scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ed682c]"
       >
         {collections.map((collection) => (
-          <li key={collection.name} className="w-22.5 shrink-0">
+          <li key={collection.name} className="w-22.5 shrink-0 first:ml-auto last:mr-auto">
             <Link
               href={collection.href}
               className="group flex flex-col items-center gap-2 rounded-lg text-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ed682c]"
             >
               <div className="relative size-22.5 overflow-hidden rounded-full border border-[#cececa] bg-[#E9E2D7] transition-colors duration-200 group-hover:border-[#ed682c]">
                 <Image
-                  src={collection.image || "/images/shoes/runner-cutout.png"}
+                  src={collection.image || "https://pub-bbec48a9985d48a988fd956df7da148b.r2.dev/legacy-sole/images/shoes/runner-cutout.png"}
                   alt=""
                   fill
                   sizes="90px"

@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "../../lib/seo";
 import CarePage, { CareSection } from "../_components/CarePage";
 
-export const metadata: Metadata = {
-  title: "Return & Exchange | Legacy Sole",
-  description:
-    "Contact Legacy Sole for help with a return, exchange or an issue with your order.",
-};
+export const metadata = pageMetadata(
+  "Return & Exchange | Legacy Sole",
+  "Contact Legacy Sole for help with a return, exchange or an issue with your order.",
+  "/returns-exchanges",
+);
 
 export default function ReturnsPage() {
   return (

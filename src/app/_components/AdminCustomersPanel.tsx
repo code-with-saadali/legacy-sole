@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   FiUsers,
   FiRepeat,
@@ -24,6 +24,15 @@ export default function AdminCustomersPanel({
   const [view, setView] = useState("Directory");
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
+  const detailsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (selected && view === "Directory") {
+      detailsRef.current?.scrollIntoView({
+        block: "nearest",
+        behavior: "instant",
+      });
+    }
+  }, [selected, view]);
   const customers = useMemo(() => {
     const grouped = new Map<
       string,
@@ -54,16 +63,15 @@ export default function AdminCustomersPanel({
       .reduce((sum, order) => sum + order.total, 0);
   return (
     <div className="mt-7 space-y-6">
-      <div className="bg-[radial-gradient(ellipse_at_100%_0%,#775442_0%,transparent_65%)] rounded-[28px] bg-[#20211e] p-6 text-white sm:p-8">
-        <p className="text-[10px] uppercase tracking-[0.2em] text-[#E9E2D7]">
-          People behind every order
+      <div className="rounded-[24px] border border-black/10 bg-[#E9E2D7] p-6 sm:p-8">
+        <p className="text-[10px] uppercase tracking-[0.2em] text-[#796452]">
+          Customer management
         </p>
         <h2 className="mt-3 text-2xl font-medium tracking-tight">
-          Good service. Lasting connections.
+          Your customers
         </h2>
-        <p className="mt-2 max-w-xl text-sm leading-6 text-white/65">
-          Get to know your customers, follow their orders and give every request
-          the attention it deserves.
+        <p className="mt-2 max-w-xl text-sm leading-6 text-black/55">
+          Customer details, order history and support — all in one place.
         </p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-4">
@@ -98,14 +106,17 @@ export default function AdminCustomersPanel({
           note="Delivered orders only"
         />
       </div>
-      <div className="flex flex-wrap gap-2" aria-label="Customer sections">
+      <div
+        className="flex w-fit max-w-full flex-wrap gap-1 rounded-2xl border border-black/10 bg-white p-1.5"
+        aria-label="Customer sections"
+      >
         {["Directory", "Requests", "Reviews"].map((item) => (
           <button
             key={item}
             type="button"
             aria-pressed={view === item}
             onClick={() => setView(item)}
-            className={`rounded-xl px-5 py-3 text-xs font-medium ${view === item ? "bg-[#20211e] text-white" : "bg-[#E9E2D7] text-[#20211e]"}`}
+            className={`rounded-xl px-5 py-3 text-xs font-medium transition ${view === item ? "bg-[#20211e] text-white shadow-sm" : "text-black/55 hover:bg-[#F4F1E9]"}`}
           >
             {item}
           </button>
@@ -121,13 +132,16 @@ export default function AdminCustomersPanel({
                 Customer directory
               </p>
               <h2 className="mt-2 text-2xl font-medium">
-                A familiar face with every order.
+                All customers{" "}
+                <span className="text-base text-black/40">
+                  ({customers.length})
+                </span>
               </h2>
               <p className="mt-2 text-xs text-black/45">
                 Customer details reflect their most recent order.
               </p>
             </div>
-            <label className="flex w-full items-center gap-3 rounded-xl border border-black/10 bg-white px-4 py-3 sm:w-72">
+            <label className="flex w-full items-center gap-3 rounded-xl border border-black/10 bg-[#FAF9F6] px-4 py-3 focus-within:border-[#4b5b40] focus-within:ring-1 focus-within:ring-[#4b5b40] sm:w-72">
               <FiSearch className="shrink-0 text-black/40" />
               <input
                 aria-label="Search customers"
@@ -138,73 +152,91 @@ export default function AdminCustomersPanel({
               />
             </label>
           </div>
-          <div className="mt-6 overflow-x-auto rounded-2xl border border-black/[0.06]">
-            <table className="w-full min-w-[700px] text-left text-xs">
-              <thead>
-                <tr>
-                  {[
-                    "Customer",
-                    "City",
-                    "Orders",
-                    "Delivered value",
-                    "Latest order",
-                    "",
-                  ].map((label, index) => (
-                    <th key={index} scope="col">
-                      {label || <span className="sr-only">Actions</span>}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-black/[0.06]">
-                {visible.map((entry) => (
-                  <tr key={entry.key}>
-                    <td>
-                      <div className="flex items-center gap-3">
-                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E9E2D7] font-semibold text-[#956248]">
-                          {entry.customer.name
-                            .split(/\s+/)
-                            .map((part) => part[0])
-                            .slice(0, 2)
-                            .join("")
-                            .toUpperCase()}
-                        </span>
-                        <div>
-                          <p className="font-medium">{entry.customer.name}</p>
-                          <p className="mt-1 text-black/45">
-                            {entry.customer.email}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td>{entry.customer.city}</td>
-                    <td>{entry.orders.length}</td>
-                    <td>Rs. {spent(entry.orders).toLocaleString("en-PK")}</td>
-                    <td>
+          <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {visible.map((entry) => (
+              <article
+                key={entry.key}
+                className={`min-w-0 rounded-2xl border p-5 transition-colors ${selected === entry.key ? "border-[#4b5b40] bg-[#f3f5ef]" : "border-black/10 bg-[#FAF9F6] hover:border-black/20"}`}
+              >
+                <div className="flex items-start gap-3">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#E9E2D7] text-sm font-semibold text-[#625143]">
+                    {entry.customer.name
+                      .trim()
+                      .split(/\s+/)
+                      .map((part) => part[0])
+                      .slice(0, 2)
+                      .join("")
+                      .toUpperCase() || "?"}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="break-words text-sm font-semibold">
+                      {entry.customer.name || "Customer"}
+                    </h3>
+                    <p className="mt-1 flex items-center gap-1 text-xs text-black/50">
+                      <FiMapPin className="shrink-0" />
+                      {entry.customer.city || "City not provided"}
+                    </p>
+                  </div>
+                  {entry.orders.length > 1 && (
+                    <span className="rounded-full bg-[#e8eddf] px-2 py-1 text-[10px] font-medium text-[#4b5b40]">
+                      Returning
+                    </span>
+                  )}
+                </div>
+                <div className="mt-4 space-y-1 text-xs leading-5 text-black/55">
+                  <p className="break-all">
+                    {entry.customer.email || "No email provided"}
+                  </p>
+                  <p>{entry.customer.phone || "No phone provided"}</p>
+                </div>
+                <dl className="my-4 grid grid-cols-2 gap-3 border-y border-black/[0.07] py-4">
+                  <div>
+                    <dt className="text-[10px] uppercase tracking-wider text-black/45">
+                      Orders
+                    </dt>
+                    <dd className="mt-1 text-lg font-semibold">
+                      {entry.orders.length}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-[10px] uppercase tracking-wider text-black/45">
+                      Delivered value
+                    </dt>
+                    <dd className="mt-1 text-sm font-semibold">
+                      Rs. {spent(entry.orders).toLocaleString("en-PK")}
+                    </dd>
+                  </div>
+                </dl>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-[11px] text-black/45">
+                    Last order
+                    <br />
+                    <span className="mt-1 inline-block text-black/70">
                       {new Date(entry.orders[0].createdAt).toLocaleDateString(
                         "en-PK",
+                        { day: "numeric", month: "short", year: "numeric" },
                       )}
-                    </td>
-                    <td>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setSelected(selected === entry.key ? null : entry.key)
-                        }
-                        aria-expanded={selected === entry.key}
-                        className="flex items-center gap-2 rounded-lg border border-black/10 px-3 py-2"
-                      >
-                        View <FiArrowUpRight />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </span>
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setSelected(selected === entry.key ? null : entry.key)
+                    }
+                    aria-expanded={selected === entry.key}
+                    aria-controls="customer-details"
+                    aria-label={`View ${entry.customer.name}'s details`}
+                    className="flex items-center gap-2 rounded-xl border border-black/10 bg-white px-3 py-2.5 text-xs font-medium transition hover:bg-[#E9E2D7]"
+                  >
+                    View details <FiArrowUpRight />
+                  </button>
+                </div>
+              </article>
+            ))}
           </div>
           {!visible.length && (
             <div className="py-12 text-center">
-              <FiUsers className="mx-auto text-[#b66b4d]" size={28} />
+              <FiUsers className="mx-auto text-[#4b5b40]" size={28} />
               <p className="mt-3 text-sm">
                 {query
                   ? "No customers match your search."
@@ -216,15 +248,28 @@ export default function AdminCustomersPanel({
             {visible.length} of {customers.length} customers
           </p>
           {active && (
-            <div className="mt-6 rounded-2xl border border-black/10 bg-white p-5">
+            <div
+              ref={detailsRef}
+              id="customer-details"
+              role="region"
+              aria-label="Customer details"
+              className="mt-6 rounded-2xl border border-[#4b5b40]/25 bg-[#f3f5ef] p-5 sm:p-6"
+            >
               <div className="flex justify-between gap-4">
-                <div>
+                <div className="min-w-0 break-words">
                   <h3 className="font-medium">{active.customer.name}</h3>
                   <p className="mt-2 text-xs text-black/50">
                     {active.customer.phone} · {active.customer.email}
                   </p>
                   <p className="mt-1 text-xs text-black/50">
-                    {active.customer.address}, {active.customer.city}
+                    {[
+                      active.customer.address,
+                      active.customer.area,
+                      active.customer.city,
+                      active.customer.postalCode,
+                    ]
+                      .filter(Boolean)
+                      .join(", ")}
                   </p>
                 </div>
                 <button
@@ -244,7 +289,7 @@ export default function AdminCustomersPanel({
                     key={order.id}
                     type="button"
                     onClick={() => onOpenOrder(order.id)}
-                    className="flex w-full flex-wrap items-center justify-between gap-3 py-4 text-left text-xs hover:text-[#b66b4d]"
+                    className="flex w-full flex-wrap items-center justify-between gap-3 py-4 text-left text-xs hover:text-[#4b5b40]"
                   >
                     <span className="break-all">{order.id}</span>
                     <span>

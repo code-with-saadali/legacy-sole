@@ -95,7 +95,7 @@ export default function ShopFilters({
                     src={
                       collectionImages.get(item) ||
                       categoryImages[item] ||
-                      "/images/shoes/runner-cutout.png"
+                      "https://pub-bbec48a9985d48a988fd956df7da148b.r2.dev/legacy-sole/images/shoes/runner-cutout.png"
                     }
                     alt=""
                     fill

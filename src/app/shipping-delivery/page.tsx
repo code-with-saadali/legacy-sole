@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "../../lib/seo";
 import Link from "next/link";
 import CarePage, { CareSection } from "../_components/CarePage";
 import { ShippingRates } from "../_components/CareSupport";
 
-export const metadata: Metadata = {
-  title: "Shipping & Delivery | Legacy Sole",
-  description:
-    "View delivery charges and get help tracking your Legacy Sole order in Pakistan.",
-};
+export const metadata = pageMetadata(
+  "Shipping & Delivery | Legacy Sole",
+  "View delivery charges and get help tracking your Legacy Sole order in Pakistan.",
+  "/shipping-delivery",
+);
 
 export default function ShippingPage() {
   return (

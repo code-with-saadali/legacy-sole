@@ -1,12 +1,12 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "../../lib/seo";
 import Link from "next/link";
 import CarePage, { CareSection } from "../_components/CarePage";
 
-export const metadata: Metadata = {
-  title: "Size Guide | Legacy Sole",
-  description:
-    "Learn how to measure your feet and use the size guide for your chosen pair.",
-};
+export const metadata = pageMetadata(
+  "Size Guide | Legacy Sole",
+  "Learn how to measure your feet and use the size guide for your chosen pair.",
+  "/size-guide",
+);
 
 export default function SizeGuidePage() {
   return (

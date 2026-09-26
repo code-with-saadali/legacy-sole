@@ -1,9 +1,17 @@
 "use client";
+import { FaAngleDown } from "react-icons/fa";
 import { formFieldClasses } from "../_styles/form-classes";
 import CustomSelect from "./CustomSelect";
 
 import { useState, type ChangeEvent } from "react";
-import { FiImage, FiSave, FiX } from "react-icons/fi";
+import {
+  FiImage,
+  FiSave,
+  FiX,
+  FiBox,
+  FiAlignLeft,
+  FiLayers,
+} from "react-icons/fi";
 import Image from "./ProductImage";
 import type { Product } from "../_data/products";
 import { productSizes } from "../_data/inventory";
@@ -39,6 +47,13 @@ export default function ProductEditorDialog({
   uploadImage,
   saveProduct,
 }: Props) {
+  const [activeSection, setActiveSection] = useState("details");
+  const sections = [
+    { id: "details", label: "Details", icon: FiBox },
+    { id: "images", label: "Photos", icon: FiImage },
+    { id: "description", label: "Description", icon: FiAlignLeft },
+    { id: "inventory", label: "Sizes & variants", icon: FiLayers },
+  ];
   const [restocking, setRestocking] = useState(false);
   const [restockQuantity, setRestockQuantity] = useState(1);
   const [restockSize, setRestockSize] = useState(productSizes[0]);
@@ -63,44 +78,87 @@ export default function ProductEditorDialog({
       role="dialog"
       aria-modal="true"
       aria-labelledby="product-editor-title"
-      onClick={onClose}
+      onClick={() => {
+        if (!saving) onClose();
+      }}
       className="fixed inset-0 z-[100] flex items-center justify-center [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:h-0 [&::-webkit-scrollbar]:w-0 overflow-y-auto bg-black/40 p-4 backdrop-blur-sm sm:p-8"
     >
       <div
         onClick={(event) => event.stopPropagation()}
-        className="group/editor flex max-h-[calc(100dvh-4rem)] w-full max-w-4xl flex-col overflow-hidden rounded-[28px] border border-black/10 bg-[#F6F5F2] shadow-[0_30px_90px_rgba(0,0,0,0.25)]"
+        className="group/editor flex h-[min(850px,calc(100dvh-2rem))] w-full max-w-5xl flex-col overflow-hidden rounded-[24px] border border-black/10 bg-[#F6F5F2] shadow-[0_30px_90px_rgba(0,0,0,0.25)] sm:max-h-[calc(100dvh-4rem)] [&_input:not([type=checkbox])]:rounded-xl [&_textarea]:rounded-xl [&_select]:rounded-xl"
       >
         <div className="flex shrink-0 items-start justify-between gap-4 border-b border-black/10 px-5 py-5 sm:px-7">
-          <div className="min-w-0">
-            <p className="text-[10px] uppercase tracking-[0.16em] text-[#b66b4d]">
-              {editingSlug !== "new-product"
-                ? "Editing product"
-                : "New product"}
-            </p>
-            <h3
-              id="product-editor-title"
-              className="mt-2 break-words text-2xl font-medium text-[#20211e] sm:text-3xl"
-            >
-              {draft.name || "Add product"}
-            </h3>
-            <p className="mt-2 text-xs text-black/50">
-              Product information, images and availability.
-            </p>
+          <div className="flex min-w-0 items-center gap-4">
+            <div className="relative hidden h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-[#E9E2D7] sm:block">
+              {draft.image ? (
+                <Image
+                  src={draft.image}
+                  alt="Product preview"
+                  fill
+                  sizes="80px"
+                  className="object-contain p-2"
+                />
+              ) : (
+                <FiImage className="m-7 text-black/35" size={24} />
+              )}
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] uppercase tracking-[0.16em] text-[#4b5b40]">
+                {editingSlug !== "new-product"
+                  ? "Editing product"
+                  : "New product"}
+              </p>
+              <h3
+                id="product-editor-title"
+                className="mt-2 break-words text-2xl font-medium text-[#20211e] sm:text-3xl"
+              >
+                {draft.name || "Add product"}
+              </h3>
+              <p className="mt-2 text-xs text-black/50">
+                {draft.category || "No category"}{" "}
+                <span className="mx-2">/</span> Rs.{" "}
+                {draft.price.toLocaleString()}
+              </p>
+            </div>
           </div>
           <button
             type="button"
             onClick={onClose}
+            disabled={saving}
             aria-label="Close product editor"
-            className="flex h-10 w-10 shrink-0 items-center justify-center border border-black/10 bg-[#F8F6F1] hover:bg-[#E9E2D7]"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-black/10 bg-white transition hover:bg-[#E9E2D7] disabled:opacity-40"
           >
             <FiX size={18} />
           </button>
         </div>
         <div
+          role="group"
+          aria-label="Product editor sections"
+          className="grid shrink-0 grid-cols-4 gap-1 border-b border-black/10 bg-white px-3 py-3 sm:px-7"
+        >
+          {sections.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              type="button"
+              aria-pressed={activeSection === id}
+              aria-controls={`product-section-${id}`}
+              onClick={() => setActiveSection(id)}
+              className={`flex min-w-0 flex-col items-center justify-center gap-2 rounded-xl px-2 py-3 text-[10px] font-medium transition sm:flex-row sm:text-xs ${activeSection === id ? "bg-[#20211e] text-white shadow-sm" : "text-black/50 hover:bg-[#F4F1E9] hover:text-black"}`}
+            >
+              <Icon size={16} className="shrink-0" />
+              {label}
+            </button>
+          ))}
+        </div>
+        <div
           data-lenis-prevent
           className="[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:h-0 [&::-webkit-scrollbar]:w-0 min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain p-5 sm:p-7"
         >
-          <section className="rounded-2xl border border-black/10 bg-white p-4 sm:p-5">
+          <section
+            id="product-section-details"
+            hidden={activeSection !== "details"}
+            className="rounded-2xl border border-black/10 bg-white p-4 sm:p-6"
+          >
             <h4 className="text-base font-semibold">Product information</h4>
             <p className="mt-1 text-xs leading-6 text-black/45">
               The essentials customers see in your collection.
@@ -163,9 +221,10 @@ export default function ProductEditorDialog({
                     Availability: {soldOut ? "Sold out" : "In stock"}
                   </p>
                   <p className="mt-1 max-w-md text-xs leading-5 text-black/55">
-                    Marking sold out sets total stock and all size quantities to
-                    zero. Save the product to apply. To restock, enter the
-                    available quantities.
+                    {soldOut
+                      ? "Add a quantity to make this product available again."
+                      : `${totalStock} units available. Mark sold out to set all quantities to zero.`}{" "}
+                    Save changes to apply.
                   </p>
                 </div>
                 <button
@@ -183,19 +242,26 @@ export default function ProductEditorDialog({
                     {draft.size_stock && (
                       <label className={formFieldClasses}>
                         Size to restock
-                        <select
-                          value={restockSize}
-                          disabled={saving}
-                          onChange={(event) =>
-                            setRestockSize(event.target.value)
-                          }
-                        >
-                          {productSizes.map((size) => (
-                            <option key={size} value={size}>
-                              {size}
-                            </option>
-                          ))}
-                        </select>
+                        <span className="relative block w-full">
+                          <FaAngleDown
+                            aria-hidden="true"
+                            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-[#20211e]"
+                          />
+                          <select
+                            className="appearance-none !pr-10"
+                            value={restockSize}
+                            disabled={saving}
+                            onChange={(event) =>
+                              setRestockSize(event.target.value)
+                            }
+                          >
+                            {productSizes.map((size) => (
+                              <option key={size} value={size}>
+                                {size}
+                              </option>
+                            ))}
+                          </select>
+                        </span>
                       </label>
                     )}
                     <label className={formFieldClasses}>
@@ -277,13 +343,17 @@ export default function ProductEditorDialog({
                   onChange={(event) =>
                     updateDraft("featured", event.target.checked)
                   }
-                  className="h-4 w-4 accent-[#b66b4d]"
+                  className="h-4 w-4 accent-[#4b5b40]"
                 />{" "}
                 Featured product
               </label>
             </div>
           </section>
-          <section className="rounded-2xl border border-black/10 bg-white p-4 sm:p-5">
+          <section
+            id="product-section-images"
+            hidden={activeSection !== "images"}
+            className="rounded-2xl border border-black/10 bg-white p-4 sm:p-6"
+          >
             <h4 className="flex items-center gap-2 text-base font-semibold">
               <FiImage size={17} /> Product images
             </h4>
@@ -306,7 +376,7 @@ export default function ProductEditorDialog({
                   return (
                     <div
                       key={slot}
-                      className="min-w-0 rounded-2xl border border-black/10 bg-[#E9E2D7] p-3"
+                      className="min-w-0 rounded-2xl border border-black/10 bg-[#FAF9F6] p-3"
                     >
                       <p className="mb-3 text-xs font-medium">{label}</p>
                       <div className="relative aspect-square overflow-hidden rounded-xl bg-[#E9E2D7]">
@@ -335,14 +405,18 @@ export default function ProductEditorDialog({
                         />
                       </label>
                       <details className="mt-3">
-                        <summary className="cursor-pointer text-[11px] text-black/55">
+                        <summary className="flex items-center justify-between gap-3 list-none [&::-webkit-details-marker]:hidden cursor-pointer text-[11px] text-black/55">
                           Use image link
+                          <FaAngleDown
+                            aria-hidden="true"
+                            className="ml-auto shrink-0 transition-transform duration-150 [[open]>summary>&]:rotate-180"
+                          />
                         </summary>
                         <label className={`${formFieldClasses} mt-3`}>
                           Image URL
                           <input
                             value={source}
-                            placeholder="/images/... or https://..."
+                            placeholder="https://..."
                             onChange={(event) => {
                               if (slot === 0)
                                 updateDraft("image", event.target.value);
@@ -356,6 +430,24 @@ export default function ProductEditorDialog({
                           />
                         </label>
                       </details>
+                      {source && (
+                        <button
+                          type="button"
+                          className="mt-3 text-xs text-red-700 underline"
+                          onClick={() => {
+                            if (slot === 0) updateDraft("image", "");
+                            else
+                              updateDraft(
+                                "gallery",
+                                draft.gallery.filter(
+                                  (_, index) => index !== slot - 1,
+                                ),
+                              );
+                          }}
+                        >
+                          Remove photo
+                        </button>
+                      )}
                     </div>
                   );
                 },
@@ -367,7 +459,11 @@ export default function ProductEditorDialog({
               </p>
             )}
           </section>
-          <section className="rounded-2xl border border-black/10 bg-white p-4 sm:p-5">
+          <section
+            id="product-section-description"
+            hidden={activeSection !== "description"}
+            className="rounded-2xl border border-black/10 bg-white p-4 sm:p-6"
+          >
             <h4 className="text-base font-semibold">Description & fit</h4>
             <p className="mt-1 text-xs leading-6 text-black/45">
               Help customers understand the product and choose their size.
@@ -428,10 +524,12 @@ export default function ProductEditorDialog({
               </label>
             </div>
           </section>
-          <details className="rounded-2xl border border-black/10 bg-white p-4 sm:p-5">
-            <summary className="cursor-pointer text-sm font-semibold">
-              Sizes & colour variants
-            </summary>
+          <section
+            id="product-section-inventory"
+            hidden={activeSection !== "inventory"}
+            className="rounded-2xl border border-black/10 bg-white p-4 sm:p-6"
+          >
+            <h4 className="text-base font-semibold">Sizes & colour variants</h4>
             <label className="mt-4 flex items-center gap-3 text-sm">
               <input
                 type="checkbox"
@@ -485,7 +583,7 @@ export default function ProductEditorDialog({
                       : null,
                   )
                 }
-                className="h-4 w-4 accent-[#b66b4d]"
+                className="h-4 w-4 accent-[#4b5b40]"
               />{" "}
               Track stock for each size
             </label>
@@ -516,10 +614,17 @@ export default function ProductEditorDialog({
                 </div>
               </>
             )}
-          </details>
-          <details className="rounded-2xl border border-black/10 bg-white p-4 sm:p-5">
-            <summary className="cursor-pointer text-sm font-semibold">
+          </section>
+          <details
+            hidden={activeSection !== "inventory"}
+            className="rounded-2xl border border-black/10 bg-white p-4 sm:p-5"
+          >
+            <summary className="flex items-center justify-between gap-3 list-none [&::-webkit-details-marker]:hidden cursor-pointer text-sm font-semibold">
               Complete the look
+              <FaAngleDown
+                aria-hidden="true"
+                className="ml-auto shrink-0 transition-transform duration-150 [[open]>summary>&]:rotate-180"
+              />
             </summary>
             <p className="mt-2 text-xs text-black/50">
               Choose up to four matching products. Only available products
@@ -562,17 +667,26 @@ export default function ProductEditorDialog({
             </div>
           </details>
         </div>
-        <div className="shrink-0 border-t border-black/10 bg-[#F8F6F1] px-5 py-4 sm:px-7">
+        <div className="shrink-0 border-t border-black/10 bg-white px-5 py-4 sm:px-7">
           {error && (
-            <p role="alert" className="mb-3 text-sm text-red-700">
+            <p
+              role="alert"
+              className="mb-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+            >
               {error}
             </p>
           )}
           <div className="flex flex-wrap items-center justify-end gap-3">
+            <span
+              className={`mr-auto rounded-full px-3 py-2 text-xs font-medium ${soldOut ? "bg-red-50 text-red-700" : "bg-[#e8eddf] text-[#4b5b40]"}`}
+            >
+              {soldOut ? "Sold out" : `${totalStock} in stock`}
+            </span>
             <button
               type="button"
               onClick={onClose}
-              className="border border-black/15 px-5 py-3 text-xs font-medium hover:bg-[#E9E2D7]"
+              disabled={saving}
+              className="rounded-xl border border-black/15 px-4 py-3 text-xs font-medium hover:bg-[#E9E2D7] disabled:opacity-40"
             >
               Cancel
             </button>
@@ -580,7 +694,7 @@ export default function ProductEditorDialog({
               type="button"
               disabled={saving}
               onClick={() => void saveProduct()}
-              className="flex items-center gap-2 bg-[#20211e] px-5 py-3 text-xs font-medium text-white transition-colors hover:bg-[#b66b4d] disabled:opacity-50"
+              className="flex items-center gap-2 rounded-xl bg-[#4b5b40] px-5 py-3 text-xs font-medium text-white transition-colors hover:bg-[#36432d] disabled:opacity-50"
             >
               <FiSave size={15} /> {saving ? "Saving..." : "Save changes"}
             </button>

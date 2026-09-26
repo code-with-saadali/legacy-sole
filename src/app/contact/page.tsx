@@ -1,11 +1,12 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "../../lib/seo";
 import Link from "next/link";
 import CarePage, { CareSection } from "../_components/CarePage";
 
-export const metadata: Metadata = {
-  title: "Contact Us | Legacy Sole",
-  description: "Get help with footwear, sizing and your Legacy Sole order.",
-};
+export const metadata = pageMetadata(
+  "Contact Us | Legacy Sole",
+  "Get help with footwear, sizing and your Legacy Sole order.",
+  "/contact",
+);
 
 export default function ContactPage() {
   return (

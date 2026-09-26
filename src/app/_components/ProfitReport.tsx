@@ -1,4 +1,5 @@
 "use client";
+import { FaAngleDown } from "react-icons/fa";
 import { formFieldClasses } from "../_styles/form-classes";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { supabase } from "../../lib/supabase";
@@ -6,6 +7,7 @@ import type { Product } from "../_data/products";
 import { orderProfit, type FinancialOrder } from "../_data/profit";
 import { FiDollarSign, FiTrendingUp, FiAlertCircle } from "react-icons/fi";
 import MetricCard from "./MetricCard";
+import CustomSelect from "./CustomSelect";
 
 const money = (value: number) => `Rs. ${value.toLocaleString("en-PK")}`;
 const inputCost = (value: FormDataEntryValue | null) =>
@@ -59,7 +61,7 @@ function OrderCosts({
   const result = orderProfit(order);
   return (
     <details className="group rounded-2xl border border-black/10 bg-white open:bg-[#F4F1E9]/50">
-      <summary className="cursor-pointer rounded-2xl p-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 sm:p-5">
+      <summary className="flex items-center justify-between gap-3 list-none [&::-webkit-details-marker]:hidden cursor-pointer rounded-2xl p-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 sm:p-5">
         <span className="ml-2 inline-flex w-[calc(100%-2rem)] flex-col gap-3 align-middle sm:flex-row sm:items-center sm:justify-between">
           <span className="min-w-0">
             <span className="block break-all font-medium">{order.id}</span>
@@ -77,6 +79,10 @@ function OrderCosts({
               : `Profit: ${money(result.profit)}`}
           </strong>
         </span>
+        <FaAngleDown
+          aria-hidden="true"
+          className="ml-auto shrink-0 transition-transform duration-150 [[open]>summary>&]:rotate-180"
+        />
       </summary>
       <div className="border-t border-black/10 px-4 pb-5 sm:px-5">
         <p className="mt-3 text-xs text-black/50">
@@ -377,8 +383,12 @@ export default function ProfitReport({ products }: { products: Product[] }) {
               </button>
             )}
             <details className="mt-6 border-t border-black/10 pt-4 text-sm text-black/60">
-              <summary className="cursor-pointer font-medium text-[#20211e]">
+              <summary className="flex items-center justify-between gap-3 list-none [&::-webkit-details-marker]:hidden cursor-pointer font-medium text-[#20211e]">
                 How profit is calculated
+                <FaAngleDown
+                  aria-hidden="true"
+                  className="ml-auto shrink-0 transition-transform duration-150 [[open]>summary>&]:rotate-180"
+                />
               </summary>
               <p className="mt-3 leading-6">
                 Delivered revenue after coupons and points, minus product,
@@ -401,17 +411,18 @@ export default function ProfitReport({ products }: { products: Product[] }) {
         <div className="mt-5 max-w-2xl rounded-2xl bg-[#F4F1E9] p-4 sm:p-5">
           <label className={formFieldClasses}>
             Choose product
-            <select
+            <CustomSelect
+              label="Choose product"
               value={selected}
-              onChange={(event) => setSelected(event.target.value)}
-            >
-              <option value="">Choose a product</option>
-              {products.map((item) => (
-                <option key={item.slug} value={item.slug}>
-                  {item.name} ({item.color})
-                </option>
-              ))}
-            </select>
+              onChange={setSelected}
+              options={[
+                { value: "", label: "Choose a product" },
+                ...products.map((item) => ({
+                  value: item.slug,
+                  label: item.name + " (" + item.color + ")",
+                })),
+              ]}
+            />
           </label>
           {product && <ProductCost key={product.slug} product={product} />}
         </div>

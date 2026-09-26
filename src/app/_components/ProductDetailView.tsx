@@ -1,5 +1,6 @@
 "use client";
 
+import type { Product } from "../_data/products";
 import ProductGallery from "./ProductGallery";
 import SizeGuide from "./SizeGuide";
 import RelatedProducts from "./RelatedProducts";
@@ -14,10 +15,18 @@ import ProductReviews from "./ProductReviews";
 import { colourSwatches } from "../shop/_components/ShopFilters";
 import { availableSizes, sizeStock } from "../_data/inventory";
 
-export default function ProductDetailView({ slug }: { slug: string }) {
+export default function ProductDetailView({
+  slug,
+  initialProduct,
+}: {
+  slug: string;
+  initialProduct?: Product;
+}) {
   const { products, loading, error } = useCatalog();
-  const product = products.find((item) => item.slug === slug);
-  if (loading)
+  const product =
+    products.find((item) => item.slug === slug) ??
+    (loading ? initialProduct : undefined);
+  if (loading && !product)
     return (
       <main className="p-12" role="status">
         Loading product...

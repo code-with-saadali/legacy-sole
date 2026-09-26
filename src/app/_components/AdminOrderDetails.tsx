@@ -101,7 +101,7 @@ export default function AdminOrderDetails({
     >
       <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-black/10 bg-[#F4F1E9]/95 px-5 py-5 backdrop-blur-md sm:px-8">
         <div className="min-w-0">
-          <p className="text-[10px] uppercase tracking-[0.18em] text-[#b66b4d]">
+          <p className="text-[10px] uppercase tracking-[0.18em] text-[#4b5b40]">
             Legacy Sole / Order details
           </p>
           <h2
@@ -125,7 +125,7 @@ export default function AdminOrderDetails({
           type="button"
           onClick={onClose}
           aria-label="Close order details"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-black/10 bg-[#F8F6F1] transition-colors hover:bg-[#E9E2D7]"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-black/10 bg-white transition-colors hover:bg-[#E9E2D7]"
         >
           <FiX size={18} />
         </button>
@@ -134,7 +134,7 @@ export default function AdminOrderDetails({
         <AdminOrderPrint order={order} />
         <AdminOrderResolution order={order} onResolved={onResolved} />
         <section className="mt-6 grid gap-4 sm:grid-cols-2">
-          <div className="min-w-0 rounded-[22px] border border-black/10 bg-[#F8F6F1] p-5">
+          <div className="min-w-0 rounded-[22px] border border-black/10 bg-white p-5">
             <h3 className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-black/50">
               <FiUser size={15} /> Customer
             </h3>
@@ -148,7 +148,7 @@ export default function AdminOrderDetails({
               {order.customer.phone}
             </p>
           </div>
-          <div className="min-w-0 rounded-[22px] border border-black/10 bg-[#F8F6F1] p-5">
+          <div className="min-w-0 rounded-[22px] border border-black/10 bg-white p-5">
             <h3 className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-black/50">
               <FiMapPin size={15} /> Delivery address
             </h3>
@@ -160,7 +160,7 @@ export default function AdminOrderDetails({
             </p>
           </div>
         </section>
-        <section className="mt-5 overflow-hidden rounded-[22px] border border-black/10 bg-[#F8F6F1]">
+        <section className="mt-5 overflow-hidden rounded-[22px] border border-black/10 bg-white">
           <h3 className="flex items-center gap-2 border-b border-black/10 px-5 py-4 text-sm font-semibold">
             <FiPackage size={16} /> Ordered products{" "}
             <span className="ml-auto text-xs font-normal text-black/45">
@@ -209,7 +209,7 @@ export default function AdminOrderDetails({
             </span>
           </div>
         </section>
-        <label className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-[22px] border border-black/10 bg-[#F8F6F1] p-5 text-sm font-medium">
+        <label className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-[22px] border border-black/10 bg-white p-5 text-sm font-medium">
           Order status
           <CustomSelect
             label={`Status for order ${order.id}`}
@@ -238,7 +238,7 @@ export default function AdminOrderDetails({
             event.preventDefault();
             void saveShipment(false);
           }}
-          className="mt-5 rounded-[22px] border border-black/10 bg-[#F8F6F1] p-5"
+          className="mt-5 rounded-[22px] border border-black/10 bg-white p-5"
         >
           <h3 className="flex items-center gap-2 text-sm font-semibold">
             <FiTruck size={16} /> Courier tracking
@@ -361,7 +361,7 @@ export default function AdminOrderDetails({
           <h3 className="flex items-center gap-2 text-sm font-semibold">
             <FiMessageCircle /> Customer update
           </h3>
-          <p className="mt-4 whitespace-pre-wrap break-words rounded-2xl border border-black/5 bg-[#F8F6F1] p-4 text-xs leading-6 text-black/65">
+          <p className="mt-4 whitespace-pre-wrap break-words rounded-2xl border border-black/5 bg-white p-4 text-xs leading-6 text-black/65">
             {message}
           </p>
           {phone ? (
@@ -369,7 +369,7 @@ export default function AdminOrderDetails({
               href={`https://wa.me/${phone}?text=${encodeURIComponent(message)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#20211e] px-5 py-3 text-xs font-medium text-white transition-colors hover:bg-[#b66b4d]"
+              className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#20211e] px-5 py-3 text-xs font-medium text-white transition-colors hover:bg-[#4b5b40]"
             >
               <FiMessageCircle /> Open WhatsApp draft
             </a>

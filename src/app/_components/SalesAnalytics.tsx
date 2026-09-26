@@ -43,7 +43,7 @@ export default function SalesAnalytics({ orders }: { orders: Order[] }) {
     <section className="bg-white rounded-[20px] shadow-[0_2px_12px_#20211e04] mt-8 min-w-0  border border-black/10 p-5 sm:p-7">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.16em] text-[#b66b4d]">
+          <p className="text-[10px] uppercase tracking-[0.16em] text-[#4b5b40]">
             Performance / last 7 days
           </p>
           <h2 className="mt-2 text-2xl text-[#20211e]">Weekly order value</h2>
@@ -53,7 +53,7 @@ export default function SalesAnalytics({ orders }: { orders: Order[] }) {
         </div>
         <span
           aria-hidden="true"
-          className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#E9E2D7] text-[#b66b4d]"
+          className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#E9E2D7] text-[#4b5b40]"
         >
           <FiBarChart2 size={21} />
         </span>
@@ -85,7 +85,7 @@ export default function SalesAnalytics({ orders }: { orders: Order[] }) {
         <div className="mb-6 flex flex-wrap items-center justify-between gap-2 text-[10px] text-black/50">
           <span>Daily order value</span>
           <span className="inline-flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-[#b66b4d]" />
+            <span className="h-2 w-2 rounded-full bg-[#4b5b40]" />
             {peak > 0 ? `Peak day: ${money(peak)}` : "No orders yet"}
           </span>
         </div>
@@ -117,10 +117,10 @@ export default function SalesAnalytics({ orders }: { orders: Order[] }) {
                   tabIndex={0}
                   aria-label={`${point.date}: ${money(point.value)}, ${point.count} orders`}
                   title={`${point.date}: ${money(point.value)} · ${point.count} orders`}
-                  className="group relative flex h-44 items-end justify-center rounded-lg outline-offset-4 focus-visible:outline-2 focus-visible:outline-[#b66b4d] sm:h-52"
+                  className="group relative flex h-44 items-end justify-center rounded-lg outline-offset-4 focus-visible:outline-2 focus-visible:outline-[#4b5b40] sm:h-52"
                 >
                   <div
-                    className={`relative w-full max-w-12 rounded-t-lg transition-colors ${point.value === peak && peak > 0 ? "bg-[#b66b4d]" : "bg-[#20211e]/75"}`}
+                    className={`relative w-full max-w-12 rounded-t-lg transition-colors ${point.value === peak && peak > 0 ? "bg-[#4b5b40]" : "bg-[#20211e]/75"}`}
                     style={{
                       height: point.value
                         ? `${(point.value / ceiling) * 100}%`
@@ -144,7 +144,7 @@ export default function SalesAnalytics({ orders }: { orders: Order[] }) {
                   </span>
                 </div>
                 <p
-                  className={`mt-4 text-center text-[10px] ${index === 6 ? "font-semibold text-[#b66b4d]" : "text-black/50"}`}
+                  className={`mt-4 text-center text-[10px] ${index === 6 ? "font-semibold text-[#4b5b40]" : "text-black/50"}`}
                 >
                   {point.label}
                 </p>
