@@ -1,5 +1,14 @@
+import { defaultNewArrivals, type NewArrivalsSettings } from "./new-arrivals";
+import {
+  defaultClassicFeature,
+  type ClassicFeatureSettings,
+} from "./classic-feature";
+import { defaultStyleGuide, type StyleGuideSettings } from "./style-guide";
 import type { MenuColumn } from "./navigation";
 export type StoreSettings = {
+  new_arrivals: NewArrivalsSettings;
+  classic_feature: ClassicFeatureSettings;
+  style_guide: StyleGuideSettings;
   menu_columns: MenuColumn[];
   whatsapp: string;
   default_shipping: number;
@@ -7,6 +16,9 @@ export type StoreSettings = {
   city_rates: Record<string, number>;
 };
 export const defaultSettings: StoreSettings = {
+  new_arrivals: defaultNewArrivals,
+  classic_feature: defaultClassicFeature,
+  style_guide: defaultStyleGuide,
   menu_columns: [],
   whatsapp: "923023898785",
   default_shipping: 250,

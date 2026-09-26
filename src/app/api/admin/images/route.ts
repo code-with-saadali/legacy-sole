@@ -98,8 +98,12 @@ export async function DELETE(request: Request) {
     const { data: orders, error: orderError } = await client
       .from("orders")
       .select("items");
-    if (productError || orderError) throw new Error("Cannot check references");
-    const references = JSON.stringify([products, orders]);
+    const { data: settings, error: settingsError } = await client
+      .from("store_settings")
+      .select("*");
+    if (productError || orderError || settingsError)
+      throw new Error("Cannot check references");
+    const references = JSON.stringify([products, orders, settings]);
     const prefix = `${process.env.R2_PUBLIC_BASE_URL?.replace(/\/$/, "")}/legacy-sole/uploads/`;
     const deleted: string[] = [];
     for (const url of new Set<string>(urls)) {

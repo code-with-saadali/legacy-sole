@@ -28,7 +28,7 @@ export default function CompleteTheLook({
       <p className="mt-3 text-sm text-black/60">
         The finishing touches, chosen to go with {product.name}.
       </p>
-      <div className="mt-7 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-7 grid grid-cols-2 gap-x-3 gap-y-7 sm:gap-6 lg:grid-cols-4">
         {matches.map((item) => (
           <ProductCard key={item.slug} product={item} />
         ))}

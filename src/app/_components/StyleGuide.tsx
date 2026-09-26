@@ -1,46 +1,25 @@
 "use client";
 
+import { useStoreSettings } from "./StoreSettingsProvider";
 import { useCatalog } from "./CatalogProvider";
 import Image from "./ProductImage";
 import Link from "next/link";
 import { FiArrowUpRight } from "react-icons/fi";
 
-const looks = [
-  {
-    number: "01",
-    title: "The Slow Morning",
-    shoe: "Court Classic",
-    image: "https://pub-bbec48a9985d48a988fd956df7da148b.r2.dev/legacy-sole/images/shoes/court-cutout.png",
-    slug: "court-classic",
-    outfit: "Straight-leg denim + a relaxed white shirt",
-    note: "Easy pieces for an unhurried start.",
-  },
-  {
-    number: "02",
-    title: "The City Day",
-    shoe: "Aero Runner",
-    image: "https://pub-bbec48a9985d48a988fd956df7da148b.r2.dev/legacy-sole/images/shoes/runner-cutout.png",
-    slug: "aero-runner",
-    outfit: "Wide-leg trousers + a lightweight layer",
-    note: "Built for long walks and longer plans.",
-  },
-  {
-    number: "03",
-    title: "The Late Plan",
-    shoe: "Shadow Runner",
-    image: "https://pub-bbec48a9985d48a988fd956df7da148b.r2.dev/legacy-sole/images/shoes/black-cutout.png",
-    slug: "shadow-runner",
-    outfit: "Dark denim + an easy overshirt",
-    note: "A clean finish for wherever the evening goes.",
-  },
-];
-
 export default function StyleGuide() {
   const { products } = useCatalog();
-  const availableLooks = looks.flatMap((look) => {
+  const { settings } = useStoreSettings();
+  const guide = settings.style_guide;
+  const availableLooks = guide.looks.flatMap((look) => {
     const product = products.find((item) => item.slug === look.slug);
     return product
-      ? [{ ...look, shoe: product.name, image: product.image }]
+      ? [
+          {
+            ...look,
+            shoe: look.shoe || product.name,
+            image: look.image || product.image,
+          },
+        ]
       : [];
   });
   if (!availableLooks.length) return null;
@@ -53,32 +32,30 @@ export default function StyleGuide() {
       <div className="mb-10 flex flex-col gap-5 border-b border-black/10 pb-8 sm:flex-row sm:items-end sm:justify-between lg:mb-14">
         <div>
           <p className="text-[9px] font-medium uppercase tracking-[0.2em] text-black/40 sm:text-[10px]">
-            Style Notes / Legacy Sole
+            {guide.eyebrow}
           </p>
 
           <h2
             id="style-title"
-            className="mt-3 max-w-175 text-[clamp(38px,5vw,68px)] font-medium leading-[0.95] tracking-tighter text-[#20211e]"
+            className="whitespace-pre-line mt-3 max-w-175 text-[clamp(38px,5vw,68px)] font-medium leading-[0.95] tracking-tighter text-[#20211e]"
           >
-            Same pair.
-            <br />
-            Different plans.
+            {guide.heading}
           </h2>
         </div>
 
         <p className="max-w-75 text-[12px] leading-6 text-black/45 sm:text-[13px]">
-          Three easy ways to style everyday footwear without overthinking it.
+          {guide.description}
         </p>
       </div>
 
-      <div className="grid gap-10 md:grid-cols-3 md:gap-5 lg:gap-7">
-        {availableLooks.map((look) => (
-          <article key={look.number} className="group">
+      <div className="grid grid-cols-2 gap-x-3 gap-y-7 md:grid-cols-3 md:gap-5 lg:gap-7">
+        {availableLooks.map((look, index) => (
+          <article key={`${look.slug}-${index}`} className="group min-w-0">
             <Link
               href={`/products/${look.slug}`}
               className="relative block aspect-4/5 overflow-hidden rounded-3xl bg-[#E9E2D7] lg:rounded-[28px]"
             >
-              <div className="absolute left-5 top-5 z-10 flex items-center gap-2">
+              <div className="absolute left-3 top-3 sm:left-5 sm:top-5 z-10 flex items-center gap-2">
                 <span className="text-[9px] font-medium uppercase tracking-[0.18em] text-black/35">
                   Look
                 </span>
@@ -95,25 +72,25 @@ export default function StyleGuide() {
                   src={look.image}
                   alt={`${look.shoe} styling inspiration`}
                   fill
-                  sizes="(max-width: 767px) 90vw, 30vw"
+                  sizes="(max-width: 767px) 45vw, 30vw"
                   className="object-contain transition-transform duration-500 ease-out group-hover:scale-[1.035]"
                 />
               </div>
 
-              <div className="absolute inset-x-5 bottom-5 flex items-center justify-between rounded-full border border-black/10 bg-[#F8F6F1]/85 px-4 py-3 backdrop-blur-md">
-                <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-black/55">
+              <div className="absolute inset-x-2 bottom-2 sm:inset-x-5 sm:bottom-5 flex items-center justify-between rounded-full border border-black/10 bg-[#F8F6F1]/85 gap-2 px-2 py-2 sm:px-4 sm:py-3 backdrop-blur-md">
+                <span className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wide sm:tracking-[0.16em] text-black/55">
                   {look.shoe}
                 </span>
 
                 <FiArrowUpRight
                   size={14}
-                  className="text-black/55 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  className="shrink-0 text-black/55 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                 />
               </div>
             </Link>
 
             <div className="pt-5">
-              <h3 className="text-[22px] font-medium tracking-[-0.035em] text-[#20211e] sm:text-[24px]">
+              <h3 className="text-base sm:text-[22px] font-medium tracking-[-0.035em] text-[#20211e]">
                 {look.title}
               </h3>
 

@@ -124,7 +124,7 @@ export default function RecentlyViewed() {
         {recent.map((product) => (
           <div
             key={product.slug}
-            className="w-[80%] shrink-0 select-none sm:w-[calc((100%-1.5rem)/2)] lg:w-[calc((100%-4.5rem)/4)]"
+            className="w-[calc((100%-1.5rem)/2)] shrink-0 select-none sm:w-[calc((100%-1.5rem)/2)] lg:w-[calc((100%-4.5rem)/4)]"
           >
             <ProductCard product={product} />
           </div>

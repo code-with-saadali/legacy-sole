@@ -8,7 +8,7 @@ export default function Hero() {
       className="relative overflow-hidden bg-[#F4F1E9] min-h-full lg:h-[calc(100svh-128px)] lg:min-h-140"
     >
       <h1 id="hero-title" className="sr-only">
-        Legacy Sole — Made for every single day.
+        Legacy Sole ? Made for every single day.
       </h1>
       <Image
         width={1500}

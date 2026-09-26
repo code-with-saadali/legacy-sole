@@ -26,12 +26,20 @@ export default function StoreSettingsProvider({
     if (!supabase) return;
     const { data, error } = await supabase
       .from("store_settings")
-      .select(
-        "whatsapp,default_shipping,free_shipping_minimum,city_rates,menu_columns",
-      )
+      .select("*")
       .eq("id", true)
       .single();
-    if (!error && data) setSettings(data);
+    if (!error && data)
+      setSettings({
+        ...defaultSettings,
+        ...data,
+        new_arrivals: { ...defaultSettings.new_arrivals, ...data.new_arrivals },
+        classic_feature: {
+          ...defaultSettings.classic_feature,
+          ...data.classic_feature,
+        },
+        style_guide: data.style_guide ?? defaultSettings.style_guide,
+      });
   }, []);
   useEffect(() => {
     void refreshSettings();

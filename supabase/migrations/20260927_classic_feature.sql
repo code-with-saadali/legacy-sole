@@ -1,0 +1,2 @@
+alter table public.store_settings add column if not exists classic_feature jsonb not null default '{"slug":"court-classic","image":"","imageAlt":"","watermark":"CLASSIC","badge":"Legacy Essential","styleLabel":"Style","styleValue":"Court / 01","caption":"The Everyday Pair","name":"","color":"","eyebrow":"Timeless For A Reason","heading":"The pair that","accent":"always works.","description":"","colorLabel":"Colourway","priceLabel":"Price","button":"","href":"#collection"}'::jsonb;
+notify pgrst, 'reload schema';

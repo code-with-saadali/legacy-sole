@@ -57,7 +57,7 @@ export default function WishlistPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid gap-5 py-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 py-8 sm:gap-5 lg:grid-cols-3">
             {items.map((product) => (
               <article key={product.slug}>
                 <Link

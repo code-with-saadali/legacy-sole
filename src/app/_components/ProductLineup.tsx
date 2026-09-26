@@ -47,9 +47,7 @@ export default function ProductLineup() {
           >
             Your everyday
             <br />
-            <span className="text-[#ed682c]">
-              rotation, refined.
-            </span>
+            <span className="text-[#ed682c]">rotation, refined.</span>
           </h2>
         </div>
 
@@ -96,12 +94,12 @@ export default function ProductLineup() {
       {!loading && !error && !products.length && (
         <p>No products are available yet.</p>
       )}
-      <div className="grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-6">
+      <div className="grid grid-cols-2 gap-x-3 gap-y-7 sm:gap-x-5 sm:gap-y-12 lg:grid-cols-3 lg:gap-x-6">
         {visible.map((product) => (
           <article key={product.slug} className="group min-w-0">
             <Link href={`/products/${product.slug}`} className="block">
-              <div className="relative aspect-[1.08] overflow-hidden rounded-[26px] bg-[#E9E2D7] lg:rounded-[30px]">
-                <div className="absolute left-5 top-5 z-10 flex items-center rounded-full border border-black/10 bg-[#F8F6F1]/85 px-3 py-2 backdrop-blur-md">
+              <div className="relative aspect-[1.08] overflow-hidden rounded-2xl bg-[#E9E2D7] sm:rounded-[26px] lg:rounded-[30px]">
+                <div className="absolute left-2 top-2 z-10 hidden sm:left-5 sm:top-5 sm:flex items-center rounded-full border border-black/10 bg-[#F8F6F1]/85 px-3 py-2 backdrop-blur-md">
                   <span className="text-[8px] font-medium uppercase tracking-[0.16em] text-black/55">
                     {product.featured ? "Featured / " : ""}
                     {product.tag}
@@ -110,7 +108,7 @@ export default function ProductLineup() {
 
                 <WishlistButton
                   product={product}
-                  className="absolute right-5 top-5 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-[#F8F6F1]/80 text-[#20211e] backdrop-blur-md hover:border-[#ed682c] hover:bg-[#ed682c] hover:text-white"
+                  className="absolute right-2 top-2 z-20 flex h-9 w-9 sm:right-5 sm:top-5 items-center justify-center rounded-full border border-black/10 bg-[#F8F6F1]/80 text-[#20211e] backdrop-blur-md hover:border-[#ed682c] hover:bg-[#ed682c] hover:text-white"
                 />
 
                 <span className="pointer-events-none absolute left-1/2 top-[10%] -translate-x-1/2 whitespace-nowrap text-[clamp(52px,6vw,90px)] font-semibold tracking-[-0.08em] text-black/[0.035]">
@@ -122,7 +120,7 @@ export default function ProductLineup() {
                     src={product.image}
                     alt={`${product.name}, ${product.color}`}
                     fill
-                    sizes="(max-width: 639px) 90vw, (max-width: 1023px) 45vw, 30vw"
+                    sizes="(max-width: 639px) 45vw, (max-width: 1023px) 45vw, 30vw"
                     className="object-contain transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.045]"
                   />
                 </div>
@@ -136,10 +134,10 @@ export default function ProductLineup() {
                 </div>
               </div>
 
-              <div className="pt-5">
-                <div className="flex items-start justify-between gap-4">
+              <div className="pt-3 sm:pt-5">
+                <div className="flex flex-col items-start gap-2 sm:flex-row sm:justify-between sm:gap-4">
                   <div>
-                    <h3 className="text-[19px] font-medium tracking-[-0.035em] text-[#20211e] sm:text-[21px]">
+                    <h3 className="wrap-break-word text-sm font-medium tracking-[-0.035em] text-[#20211e] sm:text-[21px]">
                       {product.name}
                     </h3>
 
@@ -153,7 +151,7 @@ export default function ProductLineup() {
                   </strong>
                 </div>
 
-                <div className="mt-4 flex items-center justify-between border-t border-black/10 pt-3">
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-black/10 pt-3">
                   <p className="text-[9px] font-medium uppercase tracking-[0.16em] text-black/35">
                     Unisex
                   </p>

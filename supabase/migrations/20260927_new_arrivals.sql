@@ -1,0 +1,2 @@
+alter table public.store_settings add column if not exists new_arrivals jsonb not null default '{"slug":"","image":"","imageAlt":"","watermark":"NEW","badge":"Just Landed","styleLabel":"Series","styleValue":"","caption":"Legacy Sole / New Season","name":"","color":"","eyebrow":"Introducing","heading":"The pace\njust changed.","description":"","colorLabel":"Colourway","priceLabel":"Price","button":"","href":"","sectionLabel":"New Arrival / Legacy Sole","drop":"Drop 01"}'::jsonb;
+notify pgrst, 'reload schema';

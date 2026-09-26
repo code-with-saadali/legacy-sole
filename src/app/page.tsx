@@ -1,11 +1,11 @@
-import { pageMetadata, siteUrl, jsonLd } from "../lib/seo";
 import Hero from "./_components/Hero";
-import RecentlyViewed from "./_components/RecentlyViewed";
 import ShopByCategory from "./_components/ShopByCategory";
 import NewArrivals from "./_components/NewArrivals";
 import ProductLineup from "./_components/ProductLineup";
 import ClassicFeature from "./_components/ClassicFeature";
 import StyleGuide from "./_components/StyleGuide";
+import RecentlyViewed from "./_components/RecentlyViewed";
+import { pageMetadata, siteUrl, jsonLd } from "../lib/seo";
 
 export const metadata = pageMetadata(
   "Legacy Sole | Shoes & Sneakers in Pakistan",

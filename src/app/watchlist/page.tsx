@@ -23,7 +23,7 @@ export default function WatchlistPage() {
           Availability could not be refreshed. Please try again.
         </p>
       ) : items.length ? (
-        <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid grid-cols-2 gap-x-3 gap-y-7 sm:gap-8 lg:grid-cols-3">
           {items.map((slug) => {
             const product = products.find((item) => item.slug === slug);
             return (

@@ -6,7 +6,7 @@ import WishlistButton from "./WishlistButton";
 export default function ProductCard({ product }: { product: Product }) {
   return (
     <article className="group min-w-0">
-      <div className="relative overflow-hidden rounded-3xl bg-[#E9E2D7]">
+      <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-[#E9E2D7]">
         <Link
           href={`/products/${product.slug}`}
           className="relative block aspect-[0.95]"
@@ -15,25 +15,25 @@ export default function ProductCard({ product }: { product: Product }) {
             src={product.image}
             alt={`${product.name}, ${product.color}`}
             fill
-            sizes="(max-width:640px) 90vw, (max-width:1024px) 45vw, 28vw"
+            sizes="(max-width:640px) 45vw, (max-width:1024px) 45vw, 28vw"
             className="object-contain p-[7%] transition-transform duration-500 group-hover:scale-105"
           />
           {product.tag && (
-            <span className="absolute left-4 top-4 rounded-full bg-[#F4F1E9] px-3 py-2 text-[9px] uppercase tracking-wider">
+            <span className="absolute bottom-2 left-2 max-w-[calc(100%-1rem)] break-words sm:bottom-auto sm:left-4 sm:top-4 rounded-full bg-[#F4F1E9] px-3 py-2 text-[9px] uppercase tracking-wider">
               {product.tag}
             </span>
           )}
         </Link>
         <WishlistButton
           product={product}
-          className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-[#F4F1E9]"
+          className="absolute right-2 top-2 sm:right-4 sm:top-4 flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-[#F4F1E9]"
         />
       </div>
-      <div className="mt-4 flex items-start justify-between gap-3">
+      <div className="mt-3 flex flex-col items-start gap-2 sm:mt-4 sm:flex-row sm:justify-between sm:gap-3">
         <div>
           <Link
             href={`/products/${product.slug}`}
-            className="text-xl font-medium tracking-tight"
+            className="break-words text-sm sm:text-xl font-medium tracking-tight"
           >
             {product.name}
           </Link>
@@ -43,7 +43,7 @@ export default function ProductCard({ product }: { product: Product }) {
           Rs. {product.price.toLocaleString()}
         </strong>
       </div>
-      <div className="mt-3 flex justify-between gap-2 text-xs text-black/50">
+      <div className="mt-3 flex flex-wrap justify-between gap-2 text-[10px] sm:text-xs text-black/50">
         <span>{product.category}</span>
         {(product.stock ?? 0) <= 0 ? (
           <span>Sold out</span>

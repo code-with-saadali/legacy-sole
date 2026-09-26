@@ -1,0 +1,22 @@
+export const defaultNewArrivals = {
+  slug: "",
+  image: "",
+  imageAlt: "",
+  watermark: "NEW",
+  badge: "Just Landed",
+  styleLabel: "Series",
+  styleValue: "",
+  caption: "Legacy Sole / New Season",
+  name: "",
+  color: "",
+  eyebrow: "Introducing",
+  heading: "The pace\njust changed.",
+  description: "",
+  colorLabel: "Colourway",
+  priceLabel: "Price",
+  button: "",
+  href: "",
+  sectionLabel: "New Arrival / Legacy Sole",
+  drop: "Drop 01",
+};
+export type NewArrivalsSettings = typeof defaultNewArrivals;

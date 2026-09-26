@@ -94,7 +94,7 @@ export default function ShopProducts({
           </button>
         </div>
       ) : (
-        <div className="grid gap-x-5 gap-y-12 sm:grid-cols-2 xl:grid-cols-3 xl:gap-x-6">
+        <div className="grid grid-cols-2 gap-x-3 gap-y-7 sm:gap-x-5 sm:gap-y-12 xl:grid-cols-3 xl:gap-x-6">
           {products.map((product) => (
             <ProductCard key={product.slug} product={product} />
           ))}
