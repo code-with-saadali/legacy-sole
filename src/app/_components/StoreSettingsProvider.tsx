@@ -26,13 +26,33 @@ export default function StoreSettingsProvider({
     if (!supabase) return;
     const { data, error } = await supabase
       .from("store_settings")
-      .select("whatsapp,default_shipping,free_shipping_minimum,city_rates")
+      .select(
+        "whatsapp,default_shipping,free_shipping_minimum,city_rates,menu_columns",
+      )
       .eq("id", true)
       .single();
     if (!error && data) setSettings(data);
   }, []);
   useEffect(() => {
     void refreshSettings();
+    const resume = () => {
+      if (document.visibilityState === "visible") void refreshSettings();
+    };
+    window.addEventListener("focus", resume);
+    const timer = window.setInterval(resume, 30000);
+    const channel = supabase
+      ?.channel("store-settings")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "store_settings" },
+        resume,
+      )
+      .subscribe();
+    return () => {
+      window.removeEventListener("focus", resume);
+      window.clearInterval(timer);
+      if (channel) void supabase?.removeChannel(channel);
+    };
   }, [refreshSettings]);
   return (
     <Context.Provider value={{ settings, refreshSettings }}>

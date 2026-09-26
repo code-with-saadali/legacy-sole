@@ -19,7 +19,7 @@ export default function AdminProductsPanel({
 }: Props) {
   const inventoryAlerts = stockAlerts(products);
   return (
-    <section className="mt-8 admin-panel rounded-[28px] border border-black/[0.06] bg-white p-5 sm:p-7">
+    <section className="mt-8 bg-white rounded-[20px] shadow-[0_2px_12px_#20211e04]  border border-black/[0.06]  p-5 sm:p-7">
       <div>
         <p className="text-[10px] uppercase tracking-[0.16em] text-black/40">
           Catalogue management

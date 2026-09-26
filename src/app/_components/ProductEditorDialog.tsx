@@ -1,7 +1,8 @@
 "use client";
+import { formFieldClasses } from "../_styles/form-classes";
 import CustomSelect from "./CustomSelect";
 
-import type { ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import { FiImage, FiSave, FiX } from "react-icons/fi";
 import Image from "./ProductImage";
 import type { Product } from "../_data/products";
@@ -19,7 +20,10 @@ type Props = {
     key: Key,
     value: Product[Key],
   ) => void;
-  uploadImage: (event: ChangeEvent<HTMLInputElement>) => Promise<void>;
+  uploadImage: (
+    event: ChangeEvent<HTMLInputElement>,
+    slot: number,
+  ) => Promise<void>;
   saveProduct: () => Promise<void>;
 };
 
@@ -35,17 +39,36 @@ export default function ProductEditorDialog({
   uploadImage,
   saveProduct,
 }: Props) {
+  const [restocking, setRestocking] = useState(false);
+  const [restockQuantity, setRestockQuantity] = useState(1);
+  const [restockSize, setRestockSize] = useState(productSizes[0]);
+  const totalStock = draft.size_stock
+    ? Object.values(draft.size_stock).reduce((sum, count) => sum + count, 0)
+    : (draft.stock ?? 0);
+  const soldOut = totalStock <= 0;
+  const markSoldOut = () => {
+    setRestocking(false);
+    updateDraft("stock", 0);
+    if (draft.size_stock) {
+      updateDraft(
+        "size_stock",
+        Object.fromEntries(
+          Object.keys(draft.size_stock).map((size) => [size, 0]),
+        ),
+      );
+    }
+  };
   return (
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="product-editor-title"
       onClick={onClose}
-      className="fixed inset-0 z-[100] flex items-center justify-center scrollbar-hidden overflow-y-auto bg-black/40 p-4 backdrop-blur-sm sm:p-8"
+      className="fixed inset-0 z-[100] flex items-center justify-center [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:h-0 [&::-webkit-scrollbar]:w-0 overflow-y-auto bg-black/40 p-4 backdrop-blur-sm sm:p-8"
     >
       <div
         onClick={(event) => event.stopPropagation()}
-        className="product-editor-dialog flex max-h-[calc(100dvh-4rem)] w-full max-w-4xl flex-col overflow-hidden rounded-[28px] border border-black/10 bg-[#F4F1E9] shadow-[0_30px_90px_rgba(0,0,0,0.25)]"
+        className="group/editor flex max-h-[calc(100dvh-4rem)] w-full max-w-4xl flex-col overflow-hidden rounded-[28px] border border-black/10 bg-[#F6F5F2] shadow-[0_30px_90px_rgba(0,0,0,0.25)]"
       >
         <div className="flex shrink-0 items-start justify-between gap-4 border-b border-black/10 px-5 py-5 sm:px-7">
           <div className="min-w-0">
@@ -75,15 +98,15 @@ export default function ProductEditorDialog({
         </div>
         <div
           data-lenis-prevent
-          className="scrollbar-hidden min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain p-5 sm:p-7"
+          className="[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:h-0 [&::-webkit-scrollbar]:w-0 min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain p-5 sm:p-7"
         >
-          <section className="rounded-[22px] border border-black/10 bg-[#F8F6F1] p-4 sm:p-5">
+          <section className="rounded-2xl border border-black/10 bg-white p-4 sm:p-5">
             <h4 className="text-base font-semibold">Product information</h4>
             <p className="mt-1 text-xs leading-6 text-black/45">
               The essentials customers see in your collection.
             </p>
             <div className="mt-5 grid gap-5 sm:grid-cols-2">
-              <label className="admin-field">
+              <label className={formFieldClasses}>
                 URL slug
                 <input
                   value={draft.slug}
@@ -97,14 +120,14 @@ export default function ProductEditorDialog({
                   }
                 />
               </label>
-              <label className="admin-field">
+              <label className={formFieldClasses}>
                 Product name
                 <input
                   value={draft.name}
                   onChange={(event) => updateDraft("name", event.target.value)}
                 />
               </label>
-              <label className="admin-field">
+              <label className={formFieldClasses}>
                 Price (Rs.)
                 <input
                   type="number"
@@ -115,7 +138,7 @@ export default function ProductEditorDialog({
                   }
                 />
               </label>
-              <label className="admin-field">
+              <label className={formFieldClasses}>
                 Total stock
                 <input
                   type="number"
@@ -134,14 +157,95 @@ export default function ProductEditorDialog({
                   }
                 />
               </label>
-              <label className="admin-field">
+              <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-black/10 bg-[#F4F1E9] p-4 sm:col-span-2">
+                <div>
+                  <p className="text-sm font-medium" role="status">
+                    Availability: {soldOut ? "Sold out" : "In stock"}
+                  </p>
+                  <p className="mt-1 max-w-md text-xs leading-5 text-black/55">
+                    Marking sold out sets total stock and all size quantities to
+                    zero. Save the product to apply. To restock, enter the
+                    available quantities.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  disabled={saving}
+                  onClick={() =>
+                    soldOut ? setRestocking(true) : markSoldOut()
+                  }
+                  className="rounded-full bg-[#20211e] px-5 py-3 text-xs font-medium text-white disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {soldOut ? "Mark available" : "Mark sold out"}
+                </button>
+                {soldOut && restocking && (
+                  <div className="grid w-full gap-3 border-t border-black/10 pt-4 sm:grid-cols-3">
+                    {draft.size_stock && (
+                      <label className={formFieldClasses}>
+                        Size to restock
+                        <select
+                          value={restockSize}
+                          disabled={saving}
+                          onChange={(event) =>
+                            setRestockSize(event.target.value)
+                          }
+                        >
+                          {productSizes.map((size) => (
+                            <option key={size} value={size}>
+                              {size}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    )}
+                    <label className={formFieldClasses}>
+                      Available quantity
+                      <input
+                        type="number"
+                        min="1"
+                        step="1"
+                        value={restockQuantity}
+                        disabled={saving}
+                        onChange={(event) =>
+                          setRestockQuantity(Number(event.target.value))
+                        }
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      disabled={
+                        saving ||
+                        !Number.isSafeInteger(restockQuantity) ||
+                        restockQuantity < 1
+                      }
+                      onClick={() => {
+                        if (draft.size_stock)
+                          updateDraft("size_stock", {
+                            ...draft.size_stock,
+                            [restockSize]: restockQuantity,
+                          });
+                        updateDraft("stock", restockQuantity);
+                        setRestocking(false);
+                      }}
+                      className="self-end rounded-full bg-[#20211e] px-5 py-3 text-xs font-medium text-white disabled:opacity-40"
+                    >
+                      Apply quantity
+                    </button>
+                    <p className="text-xs text-black/55 sm:col-span-3">
+                      Apply the quantity, then save the product to make it
+                      available on the shop.
+                    </p>
+                  </div>
+                )}
+              </div>
+              <label className={formFieldClasses}>
                 Colourway
                 <input
                   value={draft.color}
                   onChange={(event) => updateDraft("color", event.target.value)}
                 />
               </label>
-              <label className="admin-field">
+              <label className={formFieldClasses}>
                 Category
                 <CustomSelect
                   label="Product category"
@@ -157,14 +261,16 @@ export default function ProductEditorDialog({
                   ]}
                 />
               </label>
-              <label className="admin-field">
+              <label className={formFieldClasses}>
                 Badge / tag
                 <input
                   value={draft.tag}
                   onChange={(event) => updateDraft("tag", event.target.value)}
                 />
               </label>
-              <label className="admin-field flex-row items-center gap-3">
+              <label
+                className={`${formFieldClasses} flex-row items-center gap-3`}
+              >
                 <input
                   type="checkbox"
                   checked={draft.featured}
@@ -177,8 +283,155 @@ export default function ProductEditorDialog({
               </label>
             </div>
           </section>
-          <section className="rounded-[22px] border border-black/10 bg-[#F8F6F1] p-4 sm:p-5">
-            <h4 className="text-base font-semibold">Sizes & colour variants</h4>
+          <section className="rounded-2xl border border-black/10 bg-white p-4 sm:p-5">
+            <h4 className="flex items-center gap-2 text-base font-semibold">
+              <FiImage size={17} /> Product images
+            </h4>
+            <p className="mt-1 text-xs leading-6 text-black/45">
+              Upload or replace each pose, then save changes to update the shop.
+              PNG, JPEG or WebP, up to 5 MB per photo.
+            </p>
+            <fieldset
+              disabled={saving}
+              className="mt-5 grid min-w-0 gap-4 sm:grid-cols-3 disabled:opacity-60"
+            >
+              <legend className="sr-only">Product photo uploads</legend>
+              {Array.from(
+                { length: Math.max(3, draft.gallery.length + 1) },
+                (_, slot) => {
+                  const source =
+                    slot === 0 ? draft.image : draft.gallery[slot - 1] || "";
+                  const label =
+                    slot === 0 ? "Pose 1 / Main photo" : "Pose " + (slot + 1);
+                  return (
+                    <div
+                      key={slot}
+                      className="min-w-0 rounded-2xl border border-black/10 bg-[#E9E2D7] p-3"
+                    >
+                      <p className="mb-3 text-xs font-medium">{label}</p>
+                      <div className="relative aspect-square overflow-hidden rounded-xl bg-[#E9E2D7]">
+                        {source ? (
+                          <Image
+                            src={source}
+                            alt={label + " preview"}
+                            fill
+                            sizes="(max-width: 639px) 80vw, 240px"
+                            className="object-contain p-3"
+                          />
+                        ) : (
+                          <div className="flex h-full items-center justify-center text-black/30">
+                            <FiImage size={32} />
+                          </div>
+                        )}
+                      </div>
+                      <label className="mt-3 block text-xs font-medium">
+                        {source ? "Replace photo" : "Upload photo"}
+                        <input
+                          type="file"
+                          accept="image/png,image/jpeg,image/webp"
+                          aria-label={"Upload " + label}
+                          onChange={(event) => void uploadImage(event, slot)}
+                          className="mt-2 block w-full min-w-0 text-[10px] file:mr-2 file:rounded-lg file:border-0 file:bg-[#20211e] file:px-3 file:py-2 file:text-white"
+                        />
+                      </label>
+                      <details className="mt-3">
+                        <summary className="cursor-pointer text-[11px] text-black/55">
+                          Use image link
+                        </summary>
+                        <label className={`${formFieldClasses} mt-3`}>
+                          Image URL
+                          <input
+                            value={source}
+                            placeholder="/images/... or https://..."
+                            onChange={(event) => {
+                              if (slot === 0)
+                                updateDraft("image", event.target.value);
+                              else {
+                                const gallery = [...draft.gallery];
+                                while (gallery.length < slot) gallery.push("");
+                                gallery[slot - 1] = event.target.value;
+                                updateDraft("gallery", gallery);
+                              }
+                            }}
+                          />
+                        </label>
+                      </details>
+                    </div>
+                  );
+                },
+              )}
+            </fieldset>
+            {saving && (
+              <p role="status" className="mt-3 text-xs text-black/60">
+                Saving photos and product changes. Please wait...
+              </p>
+            )}
+          </section>
+          <section className="rounded-2xl border border-black/10 bg-white p-4 sm:p-5">
+            <h4 className="text-base font-semibold">Description & fit</h4>
+            <p className="mt-1 text-xs leading-6 text-black/45">
+              Help customers understand the product and choose their size.
+            </p>
+            <div className="mt-5 grid gap-5">
+              <label className={`${formFieldClasses} sm:col-span-2`}>
+                Product description
+                <textarea
+                  rows={4}
+                  value={draft.description}
+                  onChange={(event) =>
+                    updateDraft("description", event.target.value)
+                  }
+                />
+              </label>
+              <label className={`${formFieldClasses} sm:col-span-2`}>
+                Product details{" "}
+                <span className="font-normal text-black/35">
+                  (one per line)
+                </span>
+                <textarea
+                  rows={3}
+                  value={draft.details.join("\n")}
+                  onChange={(event) =>
+                    updateDraft(
+                      "details",
+                      event.target.value.split("\n").filter(Boolean),
+                    )
+                  }
+                />
+              </label>
+              <label className={`${formFieldClasses} sm:col-span-2`}>
+                Size guide{" "}
+                <span className="font-normal text-black/45">
+                  UK 6: 24cm — one size per line
+                </span>
+                <textarea
+                  rows={3}
+                  value={draft.sizeGuide
+                    .map((item) => `${item.size}: ${item.footLength}`)
+                    .join("\n")}
+                  onChange={(event) =>
+                    updateDraft(
+                      "sizeGuide",
+                      event.target.value
+                        .split("\n")
+                        .map((line) => {
+                          const [size, footLength] = line.split(":");
+                          return {
+                            size: (size ?? "").trim(),
+                            footLength: (footLength ?? "").trim(),
+                          };
+                        })
+                        .filter((item) => item.size && item.footLength),
+                    )
+                  }
+                />
+              </label>
+            </div>
+          </section>
+          <details className="rounded-2xl border border-black/10 bg-white p-4 sm:p-5">
+            <summary className="cursor-pointer text-sm font-semibold">
+              Sizes & colour variants
+            </summary>
             <label className="mt-4 flex items-center gap-3 text-sm">
               <input
                 type="checkbox"
@@ -194,7 +447,7 @@ export default function ProductEditorDialog({
               Create a separate product for each colour, with its own image and
               price. Use the same group name to link their colour options.
             </p>
-            <label className="admin-field mt-5">
+            <label className={`${formFieldClasses} mt-5`}>
               Colour group
               <input
                 value={draft.variant_group ?? ""}
@@ -244,7 +497,7 @@ export default function ProductEditorDialog({
                 </p>
                 <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
                   {productSizes.map((size) => (
-                    <label key={size} className="admin-field">
+                    <label key={size} className={formFieldClasses}>
                       {size}
                       <input
                         type="number"
@@ -263,9 +516,11 @@ export default function ProductEditorDialog({
                 </div>
               </>
             )}
-          </section>
-          <section className="rounded-[22px] border border-black/10 bg-[#F8F6F1] p-4 sm:p-5">
-            <h4 className="text-base font-semibold">Complete the look</h4>
+          </details>
+          <details className="rounded-2xl border border-black/10 bg-white p-4 sm:p-5">
+            <summary className="cursor-pointer text-sm font-semibold">
+              Complete the look
+            </summary>
             <p className="mt-2 text-xs text-black/50">
               Choose up to four matching products. Only available products
               appear on the storefront.
@@ -305,144 +560,7 @@ export default function ProductEditorDialog({
                   </label>
                 ))}
             </div>
-            <h4 className="flex items-center gap-2 text-base font-semibold">
-              <FiImage size={17} /> Product images
-            </h4>
-            <p className="mt-1 text-xs leading-6 text-black/45">
-              Choose a main photo and add more views to the gallery.
-            </p>
-            <div className="mt-5 flex items-center gap-4 rounded-2xl bg-[#E9E2D7] p-4">
-              <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-[#F4F1E9]">
-                {draft.image ? (
-                  <Image
-                    src={draft.image}
-                    alt="Main product preview"
-                    fill
-                    sizes="96px"
-                    className="object-contain p-2"
-                  />
-                ) : (
-                  <div className="flex h-full items-center justify-center text-black/30">
-                    <FiImage size={28} />
-                  </div>
-                )}
-              </div>
-              <div className="min-w-0">
-                <p className="text-sm font-medium">Main product photo</p>
-                <p className="mt-2 text-xs leading-5 text-black/50">
-                  {draft.image
-                    ? "Preview of the image shown in your collection."
-                    : "Upload a photo or add an image URL below."}
-                </p>
-              </div>
-            </div>
-            <div className="mt-5 grid gap-5">
-              <label className="admin-field">
-                Image URL
-                <input
-                  value={
-                    draft.image.startsWith("data:")
-                      ? "Uploaded image"
-                      : draft.image
-                  }
-                  onChange={(event) => updateDraft("image", event.target.value)}
-                />
-              </label>
-              <label className="admin-field sm:col-span-2">
-                Gallery URLs{" "}
-                <span className="font-normal text-black/35">
-                  (one HTTPS URL per line)
-                </span>
-                <textarea
-                  rows={3}
-                  value={draft.gallery.join("\n")}
-                  onChange={(event) =>
-                    updateDraft(
-                      "gallery",
-                      event.target.value
-                        .split("\n")
-                        .map((value) => value.trim())
-                        .filter(Boolean),
-                    )
-                  }
-                />
-              </label>
-              <label className="admin-field sm:col-span-2">
-                Upload image
-                <input
-                  type="file"
-                  accept="image/png,image/jpeg,image/webp"
-                  onChange={uploadImage}
-                  className="file:mr-3 file:border-0 file:bg-[#b66b4d] file:px-3 file:py-2 file:text-white"
-                />
-                <span className="mt-1 text-[10px] text-black/40">
-                  <FiImage className="mr-1 inline" size={12} /> Use a product
-                  image or paste a public image URL.
-                </span>
-              </label>
-            </div>
-          </section>
-          <section className="rounded-[22px] border border-black/10 bg-[#F8F6F1] p-4 sm:p-5">
-            <h4 className="text-base font-semibold">Description & fit</h4>
-            <p className="mt-1 text-xs leading-6 text-black/45">
-              Help customers understand the product and choose their size.
-            </p>
-            <div className="mt-5 grid gap-5">
-              <label className="admin-field sm:col-span-2">
-                Product description
-                <textarea
-                  rows={4}
-                  value={draft.description}
-                  onChange={(event) =>
-                    updateDraft("description", event.target.value)
-                  }
-                />
-              </label>
-              <label className="admin-field sm:col-span-2">
-                Product details{" "}
-                <span className="font-normal text-black/35">
-                  (one per line)
-                </span>
-                <textarea
-                  rows={3}
-                  value={draft.details.join("\n")}
-                  onChange={(event) =>
-                    updateDraft(
-                      "details",
-                      event.target.value.split("\n").filter(Boolean),
-                    )
-                  }
-                />
-              </label>
-              <label className="admin-field sm:col-span-2">
-                Size guide{" "}
-                <span className="font-normal text-black/45">
-                  UK 6: 24cm — one size per line
-                </span>
-                <textarea
-                  rows={3}
-                  value={draft.sizeGuide
-                    .map((item) => `${item.size}: ${item.footLength}`)
-                    .join("\n")}
-                  onChange={(event) =>
-                    updateDraft(
-                      "sizeGuide",
-                      event.target.value
-                        .split("\n")
-                        .map((line) => {
-                          const [size, footLength] = line.split(":");
-                          return {
-                            size: (size ?? "").trim(),
-                            footLength: (footLength ?? "").trim(),
-                          };
-                        })
-                        .filter((item) => item.size && item.footLength),
-                    )
-                  }
-                />
-              </label>
-            </div>
-          </section>
+          </details>
         </div>
         <div className="shrink-0 border-t border-black/10 bg-[#F8F6F1] px-5 py-4 sm:px-7">
           {error && (

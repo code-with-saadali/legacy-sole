@@ -87,7 +87,7 @@ export default function NewArrivals() {
 
         <Link
           href={`/products/${product.slug}`}
-          className="group relative min-h-115 overflow-hidden rounded-[28px] bg-[#E8E1D6] sm:min-h-140 lg:min-h-170 lg:rounded-[34px]"
+          className="group relative min-h-115 overflow-hidden rounded-[28px] bg-[#E9E2D7] sm:min-h-140 lg:min-h-170 lg:rounded-[34px]"
         >
           <span className="pointer-events-none absolute left-1/2 top-[7%] -translate-x-1/2 whitespace-nowrap text-[clamp(80px,11vw,170px)] font-semibold leading-none tracking-[-0.085em] text-black/[0.035]">
             NEW
@@ -116,7 +116,7 @@ export default function NewArrivals() {
               fill
               priority
               sizes="(max-width: 1023px) 90vw, 58vw"
-              className="object-contain drop-shadow-[0_35px_28px_rgba(0,0,0,0.12)] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.035] group-hover:-rotate-1"
+              className="object-contain transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.035] group-hover:-rotate-1"
             />
           </div>
 

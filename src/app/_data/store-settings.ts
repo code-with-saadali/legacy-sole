@@ -1,10 +1,13 @@
+import type { MenuColumn } from "./navigation";
 export type StoreSettings = {
+  menu_columns: MenuColumn[];
   whatsapp: string;
   default_shipping: number;
   free_shipping_minimum: number;
   city_rates: Record<string, number>;
 };
 export const defaultSettings: StoreSettings = {
+  menu_columns: [],
   whatsapp: "923023898785",
   default_shipping: 250,
   free_shipping_minimum: 10000,

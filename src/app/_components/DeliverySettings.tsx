@@ -1,4 +1,5 @@
 "use client";
+import { formFieldClasses } from "../_styles/form-classes";
 import { useState, type FormEvent } from "react";
 import { supabase } from "../../lib/supabase";
 import { useStoreSettings } from "./StoreSettingsProvider";
@@ -68,7 +69,7 @@ export default function DeliverySettings() {
     }
   };
   return (
-    <section className="admin-panel rounded-[28px] border border-black/[0.06] bg-white p-5 sm:p-7">
+    <section className="bg-white rounded-[20px] shadow-[0_2px_12px_#20211e04]  border border-black/[0.06]  p-5 sm:p-7">
       <h2 className="text-2xl font-medium tracking-tight">
         Delivery & support
       </h2>
@@ -81,11 +82,11 @@ export default function DeliverySettings() {
         className="mt-5 space-y-4"
       >
         <fieldset disabled={busy} className="grid gap-4 sm:grid-cols-2">
-          <label className="admin-field">
+          <label className={formFieldClasses}>
             WhatsApp number
             <input name="whatsapp" required defaultValue={settings.whatsapp} />
           </label>
-          <label className="admin-field">
+          <label className={formFieldClasses}>
             Default delivery (Rs.)
             <input
               name="default_shipping"
@@ -97,7 +98,7 @@ export default function DeliverySettings() {
               defaultValue={settings.default_shipping}
             />
           </label>
-          <label className="admin-field">
+          <label className={formFieldClasses}>
             Free delivery from (Rs.)
             <input
               name="free_shipping_minimum"
@@ -108,7 +109,7 @@ export default function DeliverySettings() {
               defaultValue={settings.free_shipping_minimum}
             />
           </label>
-          <label className="admin-field sm:col-span-2">
+          <label className={`${formFieldClasses} sm:col-span-2`}>
             City delivery charges
             <textarea
               name="rates"

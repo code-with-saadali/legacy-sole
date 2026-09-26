@@ -43,11 +43,11 @@ export default function ProductLineup() {
 
           <h2
             id="collection-title"
-            className="mt-4 max-w-190 text-[clamp(40px,5vw,68px)] font-medium leading-[0.95] tracking-[-0.055em] text-[#20211e]"
+            className="mt-4 max-w-190 text-[clamp(40px,5vw,68px)] font-medium leading-[0.95] tracking-tighter text-[#20211e]"
           >
             Your everyday
             <br />
-            <span className="font-serif font-normal italic text-[#ed682c]">
+            <span className="text-[#ed682c]">
               rotation, refined.
             </span>
           </h2>
@@ -100,7 +100,7 @@ export default function ProductLineup() {
         {visible.map((product) => (
           <article key={product.slug} className="group min-w-0">
             <Link href={`/products/${product.slug}`} className="block">
-              <div className="relative aspect-[1.08] overflow-hidden rounded-[26px] bg-[#EAE3D8] lg:rounded-[30px]">
+              <div className="relative aspect-[1.08] overflow-hidden rounded-[26px] bg-[#E9E2D7] lg:rounded-[30px]">
                 <div className="absolute left-5 top-5 z-10 flex items-center rounded-full border border-black/10 bg-[#F8F6F1]/85 px-3 py-2 backdrop-blur-md">
                   <span className="text-[8px] font-medium uppercase tracking-[0.16em] text-black/55">
                     {product.featured ? "Featured / " : ""}
@@ -123,7 +123,7 @@ export default function ProductLineup() {
                     alt={`${product.name}, ${product.color}`}
                     fill
                     sizes="(max-width: 639px) 90vw, (max-width: 1023px) 45vw, 30vw"
-                    className="object-contain drop-shadow-[0_26px_24px_rgba(0,0,0,0.1)] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.045]"
+                    className="object-contain transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.045]"
                   />
                 </div>
 

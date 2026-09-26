@@ -19,7 +19,9 @@ export default function useRewardsQuote(
   reference: string,
   points: number,
 ) {
+  const [attempt, setAttempt] = useState(0);
   const key = JSON.stringify({
+    attempt,
     items: items.map(({ slug, size, quantity, price }) => ({
       slug,
       size,
@@ -85,5 +87,6 @@ export default function useRewardsQuote(
     quote: result.key === key ? result.quote : null,
     quoteError: result.key === key ? result.error : "",
     quoting: result.key !== key && items.length > 0,
+    retryQuote: () => setAttempt((value) => value + 1),
   };
 }

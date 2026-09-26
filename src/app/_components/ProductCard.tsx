@@ -6,7 +6,7 @@ import WishlistButton from "./WishlistButton";
 export default function ProductCard({ product }: { product: Product }) {
   return (
     <article className="group min-w-0">
-      <div className="relative overflow-hidden rounded-3xl bg-[#E9E3D9]">
+      <div className="relative overflow-hidden rounded-3xl bg-[#E9E2D7]">
         <Link
           href={`/products/${product.slug}`}
           className="relative block aspect-[0.95]"

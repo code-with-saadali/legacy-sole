@@ -120,7 +120,7 @@ export default function ReviewForm({
             minLength={2}
             maxLength={80}
             autoComplete="name"
-            className="checkout-input mt-2 rounded-xl"
+            className="w-full border border-black/14 bg-[#f8f6f1]/70 px-[0.9rem] py-[0.85rem] text-xs outline-none focus:border-[#b66b4d] focus:ring-1 focus:ring-[#b66b4d] mt-2 rounded-xl"
             placeholder="Name shown with your review"
           />
         </label>
@@ -132,7 +132,7 @@ export default function ReviewForm({
             minLength={5}
             maxLength={1000}
             rows={4}
-            className="checkout-input mt-2 rounded-xl"
+            className="w-full border border-black/14 bg-[#f8f6f1]/70 px-[0.9rem] py-[0.85rem] text-xs outline-none focus:border-[#b66b4d] focus:ring-1 focus:ring-[#b66b4d] mt-2 rounded-xl"
             placeholder="What worked well? How was the fit?"
           />
         </label>
@@ -147,7 +147,7 @@ export default function ReviewForm({
             <input
               name="orderReference"
               maxLength={100}
-              className="checkout-input mt-2 rounded-xl"
+              className="w-full border border-black/14 bg-[#f8f6f1]/70 px-[0.9rem] py-[0.85rem] text-xs outline-none focus:border-[#b66b4d] focus:ring-1 focus:ring-[#b66b4d] mt-2 rounded-xl"
               placeholder="LS-..."
             />
           </label>
@@ -157,7 +157,7 @@ export default function ReviewForm({
               name="email"
               type="email"
               maxLength={500}
-              className="checkout-input mt-2 rounded-xl"
+              className="w-full border border-black/14 bg-[#f8f6f1]/70 px-[0.9rem] py-[0.85rem] text-xs outline-none focus:border-[#b66b4d] focus:ring-1 focus:ring-[#b66b4d] mt-2 rounded-xl"
               placeholder="you@example.com"
             />
           </label>

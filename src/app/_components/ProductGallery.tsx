@@ -1,13 +1,13 @@
 "use client";
 import { useState } from "react";
 import type { Product } from "../_data/products";
+import { productPhotos } from "../_data/product-poses";
 import ProductImage from "./ProductImage";
 import Modal from "./Modal";
 export default function ProductGallery({ product }: { product: Product }) {
-  const images = [
-    ...new Set([product.image, ...product.gallery].filter(Boolean)),
-  ];
-  const [active, setActive] = useState(images[0]);
+  const images = productPhotos(product.image, product.gallery);
+  const [selectedImage, setSelectedImage] = useState(images[0]);
+  const active = images.includes(selectedImage) ? selectedImage : images[0];
   const [zoom, setZoom] = useState(false);
   return (
     <div className="relative flex min-h-100 flex-col rounded-[30px] bg-[#E9E2D7] p-5 lg:min-h-130">
@@ -35,22 +35,25 @@ export default function ProductGallery({ product }: { product: Product }) {
         Tap image to enlarge
       </p>
       {images.length > 1 && (
-        <div className="mt-4 flex justify-center gap-2 overflow-x-auto">
+        <div
+          aria-label="Product photos"
+          className="mt-5 flex justify-center gap-3 overflow-x-auto pb-1"
+        >
           {images.map((image, index) => (
             <button
               key={image}
               type="button"
               aria-label={`View product photo ${index + 1}`}
               aria-pressed={active === image}
-              onClick={() => setActive(image)}
-              className={`relative h-16 w-16 shrink-0 rounded-xl border bg-[#F4F1E9] ${active === image ? "border-[#4b5a42]" : "border-transparent"}`}
+              onClick={() => setSelectedImage(image)}
+              className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border-2 bg-[#E9E2D7] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4b5a42] sm:h-24 sm:w-24 ${active === image ? "border-[#4b5a42]" : "border-transparent hover:border-[#4b5a42]/40"}`}
             >
               <ProductImage
                 src={image}
                 alt=""
                 fill
-                sizes="64px"
-                className="object-contain p-1"
+                sizes="(max-width: 639px) 80px, 96px"
+                className="object-contain p-2"
               />
             </button>
           ))}

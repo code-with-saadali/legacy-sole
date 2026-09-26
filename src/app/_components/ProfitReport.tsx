@@ -1,4 +1,5 @@
 "use client";
+import { formFieldClasses } from "../_styles/form-classes";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { supabase } from "../../lib/supabase";
 import type { Product } from "../_data/products";
@@ -85,7 +86,7 @@ function OrderCosts({
         </p>
         <form onSubmit={save} className="mt-4">
           <fieldset disabled={busy} className="grid gap-3 sm:grid-cols-3">
-            <label className="admin-field">
+            <label className={formFieldClasses}>
               Product cost (Rs.)
               <input
                 name="product"
@@ -95,7 +96,7 @@ function OrderCosts({
                 defaultValue={order.product_cost ?? ""}
               />
             </label>
-            <label className="admin-field">
+            <label className={formFieldClasses}>
               Delivery expense (Rs.)
               <input
                 name="delivery"
@@ -105,7 +106,7 @@ function OrderCosts({
                 defaultValue={order.delivery_cost ?? ""}
               />
             </label>
-            <label className="admin-field">
+            <label className={formFieldClasses}>
               Other expenses (Rs.)
               <input
                 name="other"
@@ -188,7 +189,7 @@ function ProductCost({ product }: { product: Product }) {
   return (
     <form onSubmit={save} className="mt-4">
       <fieldset disabled={busy} className="flex flex-wrap items-end gap-3">
-        <label className="admin-field">
+        <label className={formFieldClasses}>
           Purchase cost per unit (Rs.)
           <input
             type="number"
@@ -261,7 +262,7 @@ export default function ProfitReport({ products }: { products: Product[] }) {
   const product = products.find((item) => item.slug === selected);
   return (
     <div className="mt-8 space-y-6">
-      <section className="admin-panel rounded-[28px] border border-black/[0.06] bg-white p-5 sm:p-7">
+      <section className="bg-white rounded-[20px] shadow-[0_2px_12px_#20211e04]  border border-black/[0.06]  p-5 sm:p-7">
         <h2 className="text-xl font-semibold text-[#20211e]">
           Choose report dates
         </h2>
@@ -278,7 +279,7 @@ export default function ProfitReport({ products }: { products: Product[] }) {
           }}
           className="mt-5 grid items-end gap-4 sm:grid-cols-2 xl:grid-cols-[1fr_1fr_auto]"
         >
-          <label className="admin-field min-w-0">
+          <label className={`${formFieldClasses} min-w-0`}>
             From date
             <input
               className="min-w-0"
@@ -289,7 +290,7 @@ export default function ProfitReport({ products }: { products: Product[] }) {
               onChange={(event) => setStart(event.target.value)}
             />
           </label>
-          <label className="admin-field min-w-0">
+          <label className={`${formFieldClasses} min-w-0`}>
             To date (Pakistan time)
             <input
               className="min-w-0"
@@ -342,7 +343,7 @@ export default function ProfitReport({ products }: { products: Product[] }) {
               note="Closed orders that need your attention"
             />
           </div>
-          <section className="admin-panel rounded-[28px] border border-black/[0.06] bg-white p-5 sm:p-7">
+          <section className="bg-white rounded-[20px] shadow-[0_2px_12px_#20211e04]  border border-black/[0.06]  p-5 sm:p-7">
             <h2 className="text-xl font-semibold text-[#20211e]">
               Order costs & profit
             </h2>
@@ -389,7 +390,7 @@ export default function ProfitReport({ products }: { products: Product[] }) {
           </section>
         </>
       )}
-      <section className="admin-panel rounded-[28px] border border-black/[0.06] bg-white p-5 sm:p-7">
+      <section className="bg-white rounded-[20px] shadow-[0_2px_12px_#20211e04]  border border-black/[0.06]  p-5 sm:p-7">
         <h2 className="text-xl font-semibold text-[#20211e]">
           Product purchase costs
         </h2>
@@ -398,7 +399,7 @@ export default function ProfitReport({ products }: { products: Product[] }) {
           Update existing orders in the list above.
         </p>
         <div className="mt-5 max-w-2xl rounded-2xl bg-[#F4F1E9] p-4 sm:p-5">
-          <label className="admin-field">
+          <label className={formFieldClasses}>
             Choose product
             <select
               value={selected}

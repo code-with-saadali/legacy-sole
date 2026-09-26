@@ -100,5 +100,26 @@ export default function useAdminOrderActions({
       setUpdating(null);
     }
   };
-  return { updating, updateStatus, saveShipment };
+  const deleteOrder = async (id: string) => {
+    if (!supabase || updating) return false;
+    setUpdating(id);
+    setError("");
+    try {
+      const { error } = await supabase.rpc("admin_delete_order", {
+        order_reference: id,
+      });
+      if (error) throw error;
+      setOrders((current) => current.filter((order) => order.id !== id));
+      return true;
+    } catch (cause) {
+      setError(
+        (cause as { message?: string }).message ||
+          "Order could not be deleted.",
+      );
+      return false;
+    } finally {
+      setUpdating(null);
+    }
+  };
+  return { updating, updateStatus, saveShipment, deleteOrder };
 }

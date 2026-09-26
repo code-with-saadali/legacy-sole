@@ -47,6 +47,7 @@ export default function useAdminOrders() {
       const { data, error } = await client
         .from("orders")
         .select("*")
+        .is("deleted_at", null)
         .order("created_at", { ascending: false });
       if (!active || current !== version) return;
       if (error) {

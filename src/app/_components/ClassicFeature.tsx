@@ -11,7 +11,7 @@ export default function ClassicFeature() {
   if (!product) return null;
   return (
     <section className="bg-[#F7F4EE] px-[5%] py-16 lg:py-24">
-      <div className="grid overflow-hidden rounded-4xl border border-black/10 bg-[#ECE5DA] lg:grid-cols-[1.12fr_0.88fr] lg:rounded-[38px]">
+      <div className="grid overflow-hidden rounded-4xl border border-black/10 bg-[#E9E2D7] lg:grid-cols-[1.12fr_0.88fr] lg:rounded-[38px]">
         <Link
           href={`/products/${product.slug}`}
           className="group relative min-h-105 overflow-hidden sm:min-h-140 lg:min-h-170"
@@ -42,7 +42,7 @@ export default function ClassicFeature() {
               alt={`${product.name}, ${product.color}`}
               fill
               sizes="(max-width: 1023px) 90vw, 56vw"
-              className="object-contain drop-shadow-[0_34px_28px_rgba(0,0,0,0.11)] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.025]"
+              className="object-contain transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.025]"
             />
           </div>
 
@@ -68,10 +68,10 @@ export default function ClassicFeature() {
               Timeless For A Reason
             </p>
 
-            <h2 className="mt-5 max-w-140 text-[clamp(42px,5vw,72px)] font-medium leading-[0.92] tracking-[-0.06em] text-[#20211e]">
+            <h2 className="mt-5 max-w-140 text-[clamp(42px,5vw,72px)] font-medium leading-[0.92] tracking-tighter text-[#20211e]">
               The pair that
               <br />
-              <span className="font-serif font-normal italic text-[#ed682c]">
+              <span className="text-[#ed682c]">
                 always works.
               </span>
             </h2>

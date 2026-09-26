@@ -76,7 +76,7 @@ export default function StyleGuide() {
           <article key={look.number} className="group">
             <Link
               href={`/products/${look.slug}`}
-              className="relative block aspect-4/5 overflow-hidden rounded-3xl bg-[#EDE7DD] lg:rounded-[28px]"
+              className="relative block aspect-4/5 overflow-hidden rounded-3xl bg-[#E9E2D7] lg:rounded-[28px]"
             >
               <div className="absolute left-5 top-5 z-10 flex items-center gap-2">
                 <span className="text-[9px] font-medium uppercase tracking-[0.18em] text-black/35">

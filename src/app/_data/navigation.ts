@@ -1,3 +1,8 @@
+export type MenuColumn = {
+  title: string;
+  caption: string;
+  links: { label: string; href: string }[];
+};
 export const menuColumns = [
   {
     title: "Shop",
@@ -40,3 +45,29 @@ export const menuColumns = [
     ],
   },
 ];
+
+export function menuCategories(columns: MenuColumn[]) {
+  return Array.from(
+    new Set(
+      columns.flatMap((column) =>
+        column.links.flatMap(({ href }) => {
+          if (!href.startsWith("/shop?")) return [];
+          const category = new URLSearchParams(
+            href.split("?")[1].split("#")[0],
+          ).get("category");
+          return category ? [category] : [];
+        }),
+      ),
+    ),
+  );
+}
+export function validMenuHref(href: string) {
+  if (/\s|\\/.test(href)) return false;
+  if (href.startsWith("/") && !href.startsWith("//")) return true;
+  try {
+    const url = new URL(href);
+    return url.protocol === "https:" && !!url.hostname;
+  } catch {
+    return false;
+  }
+}

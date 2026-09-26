@@ -1,6 +1,7 @@
 "use client";
 
 import ProductCard from "../../_components/ProductCard";
+import Image from "../../_components/ProductImage";
 import type { Product } from "../../_data/products";
 import { SortDropdown } from "./ShopFilters";
 
@@ -11,6 +12,8 @@ export const sortOptions = [
 ];
 
 type ShopProductsProps = {
+  category: string;
+  categoryImage: string;
   products: Product[];
   totalCount: number;
   sort: string;
@@ -19,6 +22,8 @@ type ShopProductsProps = {
 };
 
 export default function ShopProducts({
+  category,
+  categoryImage,
   products,
   totalCount,
   sort,
@@ -28,11 +33,22 @@ export default function ShopProducts({
   return (
     <section className="min-w-0">
       <div className="relative mb-7 flex flex-wrap items-center justify-between gap-4 border-b border-black/10 pb-5">
-        <p className="text-[12px] text-black/45">
-          Showing{" "}
-          <span className="font-medium text-[#20211e]">{products.length}</span>{" "}
-          of {totalCount} styles
-        </p>
+        <div>
+          <h2 className="mb-1 text-xl font-medium tracking-tight text-[#20211e]">
+            {category === "All shoes" ? "The full collection" : category}
+          </h2>
+          <p
+            aria-live="polite"
+            aria-atomic="true"
+            className="text-[12px] text-black/45"
+          >
+            Showing{" "}
+            <span className="font-medium text-[#20211e]">
+              {products.length}
+            </span>{" "}
+            of {totalCount} styles
+          </p>
+        </div>
 
         <SortDropdown
           sort={sort}
@@ -42,7 +58,25 @@ export default function ShopProducts({
       </div>
 
       {products.length === 0 ? (
-        <div className="flex min-h-[420px] flex-col items-center justify-center rounded-[28px] border border-black/10 bg-[#ECE6DC] px-6 text-center">
+        <div className="flex min-h-[420px] flex-col items-center justify-center rounded-[28px] border border-black/10 bg-[#ECE6DC] px-6 py-10 text-center">
+          <div className="relative mb-6 size-48 overflow-hidden rounded-full border border-black/10 bg-[#f2f3f3] sm:size-60">
+            <Image
+              src={categoryImage}
+              alt={
+                category === "All shoes"
+                  ? "Footwear collection"
+                  : `${category} category illustration`
+              }
+              fill
+              sizes="(max-width: 639px) 192px, 240px"
+              className="object-contain"
+            />
+          </div>
+          {category !== "All shoes" && (
+            <h2 className="mb-2 text-sm font-semibold uppercase tracking-[0.15em] text-[#b64b18]">
+              {category}
+            </h2>
+          )}
           <p className="text-[26px] font-medium tracking-[-0.03em] text-[#20211e]">
             No pairs found.
           </p>

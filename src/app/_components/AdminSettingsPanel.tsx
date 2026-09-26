@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FiTruck, FiGift, FiMessageCircle, FiSliders } from "react-icons/fi";
 import DeliverySettings from "./DeliverySettings";
 import CouponManager from "./CouponManager";
+import NavigationSettings from "./NavigationSettings";
 import MetricCard from "./MetricCard";
 import { useStoreSettings } from "./StoreSettingsProvider";
 
@@ -12,7 +13,7 @@ export default function AdminSettingsPanel() {
   const { settings } = useStoreSettings();
   return (
     <div className="mt-7 space-y-6">
-      <div className="admin-welcome flex items-center justify-between gap-6 rounded-[28px] bg-[#20211e] p-6 text-white sm:p-8">
+      <div className="bg-[radial-gradient(ellipse_at_100%_0%,#775442_0%,transparent_65%)] flex items-center justify-between gap-6 rounded-[28px] bg-[#20211e] p-6 text-white sm:p-8">
         <div>
           <p className="text-[10px] uppercase tracking-[0.2em] text-[#E9E2D7]">
             The little details, taken care of
@@ -57,12 +58,17 @@ export default function AdminSettingsPanel() {
         />
       </div>
       <div className="grid items-start gap-6 xl:grid-cols-[240px_minmax(0,1fr)]">
-        <aside className="admin-panel rounded-[28px] border border-black/[0.06] p-5">
+        <aside className="bg-white rounded-[20px] shadow-[0_2px_12px_#20211e04]  border border-black/[0.06] p-5">
           <p className="mb-4 text-[10px] uppercase tracking-[0.16em] text-black/40">
             Store preferences
           </p>
           <nav aria-label="Settings sections" className="space-y-2">
             {[
+              {
+                label: "Navbar menu",
+                icon: FiSliders,
+                text: "Menu sections and links",
+              },
               {
                 label: "Delivery & support",
                 icon: FiTruck,
@@ -101,6 +107,8 @@ export default function AdminSettingsPanel() {
         <div className="min-w-0">
           {section === "Delivery & support" ? (
             <DeliverySettings />
+          ) : section === "Navbar menu" ? (
+            <NavigationSettings />
           ) : (
             <CouponManager />
           )}

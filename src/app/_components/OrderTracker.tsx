@@ -1,5 +1,6 @@
 "use client";
 
+import { formFieldClasses } from "../_styles/form-classes";
 import { FormEvent, useState } from "react";
 import OrderHelpForm from "./OrderHelpForm";
 import BuyAgain from "./BuyAgain";
@@ -50,11 +51,11 @@ export default function OrderTracker() {
           onSubmit={submit}
           className="mt-10 grid gap-3 border border-black/10 bg-[#F8F6F1] p-5 sm:grid-cols-[1fr_1fr_auto] sm:items-end"
         >
-          <label className="admin-field">
+          <label className={formFieldClasses}>
             Order reference
             <input required name="orderId" placeholder="LS-..." />
           </label>
-          <label className="admin-field">
+          <label className={formFieldClasses}>
             Checkout email
             <input
               required

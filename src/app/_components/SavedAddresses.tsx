@@ -2,11 +2,18 @@
 import { useEffect, useState, type RefObject } from "react";
 
 type Address = Record<
-  "name" | "phone" | "address" | "city" | "postalCode",
+  "name" | "phone" | "address" | "area" | "city" | "postalCode",
   string
 >;
 const key = "legacy-sole-addresses";
-const fields = ["name", "phone", "address", "city", "postalCode"] as const;
+const fields = [
+  "name",
+  "phone",
+  "address",
+  "area",
+  "city",
+  "postalCode",
+] as const;
 export default function SavedAddresses({
   formRef,
   onCity,
@@ -27,7 +34,9 @@ export default function SavedAddresses({
             .filter(
               (row): row is Address =>
                 !!row &&
-                fields.every((field) => typeof row[field] === "string"),
+                fields.every(
+                  (field) => field === "area" || typeof row[field] === "string",
+                ),
             )
             .slice(0, 5),
         );
@@ -71,7 +80,7 @@ export default function SavedAddresses({
     for (const field of fields) {
       if (field === "city") continue;
       const input = formRef.current?.elements.namedItem(field);
-      if (input instanceof HTMLInputElement) input.value = address[field];
+      if (input instanceof HTMLInputElement) input.value = address[field] ?? "";
     }
     onCity(address.city);
     setMessage("Address filled in. You can edit the delivery details below.");
@@ -90,10 +99,12 @@ export default function SavedAddresses({
         {addresses.map((address, index) => (
           <div key={index} className="rounded-xl border border-black/10 p-3">
             <p className="text-sm">
-              {address.name} · {address.city}
+              {address.name} / {address.city}
             </p>
             <p className="mt-1 break-words text-xs text-black/55">
-              {address.address} · {address.postalCode}
+              {[address.address, address.area, address.postalCode]
+                .filter(Boolean)
+                .join(", ")}
             </p>
             <div className="mt-2 flex gap-4 text-xs">
               <button

@@ -12,7 +12,7 @@ type Props = {
 export default function MetricCard({ label, value, icon, note }: Props) {
   const Icon = icon;
   return (
-    <div className="admin-metric min-w-0 rounded-[28px] border border-black/[0.06] bg-white p-5">
+    <div className="bg-white rounded-[20px] shadow-[0_2px_12px_#20211e04] transition-[transform,box-shadow] duration-[180ms] ease-[ease] hover:shadow-[0_4px_16px_#20211e08] min-w-0  border border-black/[0.06]  p-5">
       <div className="flex items-center justify-between">
         <p className="text-[10px] uppercase tracking-[0.16em] text-black/45">
           {label}

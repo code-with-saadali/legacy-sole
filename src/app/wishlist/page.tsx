@@ -64,7 +64,7 @@ export default function WishlistPage() {
                   href={`/products/${product.slug}`}
                   className="group block"
                 >
-                  <div className="relative aspect-[1.05] bg-[#E9E3D9]">
+                  <div className="relative aspect-[1.05] bg-[#E9E2D7]">
                     <Image
                       src={product.image}
                       alt={product.name}

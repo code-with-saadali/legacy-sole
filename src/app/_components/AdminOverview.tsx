@@ -34,7 +34,7 @@ export default function AdminOverview({
   const stockCount = stockAlerts(products).length;
   return (
     <>
-      <div className="admin-welcome mt-7 flex flex-wrap items-center justify-between gap-5 rounded-[28px] bg-[#20211e] p-6 text-white sm:p-8">
+      <div className="bg-[radial-gradient(ellipse_at_100%_0%,#775442_0%,transparent_65%)] mt-7 flex flex-wrap items-center justify-between gap-5 rounded-[28px] bg-[#20211e] p-6 text-white sm:p-8">
         <div>
           <p className="text-[10px] uppercase tracking-[0.2em] text-[#E9E2D7]">
             Start here

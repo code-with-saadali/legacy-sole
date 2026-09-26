@@ -18,7 +18,7 @@ export default function RecentOrders({
 }: Props) {
   return (
     <div className="mt-8 w-full">
-      <section className="admin-panel rounded-[28px] border border-black/[0.06] bg-white p-5 sm:p-7">
+      <section className="bg-white rounded-[20px] shadow-[0_2px_12px_#20211e04]  border border-black/[0.06]  p-5 sm:p-7">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl text-[#20211e]">Recent orders</h2>
           <button

@@ -3,6 +3,10 @@
 import CustomSelect from "../../_components/CustomSelect";
 import { FiCheck } from "react-icons/fi";
 import { colourSwatchBackground } from "../../_data/colour-swatches";
+import Image from "../../_components/ProductImage";
+import { useCatalog } from "../../_components/CatalogProvider";
+import { categoryCollections } from "../../_data/storefront";
+import { categoryImages } from "../../_data/category-images";
 
 export const colourSwatches = [
   {
@@ -47,11 +51,18 @@ export default function ShopFilters({
   priceLimit,
   colours,
 }: ShopFiltersProps) {
+  const { products } = useCatalog();
+  const collectionImages = new Map(
+    categoryCollections(products).map(({ name, product }) => [
+      name,
+      product.image,
+    ]),
+  );
   const rangeProgress =
     ((maxPrice - MIN_PRICE) / (priceLimit - MIN_PRICE)) * 100;
 
   return (
-    <aside className="lg:sticky lg:top-28 lg:h-fit">
+    <aside aria-label="Filter products" className="lg:h-fit">
       <div className="space-y-8 pt-7">
         {/* CATEGORY */}
         <fieldset>
@@ -59,20 +70,40 @@ export default function ShopFilters({
             Category
           </legend>
 
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="mt-4 grid grid-cols-3 gap-x-3 gap-y-4">
             {categories.map((item) => (
               <button
                 key={item}
                 type="button"
                 onClick={() => onCategoryChange(item)}
                 aria-pressed={category === item}
-                className={`rounded-full px-4 py-2.5 text-[12px] font-medium transition-all duration-300 ${
+                className={`group flex min-w-0 flex-col items-center gap-2 text-center text-[11px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#b64b18] ${
                   category === item
-                    ? "bg-[#20211e] text-white"
-                    : "border border-black/10 text-black/55 hover:border-black/25 hover:text-black"
+                    ? "text-[#20211e]"
+                    : "text-black/55 hover:text-black"
                 }`}
               >
-                {item}
+                <span
+                  className={
+                    "relative block size-14 overflow-hidden rounded-full bg-[#E9E2D7] " +
+                    (category === item
+                      ? "ring-2 ring-[#ed682c] ring-offset-4 ring-offset-[#f4f1ea]"
+                      : "ring-1 ring-black/10 group-hover:ring-black/25")
+                  }
+                >
+                  <Image
+                    src={
+                      collectionImages.get(item) ||
+                      categoryImages[item] ||
+                      "/images/shoes/runner-cutout.png"
+                    }
+                    alt=""
+                    fill
+                    sizes="56px"
+                    className="object-contain"
+                  />
+                </span>
+                <span className="min-w-0 flex-1 break-words">{item}</span>
               </button>
             ))}
           </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { formFieldClasses } from "../_styles/form-classes";
 import BulkProductActions from "./BulkProductActions";
 import AdminProductCard from "./AdminProductCard";
 import ProductEditorDialog from "./ProductEditorDialog";
@@ -9,6 +10,7 @@ import { type Product } from "../_data/products";
 import { searchProducts, stockAlerts } from "../_data/admin";
 import { supabase } from "../../lib/supabase";
 import { inventoryError } from "../_data/inventory";
+import { productPhotos } from "../_data/product-poses";
 
 type Props = {
   initialProducts?: Product[];
@@ -132,7 +134,12 @@ export default function AdminProductEditor({
 
   const startEditing = (product: Product) => {
     setEditingSlug(product.slug);
-    setDraft({ ...product });
+    setDraft({
+      ...product,
+      gallery: productPhotos(product.image, product.gallery).filter(
+        (image) => image !== product.image,
+      ),
+    });
     setSaved("");
     setError("");
   };
@@ -165,9 +172,17 @@ export default function AdminProductEditor({
     setDraft((current) => (current ? { ...current, [key]: value } : current));
   };
 
-  const uploadImage = async (event: ChangeEvent<HTMLInputElement>) => {
+  const uploadImage = async (
+    event: ChangeEvent<HTMLInputElement>,
+    slot: number,
+  ) => {
     const file = event.target.files?.[0];
-    if (!file || !draft || !supabase || saving) return;
+    event.target.value = "";
+    if (!file || !draft || saving) return;
+    if (!supabase) {
+      setError("Supabase is not configured.");
+      return;
+    }
     if (
       !["image/png", "image/jpeg", "image/webp"].includes(file.type) ||
       file.size > 5 * 1024 * 1024
@@ -188,7 +203,14 @@ export default function AdminProductEditor({
       const { data } = supabase.storage
         .from("product-images")
         .getPublicUrl(path);
-      updateDraft("image", data.publicUrl);
+      setDraft((current) => {
+        if (!current) return current;
+        if (slot === 0) return { ...current, image: data.publicUrl };
+        const gallery = [...current.gallery];
+        while (gallery.length < slot) gallery.push("");
+        gallery[slot - 1] = data.publicUrl;
+        return { ...current, gallery };
+      });
     } catch (cause) {
       setError(
         (cause as { message?: string }).message || "Image upload failed.",
@@ -233,6 +255,18 @@ export default function AdminProductEditor({
       setError("Choose an image, a local image path or an HTTPS image URL.");
       return;
     }
+    if (
+      draft.gallery.some(
+        (image) =>
+          image &&
+          !/^(\/(?!\/)|https:\/\/|data:image\/(png|jpeg|webp);base64,)/.test(
+            image,
+          ),
+      )
+    ) {
+      setError("Use a local image path or HTTPS URL for each product photo.");
+      return;
+    }
     setSaving(true);
     try {
       const isNew = editingSlug === "new-product";
@@ -240,6 +274,11 @@ export default function AdminProductEditor({
       if (issue) throw new Error(issue);
       const savedDraft = {
         ...draft,
+        gallery: [
+          ...new Set(
+            draft.gallery.map((image) => image.trim()).filter(Boolean),
+          ),
+        ],
         stock: draft.size_stock
           ? Object.values(draft.size_stock).reduce(
               (sum, count) => sum + count,
@@ -314,11 +353,7 @@ export default function AdminProductEditor({
   };
 
   return (
-    <div className="admin-product-editor mt-6">
-      <BulkProductActions
-        products={visibleProducts}
-        onSaved={() => onProductsChange?.(editableProducts)}
-      />
+    <div className="[&_button]:rounded-[9px] mt-6">
       <div className="flex flex-col gap-3 rounded-[22px] border border-black/10 bg-[#F4F1E9] p-4 sm:flex-row sm:items-center">
         <label className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-black/10 bg-[#F8F6F1] px-4 py-3">
           <FiSearch aria-hidden="true" className="shrink-0 text-black/40" />
@@ -391,7 +426,7 @@ export default function AdminProductEditor({
           )}
         </div>
       )}
-      <div className="grid gap-5 sm:grid-cols-2 2xl:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {visibleProducts.map((product) => (
           <AdminProductCard
             key={product.slug}
@@ -409,7 +444,18 @@ export default function AdminProductEditor({
       )}
       {saved && <p className="mt-5 text-xs text-[#b66b4d]">{saved}</p>}
 
-      <section className="mt-8 rounded-[24px] border border-black/10 bg-[#F4F1E9] p-5 sm:p-6">
+      <BulkProductActions
+        products={visibleProducts}
+        onSaved={() => onProductsChange?.(editableProducts)}
+      />
+
+      <details className="mt-8 rounded-2xl border border-black/10 bg-white p-5 sm:p-6">
+        <summary className="cursor-pointer text-sm font-semibold">
+          Manage categories{" "}
+          <span className="ml-2 font-normal text-black/45">
+            ({allCategories.length})
+          </span>
+        </summary>
         <div className="flex items-center justify-between gap-3">
           <h3 className="text-xl font-medium">Categories</h3>
           <span className="rounded-full bg-[#E9E2D7] px-3 py-1 text-xs">
@@ -426,7 +472,7 @@ export default function AdminProductEditor({
           }}
           className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-end"
         >
-          <label className="admin-field min-w-0 flex-1">
+          <label className={`${formFieldClasses} min-w-0 flex-1`}>
             Category name
             <input
               value={newCategory}
@@ -468,7 +514,7 @@ export default function AdminProductEditor({
             Your categories will appear here.
           </p>
         )}
-      </section>
+      </details>
 
       {draft && editingSlug && (
         <ProductEditorDialog
@@ -479,6 +525,7 @@ export default function AdminProductEditor({
           error={error}
           saving={saving}
           onClose={() => {
+            if (saving) return;
             setEditingSlug(null);
             setDraft(null);
           }}

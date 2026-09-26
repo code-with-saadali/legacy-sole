@@ -117,7 +117,7 @@ export default function AdminAccess({
       </>
     );
   return (
-    <main className="admin-login flex min-h-screen items-center justify-center bg-[#F4F1E9] px-5 py-16">
+    <main className="bg-[radial-gradient(ellipse_at_10%_10%,#e9e2d7_0%,transparent_55%),radial-gradient(ellipse_at_100%_100%,#ece6dc_0%,transparent_50%)] [&_h1]:font-[inherit] [&>div]:border-[#20211e1a] [&>div]:shadow-[0_24px_70px_#20211e0d] [&>div]:rounded-[30px] flex min-h-screen items-center justify-center bg-[#F4F1E9] px-5 py-16">
       <div className="w-full max-w-md rounded-3xl border border-white/20 bg-[#F8F6F1] p-7 shadow-2xl sm:p-10">
         <Link
           href="/"

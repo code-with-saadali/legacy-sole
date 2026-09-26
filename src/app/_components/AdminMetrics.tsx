@@ -16,7 +16,7 @@ export default function AdminMetrics({ products, orders }: Props) {
       label: "Total products",
       value: products.length.toString().padStart(2, "0"),
       icon: FiBox,
-      note: "Pieces in your catalogue",
+      note: "Products in your store",
     },
     {
       label: "Collections",
@@ -24,10 +24,10 @@ export default function AdminMetrics({ products, orders }: Props) {
         .toString()
         .padStart(2, "0"),
       icon: FiPackage,
-      note: "Curated product edits",
+      note: "Product categories",
     },
     {
-      label: "New enquiries",
+      label: "Pending orders",
       value: orders
         .filter((order) => order.status === "Pending")
         .length.toString()
@@ -43,7 +43,7 @@ export default function AdminMetrics({ products, orders }: Props) {
     },
   ];
   return (
-    <div className="mt-6 grid gap-4 sm:grid-cols-2 2xl:grid-cols-4">
+    <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {metrics.map((metric) => (
         <MetricCard key={metric.label} {...metric} />
       ))}

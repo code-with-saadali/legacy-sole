@@ -40,15 +40,15 @@ const pageHelp: Record<AdminTab, { title: string; description: string }> = {
 
 export default function AdminHeader({ tab }: Props) {
   return (
-    <div className="flex flex-col justify-between gap-6 border-b border-black/10 pb-8 sm:flex-row sm:items-end">
+    <div className="flex flex-col justify-between gap-4 pb-2 sm:flex-row sm:items-end">
       <div>
         <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-black/40">
-          Store admin
+          Legacy Sole / Workspace
         </p>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-[#20211e] sm:text-4xl">
+        <h1 className="mt-3 text-2xl font-semibold tracking-tight text-[#20211e] sm:text-3xl">
           {pageHelp[tab].title}
         </h1>
-        <p className="mt-3 text-sm text-black/50">
+        <p className="mt-2 max-w-xl text-sm leading-6 text-black/55">
           {pageHelp[tab].description}
         </p>
       </div>

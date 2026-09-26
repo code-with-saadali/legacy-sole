@@ -4,7 +4,6 @@ import ProductGallery from "./ProductGallery";
 import SizeGuide from "./SizeGuide";
 import RelatedProducts from "./RelatedProducts";
 import CompleteTheLook from "./CompleteTheLook";
-
 import Link from "next/link";
 import { FiArrowLeft, FiCheck } from "react-icons/fi";
 import ProductActions from "./ProductActions";
@@ -58,7 +57,7 @@ export default function ProductDetailView({ slug }: { slug: string }) {
             {product.category} / Legacy Sole
           </p>
           <div className="flex items-start justify-between gap-5">
-            <h1 className="mt-4 text-[clamp(52px,7vw,96px)] leading-[0.85] text-[#20211e]">
+            <h1 className="mt-4 text-[clamp(52px,7vw,96px)] leading-none font-medium text-[#20211e]">
               {product.name}
             </h1>
             <WishlistButton

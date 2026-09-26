@@ -4,7 +4,6 @@ import ShopByCategory from "./_components/ShopByCategory";
 import NewArrivals from "./_components/NewArrivals";
 import ProductLineup from "./_components/ProductLineup";
 import ClassicFeature from "./_components/ClassicFeature";
-import BrandStory from "./_components/BrandStory";
 import StyleGuide from "./_components/StyleGuide";
 
 export default function Home() {
@@ -12,7 +11,6 @@ export default function Home() {
     <main>
       <Hero />
       <ShopByCategory />
-      <BrandStory />
       <NewArrivals />
       <ProductLineup />
       <ClassicFeature />

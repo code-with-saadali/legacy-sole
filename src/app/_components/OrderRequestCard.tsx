@@ -1,4 +1,5 @@
 "use client";
+import { formFieldClasses } from "../_styles/form-classes";
 import { useState } from "react";
 import { supabase } from "../../lib/supabase";
 import type { OrderRequest } from "../_data/order-requests";
@@ -65,7 +66,7 @@ export default function OrderRequestCard({
             (value) => ({ value, label: value }),
           )}
         />
-        <label className="admin-field">
+        <label className={formFieldClasses}>
           Reply to customer
           <textarea
             value={note}

@@ -1,4 +1,6 @@
 "use client";
+import { formFieldClasses } from "../_styles/form-classes";
+import { orderStatusClasses } from "../_data/order-status-styles";
 import CustomSelect from "./CustomSelect";
 
 import { useEffect, useRef, useState } from "react";
@@ -22,6 +24,7 @@ export default function AdminOrderDetails({
   onStatusChange,
   onShipmentSave,
   onResolved,
+  onDelete,
   updating,
   error,
 }: {
@@ -35,10 +38,12 @@ export default function AdminOrderDetails({
     dispatch: boolean,
   ) => Promise<boolean>;
   onResolved: (order: Order) => void;
+  onDelete: (id: string) => Promise<boolean>;
   updating: boolean;
   error: string;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const phone = whatsappPhone(order.customer.phone);
   const message = orderMessage(order);
   const [shipmentDraft, setShipmentDraft] = useState<{
@@ -92,7 +97,7 @@ export default function AdminOrderDetails({
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
-      className="fixed inset-0 m-auto max-h-[90dvh] w-[calc(100%_-_1.5rem)] max-w-4xl scrollbar-hidden overflow-y-auto rounded-[28px] border border-black/10 bg-[#F4F1E9] p-0 text-[#20211e] shadow-2xl backdrop:bg-black/45 backdrop:backdrop-blur-sm"
+      className="fixed inset-0 m-auto max-h-[90dvh] w-[calc(100%_-_1.5rem)] max-w-4xl [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:h-0 [&::-webkit-scrollbar]:w-0 overflow-y-auto rounded-[28px] border border-black/10 bg-[#F4F1E9] p-0 text-[#20211e] shadow-2xl backdrop:bg-black/45 backdrop:backdrop-blur-sm"
     >
       <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-black/10 bg-[#F4F1E9]/95 px-5 py-5 backdrop-blur-md sm:px-8">
         <div className="min-w-0">
@@ -107,7 +112,7 @@ export default function AdminOrderDetails({
           </h2>
           <div className="mt-3 flex flex-wrap items-center gap-3">
             <span
-              className={`admin-status-${order.status.toLowerCase()} rounded-full px-3 py-1 text-[11px] font-medium`}
+              className={`${orderStatusClasses[order.status] ?? ""} rounded-full px-3 py-1 text-[11px] font-medium`}
             >
               {order.status}
             </span>
@@ -149,6 +154,7 @@ export default function AdminOrderDetails({
             </h3>
             <p className="mt-4 whitespace-pre-wrap break-words text-sm leading-7">
               {order.customer.address}
+              {order.customer.area && <>, {order.customer.area}</>}
               <br />
               {order.customer.city} {order.customer.postalCode}
             </p>
@@ -248,7 +254,7 @@ export default function AdminOrderDetails({
             }
             className="mt-4 grid gap-4 disabled:opacity-60 sm:grid-cols-2"
           >
-            <label className="admin-field">
+            <label className={formFieldClasses}>
               Courier name
               <input
                 maxLength={80}
@@ -263,7 +269,7 @@ export default function AdminOrderDetails({
                 }}
               />
             </label>
-            <label className="admin-field">
+            <label className={formFieldClasses}>
               Tracking number
               <input
                 maxLength={100}
@@ -303,6 +309,49 @@ export default function AdminOrderDetails({
             </p>
           )}
         </form>
+        <section className="mt-5 rounded-2xl border border-red-200 p-5">
+          <h3 className="text-sm font-semibold">Delete order</h3>
+          <p className="mt-2 text-xs leading-5 text-black/60">
+            Remove this order from the admin list. Stock and loyalty balances
+            stay unchanged; the database record is retained for order history.
+          </p>
+          {confirmDelete ? (
+            <div className="mt-3">
+              <p className="break-all text-xs font-medium">
+                Delete {order.id} for {order.customer.name}?
+              </p>
+              <div className="mt-3 flex gap-3">
+                <button
+                  type="button"
+                  disabled={updating}
+                  onClick={async () => {
+                    if (await onDelete(order.id)) onClose();
+                  }}
+                  className="rounded-full bg-red-700 px-5 py-3 text-xs text-white disabled:opacity-50"
+                >
+                  {updating ? "Please wait..." : "Confirm delete"}
+                </button>
+                <button
+                  type="button"
+                  disabled={updating}
+                  onClick={() => setConfirmDelete(false)}
+                  className="rounded-full border border-black/15 px-5 py-3 text-xs"
+                >
+                  Keep order
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              disabled={updating}
+              onClick={() => setConfirmDelete(true)}
+              className="mt-3 rounded-full border border-red-300 px-5 py-3 text-xs font-medium text-red-700 disabled:opacity-50"
+            >
+              Delete order
+            </button>
+          )}
+        </section>
         {error && (
           <p role="alert" className="mt-3 text-sm text-red-700">
             {error}

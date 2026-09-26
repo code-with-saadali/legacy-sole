@@ -8,8 +8,9 @@ export function readShopFilters(params: Pick<URLSearchParams, "get">) {
   const price = params.get("maxPrice");
   const parsedPrice = price?.trim() ? Number(price) : NaN;
   const sortKey = params.get("sort") ?? "featured";
+  const category = params.get("category")?.trim() || "All shoes";
   return {
-    category: params.get("category")?.trim() || "All shoes",
+    category: category === "Runners" ? "Running" : category,
     colour: params.get("colour")?.trim() || "All colours",
     maxPrice:
       Number.isSafeInteger(parsedPrice) && parsedPrice >= 0

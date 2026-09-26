@@ -58,7 +58,7 @@ export default function CheckoutRewards({
       <label className="block">
         Previous order reference
         <input
-          className="checkout-input mt-2"
+          className="w-full border border-black/14 bg-[#f8f6f1]/70 px-[0.9rem] py-[0.85rem] text-xs outline-none focus:border-[#b66b4d] focus:ring-1 focus:ring-[#b66b4d] mt-2"
           value={reference}
           placeholder="LS-..."
           onChange={(event) => {
@@ -87,7 +87,7 @@ export default function CheckoutRewards({
           <label className="block">
             Points to use
             <input
-              className="checkout-input mt-2"
+              className="w-full border border-black/14 bg-[#f8f6f1]/70 px-[0.9rem] py-[0.85rem] text-xs outline-none focus:border-[#b66b4d] focus:ring-1 focus:ring-[#b66b4d] mt-2"
               type="number"
               min={0}
               max={balance}

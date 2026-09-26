@@ -1,4 +1,5 @@
 "use client";
+import { formFieldClasses } from "../_styles/form-classes";
 import { useState, type FormEvent } from "react";
 import { supabase } from "../../lib/supabase";
 import useAdminRows from "../_hooks/useAdminRows";
@@ -30,16 +31,14 @@ export default function CouponManager() {
     setError("");
     try {
       const expiry = String(form.get("expires") ?? "");
-      const { error } = await supabase
-        .from("coupons")
-        .insert({
-          code: String(form.get("code")).trim().toUpperCase(),
-          kind,
-          amount: Number(form.get("amount")),
-          minimum: Number(form.get("minimum")),
-          max_uses: form.get("max_uses") ? Number(form.get("max_uses")) : null,
-          expires_at: expiry ? new Date(expiry).toISOString() : null,
-        });
+      const { error } = await supabase.from("coupons").insert({
+        code: String(form.get("code")).trim().toUpperCase(),
+        kind,
+        amount: Number(form.get("amount")),
+        minimum: Number(form.get("minimum")),
+        max_uses: form.get("max_uses") ? Number(form.get("max_uses")) : null,
+        expires_at: expiry ? new Date(expiry).toISOString() : null,
+      });
       if (error) throw error;
       element.reset();
       setMessage("Coupon created.");
@@ -64,14 +63,14 @@ export default function CouponManager() {
     setBusy(false);
   };
   return (
-    <section className="admin-panel rounded-[28px] border border-black/[0.06] bg-white p-5 sm:p-7">
+    <section className="bg-white rounded-[20px] shadow-[0_2px_12px_#20211e04]  border border-black/[0.06]  p-5 sm:p-7">
       <h2 className="text-2xl font-medium tracking-tight">Discount coupons</h2>
       <form onSubmit={save} className="mt-5">
         <fieldset
           disabled={busy}
           className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
         >
-          <label className="admin-field">
+          <label className={formFieldClasses}>
             Code
             <input
               required
@@ -81,7 +80,7 @@ export default function CouponManager() {
               placeholder="e.g. WELCOME10"
             />
           </label>
-          <div className="admin-field">
+          <div className={formFieldClasses}>
             Discount type
             <CustomSelect
               label="Coupon discount type"
@@ -94,7 +93,7 @@ export default function CouponManager() {
               ]}
             />
           </div>
-          <label className="admin-field">
+          <label className={formFieldClasses}>
             {kind === "percent" ? "Discount (%)" : "Discount (Rs.)"}
             <input
               required
@@ -105,7 +104,7 @@ export default function CouponManager() {
               step="1"
             />
           </label>
-          <label className="admin-field">
+          <label className={formFieldClasses}>
             Minimum subtotal
             <input
               required
@@ -116,11 +115,11 @@ export default function CouponManager() {
               defaultValue="0"
             />
           </label>
-          <label className="admin-field">
+          <label className={formFieldClasses}>
             Maximum uses (optional)
             <input name="max_uses" type="number" min="1" step="1" />
           </label>
-          <label className="admin-field">
+          <label className={formFieldClasses}>
             Expires at (optional)
             <input name="expires" type="datetime-local" />
           </label>

@@ -160,14 +160,14 @@ revoke insert on public.reviews from anon,authenticated;
 revoke all on function public.submit_purchase_review(text,text,integer,text,text[],text,text) from public;
 grant execute on function public.submit_purchase_review(text,text,integer,text,text[],text,text) to anon,authenticated;
 create function public.profit_report(start_date date,end_date date) returns jsonb
-language plpgsql stable security definer set search_path='' as $
+language plpgsql stable security definer set search_path='' as $$
 begin
   if not public.is_store_admin() then raise exception 'Admin access required'; end if;
   if start_date is null or end_date is null or start_date>end_date then raise exception 'Choose a valid date range'; end if;
   return coalesce((select jsonb_agg(jsonb_build_object('id',o.id,'created_at',o.created_at,'status',o.status,'total',o.total,'stock_restored',o.stock_restored,'product_cost',f.product_cost,'delivery_cost',f.delivery_cost,'other_cost',coalesce(f.other_cost,0)) order by o.created_at desc,o.id)
     from public.orders o left join public.order_financials f on f.order_id=o.id
     where o.created_at>=start_date::timestamp at time zone 'Asia/Karachi' and o.created_at<(end_date+1)::timestamp at time zone 'Asia/Karachi'),'[]'::jsonb);
-end; $;
+end; $$;
 revoke all on function public.profit_report(date,date) from public;
 grant execute on function public.profit_report(date,date) to authenticated;
 commit;

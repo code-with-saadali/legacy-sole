@@ -1,4 +1,5 @@
 "use client";
+import { formFieldClasses } from "../_styles/form-classes";
 import { useState, type FormEvent } from "react";
 import { supabase } from "../../lib/supabase";
 import type { TrackedOrder } from "../_data/order-requests";
@@ -91,7 +92,7 @@ export default function OrderHelpForm({
               options={productSizes.map((value) => ({ value, label: value }))}
             />
           )}
-          <label className="admin-field">
+          <label className={formFieldClasses}>
             Reason
             <textarea
               required

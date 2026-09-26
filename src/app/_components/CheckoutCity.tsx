@@ -45,7 +45,7 @@ export default function CheckoutCity({
             disabled={disabled}
             maxLength={80}
             onChange={(event) => onCityChange(event.target.value)}
-            className="checkout-input mt-2 rounded-xl"
+            className="w-full border border-black/14 bg-[#f8f6f1]/70 px-[0.9rem] py-[0.85rem] text-xs outline-none focus:border-[#b66b4d] focus:ring-1 focus:ring-[#b66b4d] mt-2 rounded-xl"
             autoComplete="address-level2"
           />
         </label>

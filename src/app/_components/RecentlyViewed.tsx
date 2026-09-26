@@ -76,7 +76,7 @@ export default function RecentlyViewed() {
         role="region"
         aria-label="Recently viewed products, scroll to see more"
         tabIndex={0}
-        className="scrollbar-hidden mt-7 flex cursor-grab gap-6 overflow-x-auto overscroll-x-contain pb-5 active:cursor-grabbing focus-visible:outline-2 focus-visible:outline-offset-4"
+        className="[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:h-0 [&::-webkit-scrollbar]:w-0 mt-7 flex cursor-grab gap-6 overflow-x-auto overscroll-x-contain pb-5 active:cursor-grabbing focus-visible:outline-2 focus-visible:outline-offset-4"
         onDragStart={(event) => event.preventDefault()}
         onPointerDown={(event) => {
           drag.current.moved = false;

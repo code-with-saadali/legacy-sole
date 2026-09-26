@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   FiArrowUpRight,
+  FiTrendingUp,
   FiBox,
   FiShoppingBag,
   FiPackage,
@@ -24,19 +25,19 @@ export default function AdminNavigation({
   return (
     <>
       {" "}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-black/10 bg-[#20211e] px-6 py-8 text-white lg:flex lg:flex-col">
-        <Link href="/" className="border-b border-white/10 pb-8">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-black/10 bg-white px-5 py-8 text-[#20211e] lg:flex lg:flex-col">
+        <Link href="/" className="border-b border-black/8 pb-8">
           <Image
             width={110}
             height={50}
-            src="/logo-white.svg"
+            src="/logo-black.svg"
             alt="Legacy Sole home"
           />
-          <span className="mt-2 block text-[9px] uppercase tracking-[0.24em] text-white/35">
+          <span className="mt-2 block text-[9px] uppercase tracking-[0.24em] text-black/45">
             Admin workspace
           </span>
         </Link>
-        <p className="mt-10 text-[9px] uppercase tracking-[0.2em] text-white/30">
+        <p className="mt-10 text-[9px] uppercase tracking-[0.2em] text-black/45">
           Manage store
         </p>
         <nav className="mt-4 space-y-2" aria-label="Dashboard sections">
@@ -59,14 +60,16 @@ export default function AdminNavigation({
                     ? FiUsers
                     : item === "Settings"
                       ? FiSettings
-                      : FiPackage;
+                      : item === "Profit"
+                        ? FiTrendingUp
+                        : FiPackage;
             return (
               <button
                 key={item}
                 type="button"
                 onClick={() => setTab(item)}
                 aria-current={tab === item ? "page" : undefined}
-                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left text-sm font-medium transition-colors ${tab === item ? "bg-[#E9E2D7] text-[#20211e]" : "text-white/75 hover:bg-white/5 hover:text-white"}`}
+                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left text-sm font-medium transition-colors ${tab === item ? "bg-[#20211e] text-white" : "text-black/60 hover:bg-[#F4F3EF] hover:text-black"}`}
               >
                 <Icon size={18} />{" "}
                 {item === "Overview"
@@ -78,34 +81,34 @@ export default function AdminNavigation({
             );
           })}
         </nav>
-        <div className="mt-auto border-t border-white/10 pt-6">
-          <p className="text-[9px] uppercase tracking-[0.18em] text-white/30">
+        <div className="mt-auto border-t border-black/8 pt-6">
+          <p className="text-[9px] uppercase tracking-[0.18em] text-black/45">
             Store connection
           </p>
-          <p className="mt-2 flex items-center gap-2 text-xs text-white/70">
+          <p className="mt-2 flex items-center gap-2 text-xs text-black/60">
             <span
-              className={`h-1.5 w-1.5 rounded-full ${connection === "Live" ? "bg-[#ed682c]" : "bg-amber-400"}`}
+              className={`h-1.5 w-1.5 rounded-full ${connection === "Live" ? "bg-emerald-500" : "bg-amber-400"}`}
             />{" "}
             {connection === "Live" ? "Connected" : connection}
           </p>
           <Link
             href="/"
-            className="mt-6 inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.12em] text-white/45 hover:text-white"
+            className="mt-6 inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.12em] text-black/60 hover:text-black"
           >
             View storefront <FiArrowUpRight size={13} />
           </Link>
         </div>
       </aside>
-      <div className="border-b border-black/10 bg-[#20211e] px-5 pb-4 pt-6 pr-28 text-white lg:hidden">
-        <div className="flex items-center justify-between">
+      <div className="border-b border-black/10 bg-white px-5 pb-4 pt-6 text-[#20211e] lg:hidden">
+        <div className="flex flex-wrap items-center justify-between gap-3 pr-24">
           <span className="text-sm font-black tracking-[-0.8px]">
             LEGACY SOLE
           </span>
-          <span className="text-[9px] uppercase tracking-[0.16em] text-white/45">
+          <span className="text-[9px] uppercase tracking-[0.16em] text-black/45">
             Admin workspace
           </span>
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
           {(
             [
               "Overview",
@@ -121,7 +124,7 @@ export default function AdminNavigation({
               type="button"
               onClick={() => setTab(item)}
               aria-current={tab === item ? "page" : undefined}
-              className={`min-h-11 rounded-lg px-3 py-2 text-sm ${tab === item ? "bg-[#E9E2D7] text-[#20211e]" : "bg-white/5 text-white/75"}`}
+              className={`min-h-11 shrink-0 rounded-xl px-4 py-2 text-xs font-medium ${tab === item ? "bg-[#20211e] text-white" : "bg-[#F4F3EF] text-black/60"}`}
             >
               {item === "Overview"
                 ? "Dashboard"

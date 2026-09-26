@@ -54,7 +54,7 @@ export default function AdminCustomersPanel({
       .reduce((sum, order) => sum + order.total, 0);
   return (
     <div className="mt-7 space-y-6">
-      <div className="admin-welcome rounded-[28px] bg-[#20211e] p-6 text-white sm:p-8">
+      <div className="bg-[radial-gradient(ellipse_at_100%_0%,#775442_0%,transparent_65%)] rounded-[28px] bg-[#20211e] p-6 text-white sm:p-8">
         <p className="text-[10px] uppercase tracking-[0.2em] text-[#E9E2D7]">
           People behind every order
         </p>
@@ -114,7 +114,7 @@ export default function AdminCustomersPanel({
       {view === "Requests" && <CustomerRequests onOpenOrder={onOpenOrder} />}
       {view === "Reviews" && <ReviewModeration />}
       {view === "Directory" && (
-        <section className="admin-panel rounded-[28px] border border-black/[0.06] p-5 sm:p-7">
+        <section className="bg-white rounded-[20px] shadow-[0_2px_12px_#20211e04]  border border-black/[0.06] p-5 sm:p-7">
           <div className="flex flex-wrap items-end justify-between gap-5">
             <div>
               <p className="text-[10px] uppercase tracking-[0.16em] text-black/40">

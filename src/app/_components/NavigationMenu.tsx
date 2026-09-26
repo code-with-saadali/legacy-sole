@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { FiArrowUpRight, FiX } from "react-icons/fi";
-import { menuColumns } from "../_data/navigation";
+import { useStoreSettings } from "./StoreSettingsProvider";
 
 export default function NavigationMenu({
   menuOpen,
@@ -11,6 +11,8 @@ export default function NavigationMenu({
   menuOpen: boolean;
   closeMenu: () => void;
 }) {
+  const { settings } = useStoreSettings();
+  const menuColumns = settings.menu_columns;
   return (
     <>
       <div
@@ -39,7 +41,7 @@ export default function NavigationMenu({
           maxHeight: "calc(100dvh - 150px)",
         }}
       >
-        <div className="scrollbar-hidden relative max-h-[calc(100dvh-150px)] overflow-y-auto overscroll-contain">
+        <div className="[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:h-0 [&::-webkit-scrollbar]:w-0 relative max-h-[calc(100dvh-150px)] overflow-y-auto overscroll-contain">
           <div className="pointer-events-none absolute -left-20 -top-24 h-64 w-64 rounded-full bg-white/70 blur-3xl" />
 
           <div className="pointer-events-none absolute -bottom-20 right-10 h-64 w-64 rounded-full bg-[#e7ddd1]/60 blur-3xl" />
@@ -180,18 +182,6 @@ export default function NavigationMenu({
                 Based in Pakistan
               </p>
             </div>
-
-            <Link
-              href="/#new-arrivals"
-              onClick={closeMenu}
-              className="group inline-flex w-fit shrink-0 items-center gap-2 rounded-full border border-black/10 bg-white/50 px-4 py-2 text-[10px] font-medium text-[#20211e] transition-all duration-300 hover:border-black/20 hover:bg-[#20211e] hover:text-white sm:text-[11px]"
-            >
-              Discover new arrivals
-              <FiArrowUpRight
-                size={13}
-                className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              />
-            </Link>
           </div>
         </div>
       </div>

@@ -16,7 +16,7 @@ export default function StockAlerts({
 }: Props) {
   const inventoryAlerts = stockAlerts(products);
   return (
-    <section className="admin-panel mt-8 rounded-[28px] border border-black/[0.06] bg-white p-5 sm:p-7">
+    <section className="bg-white rounded-[20px] shadow-[0_2px_12px_#20211e04] mt-8  border border-black/[0.06]  p-5 sm:p-7">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-2xl">Stock alerts ({inventoryAlerts.length})</h2>

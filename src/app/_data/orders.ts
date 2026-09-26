@@ -21,9 +21,15 @@ export type Order = {
     email: string;
     phone: string;
     address: string;
+    area?: string;
     city: string;
     postalCode: string;
   };
   items: CartItem[];
   total: number;
+  subtotal?: number | null;
+  shipping?: number | null;
+  discount?: number;
+  coupon_code?: string;
+  loyalty_spent?: number;
 };

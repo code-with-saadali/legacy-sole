@@ -40,7 +40,7 @@ export default function SalesAnalytics({ orders }: { orders: Order[] }) {
   const ceiling = Math.max(100, Math.ceil(peak / 0.85 / 100) * 100);
 
   return (
-    <section className="admin-panel mt-8 min-w-0 rounded-[28px] border border-black/10 p-5 sm:p-7">
+    <section className="bg-white rounded-[20px] shadow-[0_2px_12px_#20211e04] mt-8 min-w-0  border border-black/10 p-5 sm:p-7">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-[10px] uppercase tracking-[0.16em] text-[#b66b4d]">

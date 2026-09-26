@@ -1,4 +1,5 @@
 "use client";
+import { formFieldClasses } from "../_styles/form-classes";
 import { useState } from "react";
 import type { Product } from "../_data/products";
 import { supabase } from "../../lib/supabase";
@@ -74,7 +75,7 @@ export default function BulkProductActions({
             ]}
           />
         ) : (
-          <label className="admin-field">
+          <label className={formFieldClasses}>
             {action === "price" ? "Change (-90% to +100%)" : "Stock units"}
             <input
               type="number"

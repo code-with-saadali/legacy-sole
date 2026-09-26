@@ -138,7 +138,7 @@ export default function Navbar() {
                 size={18}
                 className="transition-transform duration-300 group-hover:scale-105"
               />
-              <span className="hidden font-serif text-lg sm:inline">
+              <span className="hidden text-lg sm:inline">
                 Search
               </span>
             </button>

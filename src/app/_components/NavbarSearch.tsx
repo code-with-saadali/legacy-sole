@@ -70,7 +70,7 @@ export default function NavbarSearch({ onClose }: { onClose: () => void }) {
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
-      className="scrollbar-hidden fixed inset-x-0 bottom-auto m-0 w-full max-w-none overflow-x-hidden overflow-y-auto overscroll-contain border-0 border-b border-black/10 bg-[#F4F1E9] p-0 text-[#20211e] shadow-[0_24px_40px_-30px_rgba(32,33,30,0.25)] backdrop:bg-black/10"
+      className="[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:h-0 [&::-webkit-scrollbar]:w-0 fixed inset-x-0 bottom-auto m-0 w-full max-w-none overflow-x-hidden overflow-y-auto overscroll-contain border-0 border-b border-black/10 bg-[#F4F1E9] p-0 text-[#20211e] shadow-[0_24px_40px_-30px_rgba(32,33,30,0.25)] backdrop:bg-black/10"
     >
       <div className="mx-auto max-w-7xl px-5 py-7 sm:px-8 sm:py-10">
         <div className="mb-7 flex items-center justify-between gap-4">
@@ -80,7 +80,7 @@ export default function NavbarSearch({ onClose }: { onClose: () => void }) {
             </p>
             <h2
               id="search-heading"
-              className="mt-2 font-serif text-3xl tracking-tight sm:text-4xl"
+              className="mt-2 text-3xl tracking-tight sm:text-4xl"
             >
               Find your everyday pair.
             </h2>
@@ -181,7 +181,7 @@ export default function NavbarSearch({ onClose }: { onClose: () => void }) {
                       onClick={onClose}
                       className="group min-w-0"
                     >
-                      <div className="relative aspect-[1.2] overflow-hidden rounded-xl bg-[#E9E3D9]">
+                      <div className="relative aspect-[1.2] overflow-hidden rounded-xl bg-[#E9E2D7]">
                         <ProductImage
                           src={product.image}
                           alt={product.name}
@@ -233,7 +233,7 @@ export default function NavbarSearch({ onClose }: { onClose: () => void }) {
                           onClick={() => onClose()}
                           className="group flex w-full items-center gap-4 py-5 transition-colors hover:bg-[#E9E2D7]/40 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#687451] sm:gap-5"
                         >
-                          <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[#E9E3D9] sm:h-24 sm:w-24">
+                          <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[#E9E2D7] sm:h-24 sm:w-24">
                             <ProductImage
                               src={product.image}
                               alt={`${product.name}, ${product.color}`}
@@ -243,7 +243,7 @@ export default function NavbarSearch({ onClose }: { onClose: () => void }) {
                             />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="text-lg font-serif tracking-tight text-[#20211e] sm:text-2xl">
+                            <p className="text-lg tracking-tight text-[#20211e] sm:text-2xl">
                               {product.name}
                             </p>
                             <p className="mt-2 text-[10px] uppercase tracking-wider text-black/45 sm:text-xs">

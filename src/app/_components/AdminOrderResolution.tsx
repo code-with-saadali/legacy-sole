@@ -1,5 +1,6 @@
 "use client";
 
+import { formFieldClasses } from "../_styles/form-classes";
 import { useState } from "react";
 import type { Order } from "../_data/orders";
 import { supabase } from "../../lib/supabase";
@@ -76,7 +77,7 @@ export default function AdminOrderResolution({
             disabled={busy}
             className="mt-4 space-y-4 disabled:opacity-50"
           >
-            <label className="admin-field">
+            <label className={formFieldClasses}>
               Reason
               <textarea
                 required

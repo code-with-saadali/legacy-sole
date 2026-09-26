@@ -7,6 +7,7 @@ import { cartKey, parseCart, cartIssues, type CartItem } from "../_data/cart";
 export default function useCart() {
   const [stored, setStored] = useState<CartItem[]>([]);
   const [hydrated, setHydrated] = useState(false);
+  const [storageError, setStorageError] = useState("");
   const { products, loading, error } = useCatalog();
   useEffect(() => {
     const sync = () => {
@@ -31,9 +32,22 @@ export default function useCart() {
   }));
   const issues = !loading && !error ? cartIssues(items, products) : [];
   const updateCart = (next: CartItem[]) => {
-    localStorage.setItem(cartKey, JSON.stringify(next));
-    setStored(next);
-    window.dispatchEvent(new Event("cart-updated"));
+    try {
+      localStorage.setItem(cartKey, JSON.stringify(next));
+      setStorageError("");
+      setStored(next);
+      window.dispatchEvent(new Event("cart-updated"));
+    } catch {
+      setStorageError(
+        "Your bag could not be updated. Allow browser storage and try again.",
+      );
+    }
   };
-  return { items, updateCart, issues, ready: hydrated && !loading, error };
+  return {
+    items,
+    updateCart,
+    issues,
+    ready: hydrated && !loading,
+    error: error || storageError,
+  };
 }
