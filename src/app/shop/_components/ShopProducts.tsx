@@ -58,7 +58,7 @@ export default function ShopProducts({
       </div>
 
       {products.length === 0 ? (
-        <div className="flex min-h-[420px] flex-col items-center justify-center rounded-[28px] border border-black/10 bg-[#ECE6DC] px-6 py-10 text-center">
+        <div className="flex min-h-105 flex-col items-center justify-center rounded-[28px] border border-black/10 bg-[#ECE6DC] px-6 py-10 text-center">
           <div className="relative mb-6 size-48 overflow-hidden rounded-full border border-black/10 bg-[#f2f3f3] sm:size-60">
             <Image
               src={categoryImage}
@@ -81,7 +81,7 @@ export default function ShopProducts({
             No pairs found.
           </p>
 
-          <p className="mt-3 max-w-[340px] text-[13px] leading-6 text-black/45">
+          <p className="mt-3 max-w-85 text-[13px] leading-6 text-black/45">
             Try a different search, category, colour or price range.
           </p>
 

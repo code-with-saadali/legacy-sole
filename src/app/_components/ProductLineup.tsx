@@ -29,7 +29,7 @@ export default function ProductLineup() {
     <section
       id="collection"
       aria-labelledby="collection-title"
-      className="scroll-mt-28 bg-[#F8F6F1] px-[5%] py-16 lg:py-24"
+      className="scroll-mt-28 bg-[#F4F1E9] px-[5%] py-16 lg:py-24"
     >
       <div className="grid gap-6 border-b border-black/10 pb-8 lg:grid-cols-[1fr_auto] lg:items-end">
         <div>
@@ -115,13 +115,13 @@ export default function ProductLineup() {
                   SOLE
                 </span>
 
-                <div className="absolute inset-[7%]">
+                <div className="absolute inset-0">
                   <Image
                     src={product.image}
                     alt={`${product.name}, ${product.color}`}
                     fill
                     sizes="(max-width: 639px) 45vw, (max-width: 1023px) 45vw, 30vw"
-                    className="object-contain transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.045]"
+                    className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.045]"
                   />
                 </div>
 

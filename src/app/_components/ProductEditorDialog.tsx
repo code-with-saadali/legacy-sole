@@ -529,90 +529,215 @@ export default function ProductEditorDialog({
             hidden={activeSection !== "inventory"}
             className="rounded-2xl border border-black/10 bg-white p-4 sm:p-6"
           >
-            <h4 className="text-base font-semibold">Sizes & colour variants</h4>
-            <label className="mt-4 flex items-center gap-3 text-sm">
-              <input
-                type="checkbox"
-                checked={draft.one_size ?? false}
-                onChange={(event) => {
-                  updateDraft("one_size", event.target.checked);
-                  if (event.target.checked) updateDraft("size_stock", null);
-                }}
-              />
-              One size (accessories, shoe care, bags)
-            </label>
-            <p className="mt-2 text-xs leading-6 text-black/50">
-              Create a separate product for each colour, with its own image and
-              price. Use the same group name to link their colour options.
-            </p>
-            <label className={`${formFieldClasses} mt-5`}>
-              Colour group
-              <input
-                value={draft.variant_group ?? ""}
-                placeholder="e.g. court-classic"
-                onChange={(event) =>
-                  updateDraft("variant_group", event.target.value.toLowerCase())
-                }
-              />
-            </label>
-            <CustomSelect
-              label="Existing colour groups"
-              value={draft.variant_group ?? ""}
-              onChange={(value) => updateDraft("variant_group", value)}
-              placeholder="Or choose an existing colour group"
-              options={Array.from(
-                new Set(
-                  editableProducts
-                    .map((product) => product.variant_group)
-                    .filter((value): value is string => Boolean(value)),
-                ),
-              ).map((value) => ({ value, label: value }))}
-            />
-            <label className="mt-5 flex items-center gap-3 text-sm">
-              <input
-                type="checkbox"
-                checked={!!draft.size_stock}
-                disabled={draft.one_size}
-                onChange={(event) =>
-                  updateDraft(
-                    "size_stock",
-                    event.target.checked
-                      ? Object.fromEntries(
-                          productSizes.map((size) => [size, 0]),
-                        )
-                      : null,
-                  )
-                }
-                className="h-4 w-4 accent-[#4b5b40]"
-              />{" "}
-              Track stock for each size
-            </label>
-            {draft.size_stock && (
-              <>
-                <p className="mt-2 text-xs leading-6 text-black/50">
-                  Enter the available units for every size. Zero means sold out.
-                  Total stock is calculated automatically.
+            <div className="flex flex-wrap items-start justify-between gap-4 border-b border-black/10 pb-5">
+              <div>
+                <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-[#4b5b40]">
+                  Inventory setup
                 </p>
-                <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
-                  {productSizes.map((size) => (
-                    <label key={size} className={formFieldClasses}>
-                      {size}
-                      <input
-                        type="number"
-                        min="0"
-                        step="1"
-                        value={draft.size_stock?.[size] ?? 0}
-                        onChange={(event) =>
-                          updateDraft("size_stock", {
-                            ...draft.size_stock,
-                            [size]: Number(event.target.value),
-                          })
-                        }
-                      />
-                    </label>
-                  ))}
+                <h4 className="mt-1 text-xl font-semibold text-[#20211e]">
+                  Sizes & colour variants
+                </h4>
+                <p className="mt-1 text-xs leading-5 text-black/50">
+                  Set stock by size and link colour options for this style.
+                </p>
+              </div>
+              <span
+                className={`rounded-full px-4 py-2 text-xs font-medium ${
+                  soldOut
+                    ? "bg-red-50 text-red-700"
+                    : "bg-[#e8eddf] text-[#4b5b40]"
+                }`}
+              >
+                {soldOut ? "Sold out" : `${totalStock} units in stock`}
+              </span>
+            </div>
+
+            <div className="mt-5 grid gap-5 lg:grid-cols-2">
+              <div className="rounded-2xl border border-black/10 bg-[#FAF9F6] p-4 sm:p-5">
+                <div className="flex items-center gap-3">
+                  <span className="flex size-9 items-center justify-center rounded-xl bg-[#E9E2D7] text-[#4b5b40]">
+                    <FiLayers size={17} />
+                  </span>
+                  <div>
+                    <h5 className="text-sm font-semibold">Colour variants</h5>
+                    <p className="text-xs text-black/45">
+                      Link matching colourways together.
+                    </p>
+                  </div>
                 </div>
-              </>
+                <p className="mt-4 text-xs leading-5 text-black/50">
+                  Give each colour its own product, image and price. Products
+                  with the same group name appear as colour options together.
+                </p>
+                <label className={`${formFieldClasses} mt-5`}>
+                  Variant group name
+                  <input
+                    value={draft.variant_group ?? ""}
+                    placeholder="e.g. court-classic"
+                    onChange={(event) =>
+                      updateDraft(
+                        "variant_group",
+                        event.target.value.toLowerCase(),
+                      )
+                    }
+                  />
+                </label>
+                <div className="mt-4">
+                  <CustomSelect
+                    label="Use an existing colour group"
+                    value={draft.variant_group ?? ""}
+                    onChange={(value) => updateDraft("variant_group", value)}
+                    placeholder="Choose an existing group"
+                    options={Array.from(
+                      new Set(
+                        editableProducts
+                          .map((product) => product.variant_group)
+                          .filter((value): value is string => Boolean(value)),
+                      ),
+                    ).map((value) => ({ value, label: value }))}
+                  />
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-black/10 bg-[#F4F1E9] p-4 sm:p-5">
+                <div className="flex items-center gap-3">
+                  <span className="flex size-9 items-center justify-center rounded-xl bg-[#20211e] text-white">
+                    <FiBox size={17} />
+                  </span>
+                  <div>
+                    <h5 className="text-sm font-semibold">Stock control</h5>
+                    <p className="text-xs text-black/45">
+                      Choose one stock pool or size-level stock.
+                    </p>
+                  </div>
+                </div>
+
+                <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border border-black/10 bg-white p-3 text-sm transition-colors hover:border-[#4b5b40]/45">
+                  <input
+                    type="checkbox"
+                    checked={draft.one_size ?? false}
+                    onChange={(event) => {
+                      updateDraft("one_size", event.target.checked);
+                      if (event.target.checked) updateDraft("size_stock", null);
+                    }}
+                    className="mt-0.5 h-4 w-4 shrink-0 accent-[#4b5b40]"
+                  />
+                  <span>
+                    <span className="block font-medium text-[#20211e]">
+                      One size product
+                    </span>
+                    <span className="mt-0.5 block text-xs leading-5 text-black/50">
+                      For accessories, shoe care and bags.
+                    </span>
+                  </span>
+                </label>
+
+                <label
+                  className={`mt-3 flex items-start gap-3 rounded-xl border p-3 text-sm transition-colors ${
+                    draft.one_size
+                      ? "cursor-not-allowed border-black/5 bg-black/[0.025] text-black/35"
+                      : "cursor-pointer border-black/10 bg-white hover:border-[#4b5b40]/45"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={!!draft.size_stock}
+                    disabled={draft.one_size}
+                    onChange={(event) =>
+                      updateDraft(
+                        "size_stock",
+                        event.target.checked
+                          ? Object.fromEntries(
+                              productSizes.map((size) => [size, 0]),
+                            )
+                          : null,
+                      )
+                    }
+                    className="mt-0.5 h-4 w-4 shrink-0 accent-[#4b5b40]"
+                  />
+                  <span>
+                    <span className="block font-medium text-[#20211e]">
+                      Track stock by size
+                    </span>
+                    <span className="mt-0.5 block text-xs leading-5 text-black/50">
+                      Let customers see which UK sizes are available.
+                    </span>
+                  </span>
+                </label>
+
+                {!draft.size_stock && (
+                  <label className={`${formFieldClasses} mt-4`}>
+                    Total available units
+                    <input
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={draft.stock ?? 0}
+                      onChange={(event) =>
+                        updateDraft("stock", Number(event.target.value))
+                      }
+                    />
+                  </label>
+                )}
+              </div>
+            </div>
+
+            {draft.size_stock && (
+              <div className="mt-5 rounded-2xl border border-[#4b5b40]/20 bg-[#e8eddf]/45 p-4 sm:p-5">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h5 className="text-sm font-semibold text-[#20211e]">
+                      Size availability
+                    </h5>
+                    <p className="mt-1 text-xs text-black/50">
+                      Set units per size. A zero quantity marks that size sold
+                      out.
+                    </p>
+                  </div>
+                  <span className="rounded-full bg-white px-3 py-1.5 text-xs font-medium text-[#4b5b40]">
+                    Total: {totalStock} units
+                  </span>
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
+                  {productSizes.map((size) => {
+                    const quantity = draft.size_stock?.[size] ?? 0;
+                    return (
+                      <label
+                        key={size}
+                        className={`rounded-xl border p-3 transition-colors ${
+                          quantity > 0
+                            ? "border-[#4b5b40]/25 bg-white"
+                            : "border-black/10 bg-white/55"
+                        }`}
+                      >
+                        <span className="flex items-center justify-between gap-2 text-xs font-semibold text-[#20211e]">
+                          {size}
+                          <span
+                            className={`size-2 rounded-full ${quantity > 0 ? "bg-[#4b5b40]" : "bg-black/20"}`}
+                          />
+                        </span>
+                        <input
+                          aria-label={`${size} stock`}
+                          type="number"
+                          min="0"
+                          step="1"
+                          value={quantity}
+                          onChange={(event) =>
+                            updateDraft("size_stock", {
+                              ...draft.size_stock,
+                              [size]: Number(event.target.value),
+                            })
+                          }
+                          className="mt-3 w-full border-0 bg-transparent p-0 text-2xl font-medium tracking-tight text-[#20211e] outline-none"
+                        />
+                        <span className="text-[10px] uppercase tracking-[0.12em] text-black/40">
+                          units
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
             )}
           </section>
           <details

@@ -67,13 +67,13 @@ export default function StyleGuide() {
                 </span>
               </div>
 
-              <div className="absolute inset-x-[5%] bottom-[8%] top-[10%]">
+              <div className="absolute inset-0">
                 <Image
                   src={look.image}
                   alt={`${look.shoe} styling inspiration`}
                   fill
                   sizes="(max-width: 767px) 45vw, 30vw"
-                  className="object-contain transition-transform duration-500 ease-out group-hover:scale-[1.035]"
+                  className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.035]"
                 />
               </div>
 

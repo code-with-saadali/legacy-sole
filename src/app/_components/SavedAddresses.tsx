@@ -4,7 +4,7 @@ import { useEffect, useState, type RefObject } from "react";
 type Address = Record<
   "name" | "phone" | "address" | "area" | "city" | "postalCode",
   string
->;
+> & { province?: string };
 const key = "legacy-sole-addresses";
 const fields = [
   "name",
@@ -12,6 +12,7 @@ const fields = [
   "address",
   "area",
   "city",
+  "province",
   "postalCode",
 ] as const;
 export default function SavedAddresses({
@@ -20,7 +21,7 @@ export default function SavedAddresses({
   disabled,
 }: {
   formRef: RefObject<HTMLFormElement | null>;
-  onCity: (city: string) => void;
+  onCity: (city: string, province?: string) => void;
   disabled: boolean;
 }) {
   const [addresses, setAddresses] = useState<Address[]>([]);
@@ -35,7 +36,10 @@ export default function SavedAddresses({
               (row): row is Address =>
                 !!row &&
                 fields.every(
-                  (field) => field === "area" || typeof row[field] === "string",
+                  (field) =>
+                    field === "area" ||
+                    field === "province" ||
+                    typeof row[field] === "string",
                 ),
             )
             .slice(0, 5),
@@ -78,11 +82,11 @@ export default function SavedAddresses({
   };
   const use = (address: Address) => {
     for (const field of fields) {
-      if (field === "city") continue;
+      if (field === "city" || field === "province") continue;
       const input = formRef.current?.elements.namedItem(field);
       if (input instanceof HTMLInputElement) input.value = address[field] ?? "";
     }
-    onCity(address.city);
+    onCity(address.city, address.province);
     setMessage("Address filled in. You can edit the delivery details below.");
   };
   return (

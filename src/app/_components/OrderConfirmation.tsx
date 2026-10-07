@@ -1,16 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { FiCheck, FiCopy, FiArrowUpRight } from "react-icons/fi";
-import type { Order } from "../_data/orders";
+import { useEffect, useState } from "react";
+import { FiCheck, FiCopy, FiArrowUpRight, FiPackage } from "react-icons/fi";
+import { saveOrderHistory, type Order } from "../_data/orders";
 import ProductImage from "./ProductImage";
 
 export default function OrderConfirmation({ order }: { order: Order }) {
   const [copied, setCopied] = useState("");
+  useEffect(() => saveOrderHistory(order), [order]);
+  const trackHref = `/track-order?reference=${encodeURIComponent(order.id)}&email=${encodeURIComponent(order.customer.email)}`;
   return (
     <main className="min-h-[70vh] bg-[#F4F1E9] px-[5%] py-10 sm:py-16">
-      <div className="mx-auto max-w-4xl overflow-hidden rounded-[28px] border border-black/10 bg-[#F8F6F1]">
+      <div className="w-full overflow-hidden rounded-[28px] border border-black/10 bg-[#F8F6F1]">
         <header className="bg-[#20211e] px-6 py-8 text-white sm:px-10 sm:py-10">
           <div className="flex items-center gap-3 text-xs uppercase tracking-[0.16em] text-white/70">
             <span className="flex size-9 items-center justify-center rounded-full bg-[#E9E2D7] text-[#20211e]">
@@ -27,31 +29,67 @@ export default function OrderConfirmation({ order }: { order: Order }) {
           </p>
         </header>
         <div className="p-6 sm:p-10">
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-black/10 bg-[#E9E2D7]/50 p-4">
-            <div className="min-w-0">
-              <p className="text-[10px] uppercase tracking-[0.14em] text-black/50">
-                Order reference
-              </p>
-              <p className="mt-2 break-all font-mono text-xs sm:text-sm">
-                {order.id}
-              </p>
+          <section className="rounded-2xl border border-black/10 bg-[#E9E2D7]/50 p-4 sm:p-5">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div className="min-w-0">
+                <p className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.14em] text-black/50">
+                  <FiPackage aria-hidden="true" size={13} /> Your tracking card
+                </p>
+                <p className="mt-2 break-all font-mono text-xs sm:text-sm">
+                  {order.id}
+                </p>
+                <p className="mt-2 text-xs text-black/55">
+                  Status:{" "}
+                  <span className="font-medium text-[#20211e]">
+                    {order.status}
+                  </span>
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(order.id);
+                    setCopied("Reference copied.");
+                  } catch {
+                    setCopied("Select the reference above to copy it.");
+                  }
+                }}
+                className="inline-flex items-center gap-2 rounded-full border border-black/15 bg-white/65 px-4 py-2 text-xs"
+              >
+                <FiCopy />
+                Copy reference
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={async () => {
-                try {
-                  await navigator.clipboard.writeText(order.id);
-                  setCopied("Reference copied.");
-                } catch {
-                  setCopied("Select the reference above to copy it.");
-                }
-              }}
-              className="inline-flex items-center gap-2 rounded-full border border-black/15 px-4 py-2 text-xs"
+            <div className="mt-4 border-t border-black/10 pt-4">
+              <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-black/45">
+                Ordered items
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {order.items.map((item) => (
+                  <span
+                    key={`${item.slug}-${item.size}`}
+                    className="rounded-full border border-black/10 bg-white/70 px-3 py-1.5 text-xs text-[#20211e]"
+                  >
+                    {item.name}{" "}
+                    <span className="text-black/45">× {item.quantity}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+            <Link
+              href={trackHref}
+              className="mt-4 inline-flex items-center gap-2 text-xs font-medium text-[#4b5a42] underline decoration-[#4b5a42]/30 underline-offset-4 hover:text-[#ed682c]"
             >
-              <FiCopy />
-              Copy
-            </button>
-          </div>
+              Track this order <FiArrowUpRight aria-hidden="true" size={14} />
+            </Link>
+            <Link
+              href="/orders"
+              className="mt-4 ml-5 inline-flex items-center gap-2 text-xs font-medium text-[#20211e] underline decoration-black/20 underline-offset-4 hover:text-[#ed682c]"
+            >
+              View my orders
+            </Link>
+          </section>
           {copied && (
             <p role="status" className="mt-2 text-xs text-black/55">
               {copied}
@@ -68,6 +106,7 @@ export default function OrderConfirmation({ order }: { order: Order }) {
                 {[
                   order.customer.area,
                   order.customer.city,
+                  order.customer.province,
                   order.customer.postalCode,
                 ]
                   .filter(Boolean)
@@ -124,7 +163,7 @@ export default function OrderConfirmation({ order }: { order: Order }) {
           </section>
           <div className="mt-7 grid gap-3 sm:grid-cols-2">
             <Link
-              href="/track-order"
+              href={trackHref}
               className="flex items-center justify-center gap-2 rounded-full bg-[#20211e] px-6 py-4 text-sm font-medium text-white"
             >
               Track your order <FiArrowUpRight />

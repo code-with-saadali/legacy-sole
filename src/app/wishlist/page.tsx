@@ -70,7 +70,7 @@ export default function WishlistPage() {
                       alt={product.name}
                       fill
                       sizes="33vw"
-                      className="object-contain p-[8%] transition-transform duration-500 group-hover:scale-105"
+                      className="object-contain transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
                   <div className="flex items-start justify-between pt-4">

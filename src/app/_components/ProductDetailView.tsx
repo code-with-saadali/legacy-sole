@@ -28,19 +28,19 @@ export default function ProductDetailView({
     (loading ? initialProduct : undefined);
   if (loading && !product)
     return (
-      <main className="p-12" role="status">
+      <main className="px-[5%] py-12" role="status">
         Loading product...
       </main>
     );
   if (error)
     return (
-      <main className="p-12" role="alert">
+      <main className="px-[5%] py-12" role="alert">
         Unable to refresh product details. Please try again shortly.
       </main>
     );
   if (!product)
     return (
-      <main className="p-12">
+      <main className="px-[5%] py-12">
         <h1>This product is no longer available.</h1>
         <Link href="/shop">Browse the collection</Link>
       </main>

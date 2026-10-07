@@ -15,8 +15,8 @@ export default function CarePage({
   children: ReactNode;
 }) {
   return (
-    <main className="bg-[#f4f1e9] px-6 py-12 text-[#20211e] sm:px-[5%] sm:py-20">
-      <div className="mx-auto max-w-7xl">
+    <main className="bg-[#f4f1e9] px-[5%] py-12 text-[#20211e] sm:py-20">
+      <div className="w-full">
         <nav
           aria-label="Breadcrumb"
           className="mb-8 flex gap-3 text-xs text-black/55"

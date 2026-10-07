@@ -39,7 +39,7 @@ export default function ClassicFeature() {
             </p>
           </div>
 
-          <div className="absolute inset-[5%] bottom-[8%] top-[10%]">
+          <div className="absolute inset-0">
             <Image
               src={feature.image || product.image}
               alt={

@@ -37,16 +37,21 @@ export default function AdminProductEditor({
   const [categories, setCategories] = useState<string[]>([]);
   const [newCategory, setNewCategory] = useState("");
   const [search, setSearch] = useState("");
-  const visibleProducts = searchProducts(
-    stockOnly ? stockAlerts(editableProducts) : editableProducts,
-    search,
-  );
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const allCategories = Array.from(
     new Set([
       ...categories,
       ...editableProducts.map((product) => product.category).filter(Boolean),
     ]),
   ).sort();
+  const categoryProducts = (stockOnly
+    ? stockAlerts(editableProducts)
+    : editableProducts
+  ).filter(
+    (product) =>
+      selectedCategory === "All" || product.category === selectedCategory,
+  );
+  const visibleProducts = searchProducts(categoryProducts, search);
 
   useEffect(() => {
     setEditableProducts(initialProducts);
@@ -117,6 +122,7 @@ export default function AdminProductEditor({
       setCategories((current) =>
         current.filter((category) => category !== name),
       );
+      if (selectedCategory === name) setSelectedCategory("All");
       setSaved(`${name} category deleted.`);
     }
   };
@@ -392,6 +398,46 @@ export default function AdminProductEditor({
 
   return (
     <div className="[&_button]:rounded-[9px] mt-6">
+      <div className="mb-5 rounded-[22px] border border-black/10 bg-[#F4F1E9] p-4">
+        <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-black/45">
+          Browse by category
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2" aria-label="Product categories">
+          <button
+            type="button"
+            aria-pressed={selectedCategory === "All"}
+            onClick={() => setSelectedCategory("All")}
+            className={`px-4 py-2 text-xs font-medium transition-colors ${
+              selectedCategory === "All"
+                ? "bg-[#20211e] text-white"
+                : "bg-white text-[#20211e] hover:bg-[#E9E2D7]"
+            }`}
+          >
+            All products ({stockOnly ? stockAlerts(editableProducts).length : editableProducts.length})
+          </button>
+          {allCategories.map((category) => {
+            const count = (stockOnly
+              ? stockAlerts(editableProducts)
+              : editableProducts
+            ).filter((product) => product.category === category).length;
+            return (
+              <button
+                key={category}
+                type="button"
+                aria-pressed={selectedCategory === category}
+                onClick={() => setSelectedCategory(category)}
+                className={`px-4 py-2 text-xs font-medium transition-colors ${
+                  selectedCategory === category
+                    ? "bg-[#20211e] text-white"
+                    : "bg-white text-[#20211e] hover:bg-[#E9E2D7]"
+                }`}
+              >
+                {category} ({count})
+              </button>
+            );
+          })}
+        </div>
+      </div>
       <div className="flex flex-col gap-3 rounded-[22px] border border-black/10 bg-[#F4F1E9] p-4 sm:flex-row sm:items-center">
         <label className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-black/10 bg-white px-4 py-3">
           <FiSearch aria-hidden="true" className="shrink-0 text-black/40" />
@@ -415,7 +461,11 @@ export default function AdminProductEditor({
       <div className="my-5 flex flex-wrap items-center justify-between gap-3">
         <p role="status" className="text-xs text-black/50">
           <strong className="text-[#20211e]">{visibleProducts.length}</strong>{" "}
-          {stockOnly ? "products need restocking" : "products shown"}
+          {selectedCategory === "All"
+            ? stockOnly
+              ? "products need restocking"
+              : "products shown"
+            : `products in ${selectedCategory}`}
         </p>
         {search && (
           <button

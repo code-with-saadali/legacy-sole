@@ -15,6 +15,7 @@ import AdminOrderDetails from "./AdminOrderDetails";
 import useAdminOrders from "../_hooks/useAdminOrders";
 import useAdminOrderActions from "../_hooks/useAdminOrderActions";
 import type { Order } from "../_data/orders";
+import { stockAlerts } from "../_data/admin";
 
 export default function AdminDashboard() {
   const [tab, setTab] = useState<AdminTab>("Overview");
@@ -40,6 +41,10 @@ export default function AdminDashboard() {
       setError,
     });
   const selectedOrder = orders.find((order) => order.id === selectedOrderId);
+  const pendingOrders = orders.filter(
+    (order) => order.status === "Pending",
+  ).length;
+  const stockCount = stockAlerts(products).length;
 
   const viewNewOrders = () => {
     setTab("Orders");
@@ -53,6 +58,11 @@ export default function AdminDashboard() {
     setTab("Products");
   };
 
+  const manageProducts = () => {
+    setStockOnly(false);
+    setTab("Products");
+  };
+
   const resolveOrder = (resolved: Order) => {
     setOrders((current) =>
       current.map((order) => (order.id === resolved.id ? resolved : order)),
@@ -62,10 +72,23 @@ export default function AdminDashboard() {
 
   return (
     <main className="group/admin text-[#20211e] [&_h1]:font-[inherit] [&_h2]:font-[inherit] [&_h3]:font-[inherit] [&_table_th]:px-3 [&_table_th]:py-3.5 [&_table_th]:bg-[#f6f5f2] [&_table_th]:font-medium [&_table_td]:px-3 [&_table_td]:py-[18px] [&_table_tbody_tr:hover]:bg-[#f4f1e9] [&_summary]:list-inside [&_summary:focus-visible]:outline-2 [&_summary:focus-visible]:outline-[#4b5b40] [&_summary:focus-visible]:outline-offset-5 [&_summary:focus-visible]:rounded [&_input:focus-visible]:outline-2 [&_input:focus-visible]:outline-[#4b5b40] [&_input:focus-visible]:outline-offset-3 [&_select:focus-visible]:outline-2 [&_select:focus-visible]:outline-[#4b5b40] [&_select:focus-visible]:outline-offset-3 [&_textarea:focus-visible]:outline-2 [&_textarea:focus-visible]:outline-[#4b5b40] [&_textarea:focus-visible]:outline-offset-3 min-h-screen bg-[#F6F5F2]">
-      <AdminNavigation tab={tab} setTab={setTab} connection={connection} />
+      <AdminNavigation
+        tab={tab}
+        setTab={setTab}
+        connection={connection}
+        pendingOrders={pendingOrders}
+        stockCount={stockCount}
+      />
       <div className="min-h-screen px-4 pb-16 pt-7 sm:px-7 lg:ml-64 lg:px-10 lg:pt-10 xl:px-12">
         <div className="mx-auto max-w-7xl">
-          <AdminHeader tab={tab} />
+          <AdminHeader
+            tab={tab}
+            pendingOrders={pendingOrders}
+            stockCount={stockCount}
+            onViewOrders={viewNewOrders}
+            onManageProducts={manageProducts}
+            onManageStock={manageStock}
+          />
           <AdminOrderNotifications
             count={newOrderIds.length}
             soundOn={soundOn}
@@ -90,10 +113,7 @@ export default function AdminDashboard() {
               products={products}
               orders={orders}
               catalogError={catalogError}
-              onManageProducts={() => {
-                setStockOnly(false);
-                setTab("Products");
-              }}
+              onManageProducts={manageProducts}
               onManageStock={manageStock}
               onViewOrders={viewNewOrders}
               onOpenOrder={setSelectedOrderId}

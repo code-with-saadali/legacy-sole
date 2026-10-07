@@ -16,10 +16,10 @@ export default function ProductCard({ product }: { product: Product }) {
             alt={`${product.name}, ${product.color}`}
             fill
             sizes="(max-width:640px) 45vw, (max-width:1024px) 45vw, 28vw"
-            className="object-contain p-[7%] transition-transform duration-500 group-hover:scale-105"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
           {product.tag && (
-            <span className="absolute bottom-2 left-2 max-w-[calc(100%-1rem)] break-words sm:bottom-auto sm:left-4 sm:top-4 rounded-full bg-[#F4F1E9] px-3 py-2 text-[9px] uppercase tracking-wider">
+            <span className="absolute bottom-2 left-2 max-w-[calc(100%-1rem)] wrap-break-word sm:bottom-auto sm:left-4 sm:top-4 rounded-full bg-[#F4F1E9] px-3 py-2 text-[9px] uppercase tracking-wider">
               {product.tag}
             </span>
           )}
@@ -33,7 +33,7 @@ export default function ProductCard({ product }: { product: Product }) {
         <div>
           <Link
             href={`/products/${product.slug}`}
-            className="break-words text-sm sm:text-xl font-medium tracking-tight"
+            className="wrap-break-word text-sm sm:text-xl font-medium tracking-tight"
           >
             {product.name}
           </Link>

@@ -266,6 +266,7 @@ export default function AdminCustomersPanel({
                       active.customer.address,
                       active.customer.area,
                       active.customer.city,
+                      active.customer.province,
                       active.customer.postalCode,
                     ]
                       .filter(Boolean)

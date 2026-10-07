@@ -162,6 +162,16 @@ export default function NavigationMenu({
             }}
           >
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+              <Link
+                href="/orders"
+                onClick={closeMenu}
+                className="text-[10px] font-medium uppercase tracking-[0.14em] text-[#20211e] underline decoration-black/20 underline-offset-4 transition-colors hover:text-[#ed682c] sm:text-[11px]"
+              >
+                My orders
+              </Link>
+
+              <span className="hidden h-3 w-px bg-black/10 sm:block" />
+
               <div className="flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#20211e]" />
 

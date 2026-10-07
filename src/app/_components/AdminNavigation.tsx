@@ -17,10 +17,14 @@ export default function AdminNavigation({
   tab,
   setTab,
   connection,
+  pendingOrders,
+  stockCount,
 }: {
   tab: AdminTab;
   setTab: (tab: AdminTab) => void;
   connection: string;
+  pendingOrders: number;
+  stockCount: number;
 }) {
   return (
     <>
@@ -51,6 +55,12 @@ export default function AdminNavigation({
               "Settings",
             ] as AdminTab[]
           ).map((item) => {
+            const itemCount =
+              item === "Orders"
+                ? pendingOrders
+                : item === "Products"
+                  ? stockCount
+                  : 0;
             const Icon =
               item === "Overview"
                 ? FiBox
@@ -71,12 +81,25 @@ export default function AdminNavigation({
                 aria-current={tab === item ? "page" : undefined}
                 className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left text-sm font-medium transition-colors ${tab === item ? "bg-[#20211e] text-white" : "text-black/60 hover:bg-[#F4F1E9] hover:text-black"}`}
               >
-                <Icon size={18} />{" "}
-                {item === "Overview"
-                  ? "Dashboard"
-                  : item === "Products"
-                    ? "Products & stock"
-                    : item}
+                <Icon size={18} />
+                <span>
+                  {item === "Overview"
+                    ? "Dashboard"
+                    : item === "Products"
+                      ? "Products & stock"
+                      : item}
+                </span>
+                {itemCount > 0 && (
+                  <span
+                    className={`ml-auto min-w-5 rounded-full px-1.5 py-0.5 text-center text-[10px] ${
+                      tab === item
+                        ? "bg-white/20 text-white"
+                        : "bg-[#ed682c]/12 text-[#b84e1d]"
+                    }`}
+                  >
+                    {itemCount}
+                  </span>
+                )}
               </button>
             );
           })}
@@ -118,21 +141,40 @@ export default function AdminNavigation({
               "Profit",
               "Settings",
             ] as AdminTab[]
-          ).map((item) => (
-            <button
-              key={item}
-              type="button"
-              onClick={() => setTab(item)}
-              aria-current={tab === item ? "page" : undefined}
-              className={`min-h-11 shrink-0 rounded-xl px-4 py-2 text-xs font-medium ${tab === item ? "bg-[#20211e] text-white" : "bg-[#F4F1E9] text-black/60"}`}
-            >
-              {item === "Overview"
-                ? "Dashboard"
+          ).map((item) => {
+            const itemCount =
+              item === "Orders"
+                ? pendingOrders
                 : item === "Products"
-                  ? "Products & stock"
-                  : item}
-            </button>
-          ))}
+                  ? stockCount
+                  : 0;
+            return (
+              <button
+                key={item}
+                type="button"
+                onClick={() => setTab(item)}
+                aria-current={tab === item ? "page" : undefined}
+                className={`flex min-h-11 shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-xs font-medium ${tab === item ? "bg-[#20211e] text-white" : "bg-[#F4F1E9] text-black/60"}`}
+              >
+                {item === "Overview"
+                  ? "Dashboard"
+                  : item === "Products"
+                    ? "Products & stock"
+                    : item}
+                {itemCount > 0 && (
+                  <span
+                    className={`rounded-full px-1.5 py-0.5 text-[10px] ${
+                      tab === item
+                        ? "bg-white/20 text-white"
+                        : "bg-[#ed682c]/12 text-[#b84e1d]"
+                    }`}
+                  >
+                    {itemCount}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
     </>

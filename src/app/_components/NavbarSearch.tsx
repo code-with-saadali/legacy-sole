@@ -187,7 +187,7 @@ export default function NavbarSearch({ onClose }: { onClose: () => void }) {
                           alt={product.name}
                           fill
                           sizes="(max-width: 767px) 28vw, 220px"
-                          className="object-contain p-3 transition-transform duration-300 motion-safe:group-hover:scale-105"
+                          className="object-contain transition-transform duration-300 motion-safe:group-hover:scale-105"
                         />
                       </div>
                       <p className="mt-3 text-xs font-medium sm:text-sm">
@@ -239,7 +239,7 @@ export default function NavbarSearch({ onClose }: { onClose: () => void }) {
                               alt={`${product.name}, ${product.color}`}
                               fill
                               sizes="96px"
-                              className="object-contain p-2 transition-transform duration-300 motion-safe:group-hover:scale-105"
+                              className="object-contain transition-transform duration-300 motion-safe:group-hover:scale-105"
                             />
                           </div>
                           <div className="min-w-0 flex-1">

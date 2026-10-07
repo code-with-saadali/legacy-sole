@@ -55,3 +55,17 @@ In **Admin → Products → Edit → Sizes & colour variants**, enable size trac
 For additional colours, create a separate product with its own unique slug, colour, image, price and stock. Give related products the same **Colour group** (for example `court-classic`). Their product pages show linked colour options, and orders retain the selected colour and size.
 
 For another database, apply `supabase/migrations/20260919_product_variants.sql` before using these controls. Checkout validates and deducts size inventory in the same transaction as the order.
+# Checkout locations
+
+Checkout requires a province/territory and lets customers search cities, towns,
+and settlements or type an unlisted locality. Province is stored in the existing
+order customer JSON, saved browser addresses, confirmation, admin details and
+exports. Older orders without a province remain supported. No database migration
+is needed for this field.
+
+`public/data/pakistan-cities.json` contains 117,564 distinct names grouped within
+seven provinces/territories, derived from the GeoNames Pakistan extract. Names
+can repeat between regions; the gazetteer is not a guarantee of every locality
+or courier coverage. Attribution and license are in
+`public/data/GEONAMES-LICENSE.md`. Regenerate after extracting `PK.zip` with
+`node scripts/build-pakistan-cities.mjs path/to/PK.txt`.

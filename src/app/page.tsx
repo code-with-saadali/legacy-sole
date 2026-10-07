@@ -1,8 +1,6 @@
 import Hero from "./_components/Hero";
 import ShopByCategory from "./_components/ShopByCategory";
-import NewArrivals from "./_components/NewArrivals";
 import ProductLineup from "./_components/ProductLineup";
-import ClassicFeature from "./_components/ClassicFeature";
 import StyleGuide from "./_components/StyleGuide";
 import RecentlyViewed from "./_components/RecentlyViewed";
 import { pageMetadata, siteUrl, jsonLd } from "../lib/seo";
@@ -30,9 +28,9 @@ export default function Home() {
       )}
       <Hero />
       <ShopByCategory />
-      <NewArrivals />
+      {/* <NewArrivals /> */}
       <ProductLineup />
-      <ClassicFeature />
+      {/* <ClassicFeature /> */}
       <StyleGuide />
       <RecentlyViewed />
     </main>

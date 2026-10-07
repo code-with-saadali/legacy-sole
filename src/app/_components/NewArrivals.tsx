@@ -115,7 +115,7 @@ export default function NewArrivals() {
             </p>
           </div>
 
-          <div className="absolute inset-[4%] bottom-[13%] top-[9%]">
+          <div className="absolute inset-0">
             <Image
               src={feature.image || product.image}
               alt={

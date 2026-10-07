@@ -156,7 +156,13 @@ export default function AdminOrderDetails({
               {order.customer.address}
               {order.customer.area && <>, {order.customer.area}</>}
               <br />
-              {order.customer.city} {order.customer.postalCode}
+              {[
+                order.customer.city,
+                order.customer.province,
+                order.customer.postalCode,
+              ]
+                .filter(Boolean)
+                .join(", ")}
             </p>
           </div>
         </section>
@@ -361,6 +367,17 @@ export default function AdminOrderDetails({
           <h3 className="flex items-center gap-2 text-sm font-semibold">
             <FiMessageCircle /> Customer update
           </h3>
+          <div className="mt-4 rounded-2xl border border-black/10 bg-white/60 px-4 py-3 text-xs">
+            <p className="font-medium">To: {order.customer.name}</p>
+            <p className="mt-1 text-black/60">
+              Checkout phone: {order.customer.phone || "Not provided"}
+            </p>
+            {phone && (
+              <p className="mt-1 text-black/60">
+                WhatsApp recipient: <span className="font-mono">+{phone}</span>
+              </p>
+            )}
+          </div>
           <p className="mt-4 whitespace-pre-wrap break-words rounded-2xl border border-black/5 bg-white p-4 text-xs leading-6 text-black/65">
             {message}
           </p>
@@ -371,7 +388,7 @@ export default function AdminOrderDetails({
               rel="noopener noreferrer"
               className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#20211e] px-5 py-3 text-xs font-medium text-white transition-colors hover:bg-[#4b5b40]"
             >
-              <FiMessageCircle /> Open WhatsApp draft
+              <FiMessageCircle /> Open WhatsApp draft for +{phone}
             </a>
           ) : (
             <p className="mt-4 text-xs text-amber-800">

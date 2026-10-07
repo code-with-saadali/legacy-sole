@@ -2,6 +2,7 @@
 
 import { formFieldClasses } from "../_styles/form-classes";
 import { FormEvent, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import OrderHelpForm from "./OrderHelpForm";
 import BuyAgain from "./BuyAgain";
 import LoyaltyBalance from "./LoyaltyBalance";
@@ -11,8 +12,12 @@ import { supabase } from "../../lib/supabase";
 
 const steps = ["Pending", "Confirmed", "Dispatched", "Delivered"];
 export default function OrderTracker() {
+  const searchParams = useSearchParams();
   const [order, setOrder] = useState<TrackedOrder | null>(null);
-  const [email, setEmail] = useState("");
+  const [reference, setReference] = useState(
+    () => searchParams.get("reference") ?? "",
+  );
+  const [email, setEmail] = useState(() => searchParams.get("email") ?? "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const submit = async (event: FormEvent<HTMLFormElement>) => {
@@ -27,10 +32,11 @@ export default function OrderTracker() {
       return;
     }
     const form = new FormData(event.currentTarget);
-    setEmail(String(form.get("email")).trim());
+    const submittedEmail = String(form.get("email")).trim();
+    setEmail(submittedEmail);
     const { data, error: requestError } = await supabase.rpc("track_order", {
-      order_reference: String(form.get("orderId")),
-      customer_email: String(form.get("email")),
+      order_reference: String(form.get("orderId")).trim(),
+      customer_email: submittedEmail,
     });
     if (requestError || !data)
       setError("Order not found. Check your reference and email.");
@@ -40,7 +46,7 @@ export default function OrderTracker() {
   const active = order ? steps.indexOf(order.status) : -1;
   return (
     <main className="min-h-[70vh] bg-[#F4F1E9] px-[5%] pb-24 pt-14">
-      <div className="mx-auto max-w-3xl">
+      <div className="w-full">
         <p className="text-[10px] uppercase tracking-[0.22em] text-black/40">
           Legacy Sole / Delivery
         </p>
@@ -53,7 +59,13 @@ export default function OrderTracker() {
         >
           <label className={formFieldClasses}>
             Order reference
-            <input required name="orderId" placeholder="LS-..." />
+            <input
+              required
+              name="orderId"
+              value={reference}
+              onChange={(event) => setReference(event.target.value)}
+              placeholder="LS-..."
+            />
           </label>
           <label className={formFieldClasses}>
             Checkout email
@@ -61,6 +73,8 @@ export default function OrderTracker() {
               required
               name="email"
               type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
               placeholder="you@example.com"
             />
           </label>
