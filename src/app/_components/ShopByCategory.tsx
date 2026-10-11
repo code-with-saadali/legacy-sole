@@ -87,7 +87,7 @@ export default function ShopByCategory() {
                   alt=""
                   fill
                   sizes="90px"
-                  className="object-contain transition-transform duration-300 group-hover:scale-110 motion-reduce:transform-none motion-reduce:transition-none"
+                  className="object-cover object-center transition-transform duration-300 group-hover:scale-110 motion-reduce:transform-none motion-reduce:transition-none"
                 />
               </div>
               <span className="w-full wrap-break-word text-[11px] font-medium leading-4 text-[#171717] transition-colors group-hover:text-[#b64b18]">

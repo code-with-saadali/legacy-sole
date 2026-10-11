@@ -94,7 +94,7 @@ export default function Navbar() {
       >
         <div
           className={`relative mx-auto flex items-center justify-between px-[5%] transition-all duration-500 ${
-            scrolled ? "h-18 lg:h-19.5" : "h-19.5 lg:h-22"
+            scrolled ? "h-18 lg:h-19.5" : "h-19.5 lg:h-18"
           }`}
         >
           <div className="flex flex-1 items-center gap-2">

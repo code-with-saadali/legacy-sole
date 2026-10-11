@@ -65,14 +65,11 @@ export default function ProductDetailView({
           <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-black/40">
             {product.category} / Legacy Sole
           </p>
-          <div className="flex items-start justify-between gap-5">
-            <h1 className="mt-4 text-[clamp(52px,7vw,96px)] leading-none font-medium text-[#20211e]">
+          <div className="name">
+            <h1 className="mt-4 text-[clamp(36px,5vw,64px)] tracking-tighter leading-none font-medium text-[#20211e]">
               {product.name}
             </h1>
-            <WishlistButton
-              product={product}
-              className="mt-5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-black/10 text-[#20211e] hover:border-[#b66b4d]"
-            />
+            
           </div>
           <div className="mt-6 flex items-center justify-between border-y border-black/10 py-4">
             <span className="text-sm text-black/50">Price</span>
