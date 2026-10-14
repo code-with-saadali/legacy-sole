@@ -100,7 +100,7 @@ export default function ShopFilters({
                     alt=""
                     fill
                     sizes="56px"
-                    className="object-contain"
+                    className="object-cover object-center"
                   />
                 </span>
                 <span className="min-w-0 flex-1 break-words">{item}</span>

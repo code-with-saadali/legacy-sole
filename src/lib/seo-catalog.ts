@@ -16,3 +16,19 @@ export const seoProducts = cache(async () => {
   if (error) throw new Error("Catalogue unavailable");
   return (data ?? []).map(normalizeProduct);
 });
+
+export const productSlugAlias = cache(async (slug: string) => {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  if (!url || !key) throw new Error("Catalogue configuration missing");
+  const client = createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  const { data, error } = await client
+    .from("product_slug_aliases")
+    .select("new_slug")
+    .eq("old_slug", slug)
+    .maybeSingle();
+  if (error) throw new Error("Product link aliases unavailable");
+  return data?.new_slug as string | undefined;
+});

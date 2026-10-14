@@ -5,6 +5,8 @@ import { useCatalog } from "./CatalogProvider";
 import Image from "./ProductImage";
 import Link from "next/link";
 import { FiArrowUpRight } from "react-icons/fi";
+import ProductPrice from "./ProductPrice";
+import DiscountBadge from "./DiscountBadge";
 
 export default function NewArrivals() {
   const { settings } = useStoreSettings();
@@ -70,9 +72,7 @@ export default function NewArrivals() {
                 <p className="text-[8px] uppercase tracking-[0.18em] text-white/35">
                   {feature.priceLabel}
                 </p>
-                <p className="mt-2 text-[12px] font-medium">
-                  Rs. {product.price.toLocaleString()}
-                </p>
+                <ProductPrice product={product} className="mt-2 text-[12px]" />
               </div>
             </div>
 
@@ -114,6 +114,10 @@ export default function NewArrivals() {
               {feature.styleValue || `${product.category} / 01`}
             </p>
           </div>
+          <DiscountBadge
+            product={product}
+            className="absolute right-5 top-20 z-10 sm:right-7 sm:top-24"
+          />
 
           <div className="absolute inset-0">
             <Image

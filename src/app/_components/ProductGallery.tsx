@@ -4,6 +4,7 @@ import type { Product } from "../_data/products";
 import { productPhotos } from "../_data/product-poses";
 import ProductImage from "./ProductImage";
 import ProductZoom from "./ProductZoom";
+import DiscountBadge from "./DiscountBadge";
 export default function ProductGallery({ product }: { product: Product }) {
   const images = productPhotos(product.image, product.gallery);
   const [selectedImage, setSelectedImage] = useState(images[0]);
@@ -16,6 +17,7 @@ export default function ProductGallery({ product }: { product: Product }) {
           {product.tag}
         </span>
       )}
+      <DiscountBadge product={product} className="absolute right-5 top-5 z-10" />
       <button
         type="button"
         onClick={() => setZoom(true)}

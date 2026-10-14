@@ -11,20 +11,24 @@ import {
   shopSorts,
 } from "../_data/shop-filters";
 import { useCatalog } from "./CatalogProvider";
-import { menuCategories } from "../_data/navigation";
 import { useStoreSettings } from "./StoreSettingsProvider";
 import { categoryImages } from "../_data/category-images";
 import ShopFilters from "../shop/_components/ShopFilters";
 import ShopProducts from "../shop/_components/ShopProducts";
+import { productSalePrice } from "../_data/discounts";
+
+function normaliseColour(colour: string) {
+  return colour.trim().replace(/\s+/g, " ").toLocaleLowerCase();
+}
 
 export default function ShopClient() {
   const { settings } = useStoreSettings();
-  const navigationCategories = menuCategories(settings.menu_columns);
   const {
     products,
     categories: databaseCategories,
     loading,
     error,
+    categoryError,
   } = useCatalog();
   const searchParams = useSearchParams();
   const query = searchParams.get("q")?.trim() ?? "";
@@ -60,20 +64,21 @@ export default function ShopClient() {
       ),
     [products, category],
   );
-  const availableColours = useMemo(
-    () =>
-      [
-        ...new Set(
-          categoryProducts
-            .map((product) => product.color)
-            .filter((color) => color.trim()),
-        ),
-      ].sort(),
-    [categoryProducts],
-  );
-  const activeColour = availableColours.includes(colour)
-    ? colour
-    : "All colours";
+  const availableColours = useMemo(() => {
+    const colours = new Map<string, string>();
+    for (const product of categoryProducts) {
+      const name = product.color.trim().replace(/\s+/g, " ");
+      if (name) colours.set(normaliseColour(name), name);
+    }
+    return [...colours.values()].sort((first, second) =>
+      first.localeCompare(second),
+    );
+  }, [categoryProducts]);
+  const activeColour =
+    availableColours.find(
+      (availableColour) =>
+        normaliseColour(availableColour) === normaliseColour(colour),
+    ) ?? "All colours";
   const updateFilters = (
     changes: Record<string, string | null>,
     replace = false,
@@ -86,21 +91,13 @@ export default function ShopClient() {
     if (replace) window.history.replaceState(null, "", next);
     else window.history.pushState(null, "", next);
   };
-  const categories = [
-    "All shoes",
-    ...Array.from(
-      new Set([
-        ...navigationCategories,
-        ...databaseCategories,
-        ...products.map((product) => product.category),
-      ]),
-    ),
-  ];
+  const categories = ["All shoes", ...Array.from(new Set(databaseCategories))];
 
   const visibleProducts = useMemo(() => {
     const filtered = categoryProducts.filter((product) => {
       const matchesColour =
-        activeColour === "All colours" || product.color === activeColour;
+        activeColour === "All colours" ||
+        normaliseColour(product.color) === normaliseColour(activeColour);
       const searchable =
         `${product.name} ${product.category} ${product.color} ${product.slug}`.toLowerCase();
       const matchesSearch = query
@@ -111,13 +108,15 @@ export default function ShopClient() {
       return (
         matchesSearch &&
         matchesColour &&
-        product.price <= (maxPrice ?? Infinity)
+        productSalePrice(product) <= (maxPrice ?? Infinity)
       );
     });
 
     return [...filtered].sort((first, second) => {
-      if (sort === "Price: low to high") return first.price - second.price;
-      if (sort === "Price: high to low") return second.price - first.price;
+      if (sort === "Price: low to high")
+        return productSalePrice(first) - productSalePrice(second);
+      if (sort === "Price: high to low")
+        return productSalePrice(second) - productSalePrice(first);
       return Number(second.featured) - Number(first.featured);
     });
   }, [activeColour, maxPrice, categoryProducts, sort, query]);
@@ -201,6 +200,7 @@ export default function ShopClient() {
           <div className="relative hidden min-h-72 md:block">
             <ProductImage
               src={
+                settings.shop_hero_image ||
                 categoryProducts[0]?.image ||
                 categoryImages[category] ||
                 "https://pub-bbec48a9985d48a988fd956df7da148b.r2.dev/legacy-sole/images/shoes/runner-cutout.png"
@@ -248,13 +248,12 @@ export default function ShopClient() {
               updateFilters({ colour: value === "All colours" ? null : value })
             }
             maxPrice={
-              maxPrice ??
-              Math.max(1, ...products.map((product) => product.price))
+              maxPrice ?? Math.max(1, ...products.map(productSalePrice))
             }
             priceLimit={Math.max(
               1,
               maxPrice ?? 0,
-              ...products.map((product) => product.price),
+              ...products.map(productSalePrice),
             )}
             colours={availableColours}
             onMaxPriceChange={(value) =>
@@ -270,6 +269,12 @@ export default function ShopClient() {
           id="shop-products"
           className="min-w-0 scroll-mt-28"
         >
+          {categoryError && (
+            <p role="alert" className="mb-5 text-sm text-black/60">
+              Categories could not be refreshed. Product listings are still
+              available.
+            </p>
+          )}
           {(activeColour !== "All colours" || maxPrice !== null) && (
             <div className="mb-5 flex flex-wrap items-center gap-2">
               <span className="mr-1 text-xs text-black/45">Selected:</span>

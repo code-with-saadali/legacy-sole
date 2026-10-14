@@ -26,6 +26,8 @@ import { useStoreSettings } from "./StoreSettingsProvider";
 import { deliveryCharge } from "../_data/store-settings";
 import { cartKey } from "../_data/cart";
 import { pakistanProvinces } from "../_data/pakistan-regions";
+import { productSalePrice } from "../_data/discounts";
+import ProductPrice from "./ProductPrice";
 
 import { supabase } from "../../lib/supabase";
 
@@ -57,7 +59,7 @@ export default function CheckoutView() {
   }, [placed]);
 
   const subtotal = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + productSalePrice(item) * item.quantity,
     0,
   );
   const shipping = quote?.shipping ?? deliveryCharge(subtotal, city, settings);
@@ -131,7 +133,10 @@ export default function CheckoutView() {
         createdAt: new Date().toISOString(),
         status: "Pending",
         customer: customer as Order["customer"],
-        items: items.map((item) => ({ ...item })),
+        items: items.map((item) => ({
+          ...item,
+          price: productSalePrice(item),
+        })),
         total: data.total,
       });
       setPlaced(true);
@@ -527,7 +532,11 @@ export default function CheckoutView() {
                     </span>
                   </span>
                   <strong className="shrink-0 font-medium">
-                    Rs. {(item.price * item.quantity).toLocaleString()}
+                    <ProductPrice
+                      product={item}
+                      quantity={item.quantity}
+                      className="text-sm text-right"
+                    />
                   </strong>
                 </div>
               ))}

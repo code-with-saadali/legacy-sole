@@ -2,18 +2,17 @@
 
 import type { Product } from "../_data/products";
 import ProductGallery from "./ProductGallery";
-import SizeGuide from "./SizeGuide";
 import RelatedProducts from "./RelatedProducts";
 import CompleteTheLook from "./CompleteTheLook";
 import Link from "next/link";
 import { FiArrowLeft, FiCheck } from "react-icons/fi";
 import ProductActions from "./ProductActions";
 import RecentlyViewedTracker from "./RecentlyViewedTracker";
-import WishlistButton from "./WishlistButton";
 import { useCatalog } from "./CatalogProvider";
 import ProductReviews from "./ProductReviews";
 import { colourSwatches } from "../shop/_components/ShopFilters";
 import { availableSizes, sizeStock } from "../_data/inventory";
+import ProductPrice from "./ProductPrice";
 
 export default function ProductDetailView({
   slug,
@@ -25,17 +24,11 @@ export default function ProductDetailView({
   const { products, loading, error } = useCatalog();
   const product =
     products.find((item) => item.slug === slug) ??
-    (loading ? initialProduct : undefined);
+    (loading || error ? initialProduct : undefined);
   if (loading && !product)
     return (
       <main className="px-[5%] py-12" role="status">
         Loading product...
-      </main>
-    );
-  if (error)
-    return (
-      <main className="px-[5%] py-12" role="alert">
-        Unable to refresh product details. Please try again shortly.
       </main>
     );
   if (!product)
@@ -73,9 +66,7 @@ export default function ProductDetailView({
           </div>
           <div className="mt-6 flex items-center justify-between border-y border-black/10 py-4">
             <span className="text-sm text-black/50">Price</span>
-            <strong className="text-base font-medium">
-              Rs. {product.price.toLocaleString()}
-            </strong>
+            <ProductPrice product={product} className="text-base text-right" />
           </div>
           {soldOut && (
             <div
@@ -147,7 +138,6 @@ export default function ProductDetailView({
           <p className="mt-7 max-w-lg text-sm leading-7 text-black/55">
             {product.description}
           </p>
-          {!product.one_size && <SizeGuide product={product} />}
           <ProductActions key={product.slug} product={product} />
           <div className="mt-7 grid gap-3 border-t border-black/10 pt-6 sm:grid-cols-3">
             {product.details.map((detail) => (

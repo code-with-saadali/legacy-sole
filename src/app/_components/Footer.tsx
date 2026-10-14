@@ -15,13 +15,30 @@ const shopLinks = [
 ];
 
 const socialIcons = [
-  { label: "Instagram", Icon: FiInstagram },
-  { label: "Facebook", Icon: FaFacebookF },
-  { label: "TikTok", Icon: FaTiktok },
+  {
+    label: "Instagram",
+    Icon: FiInstagram,
+    href: "https://instagram.com/legacysole_com?dlrf=MTAzYWM3djV4bGYwcg%3D%3D",
+  },
+  {
+    label: "Facebook",
+    Icon: FaFacebookF,
+    href: "https://www.facebook.com/share/19qsJyrAZK/",
+  },
+  { label: "TikTok", Icon: FaTiktok, href: "https://tiktok.com/@legacy.sole0" },
 ];
 
-const linkStyle =
-  "w-fit rounded-sm transition-opacity hover:opacity-65 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current";
+const focusRing =
+  "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current";
+
+// Text link with animated underline
+const linkStyle = `relative w-fit rounded-sm ${focusRing} after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-300 hover:after:scale-x-100`;
+
+// Round icon button
+const iconButtonStyle = `flex size-10 items-center justify-center rounded-full border border-black/30 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#171717] hover:bg-[#171717] hover:text-[#f26924] ${focusRing}`;
+
+const headingStyle =
+  "mb-4 text-[13px] font-semibold uppercase tracking-[.18em]";
 
 export default function Footer() {
   const { settings } = useStoreSettings();
@@ -36,13 +53,14 @@ export default function Footer() {
   );
 
   return (
-    <footer className="site-chrome rounded-t-[28px] bg-[#f26924] px-6 pb-4 pt-14 text-[#171717] sm:px-10 lg:px-[3.57%] lg:pt-39.5">
-      <div className="mx-auto grid max-w-360 grid-cols-2 items-start gap-x-8 gap-y-10 lg:min-h-67.5 lg:grid-cols-[minmax(0,2.8fr)_minmax(0,.85fr)_minmax(0,.95fr)_minmax(0,1.03fr)] lg:gap-x-10">
-        <div className="col-span-2 lg:col-span-1">
+    <footer className="site-chrome rounded-t-[28px] bg-[#f26924] px-[5%] pb-6 pt-14 text-[#171717] lg:pt-20">
+      <div className="grid grid-cols-2 items-start gap-x-8 gap-y-12 lg:flex lg:items-start lg:justify-between lg:gap-8">
+        {/* Brand */}
+        <div className="col-span-2 lg:w-[38%] lg:shrink-0">
           <Link
             href="/"
             aria-label="Legacy Sole home"
-            className={`inline-flex flex-col ${linkStyle}`}
+            className={`inline-flex flex-col rounded-sm transition-opacity hover:opacity-80 ${focusRing}`}
           >
             <svg
               width="65"
@@ -53,24 +71,27 @@ export default function Footer() {
             >
               <image href="/logo-black.svg" width="800" height="336" />
             </svg>
-            <span className="text-[25px] font-bold leading-7.5 tracking-[.02em]">
+            <span className="text-[26px] font-bold leading-8 tracking-[.02em]">
               LEGACY SOLE
             </span>
-            <span className="mt-0.5 text-[8px] leading-3 tracking-[.35em]">
+            <span className="mt-1 text-[8px] leading-3 tracking-[.35em]">
               EVERY PAIR, A LEGACY.
             </span>
           </Link>
-          <div className="mb-3.75 mt-3 h-px w-full max-w-70.5 bg-black/35" />
-          <p className="max-w-100 text-[14px] leading-4.25">
+
+          <div className="my-5 h-px w-full max-w-72 bg-black/35" />
+
+          <p className="max-w-md text-[14px] leading-6 text-black/80">
             Curated thrift footwear for those who value unique style, quality,
             and character. Discover original pre-loved pairs, carefully selected
             for Pakistan.
           </p>
         </div>
 
-        <nav aria-label="Footer shop" className="lg:pt-1">
-          <h2 className="mb-1 text-[18px] font-medium leading-7">Shop</h2>
-          <ul className="space-y-0.5 text-[14px] leading-4.75">
+        {/* Shop */}
+        <nav aria-label="Footer shop" className="shrink-0">
+          <h2 className={headingStyle}>Shop</h2>
+          <ul className="space-y-2.5 text-[14px] leading-5">
             {shopLinks.map(({ label, href }) => (
               <li key={label}>
                 <Link href={href} className={linkStyle}>
@@ -81,11 +102,10 @@ export default function Footer() {
           </ul>
         </nav>
 
-        <nav aria-label="Customer care" className="lg:pt-1">
-          <h2 className="mb-1 text-[18px] font-medium leading-7">
-            Customer Care
-          </h2>
-          <ul className="space-y-0.5 text-[14px] leading-4.75">
+        {/* Customer Care */}
+        <nav aria-label="Customer care" className="shrink-0">
+          <h2 className={headingStyle}>Customer Care</h2>
+          <ul className="space-y-2.5 text-[14px] leading-5">
             {careLinks.map(({ label, href }) => (
               <li key={label}>
                 <Link href={href} className={linkStyle}>
@@ -96,43 +116,51 @@ export default function Footer() {
           </ul>
         </nav>
 
-        <div className="col-span-2 sm:col-span-1 lg:pt-1">
-          <h2 className="mb-1 text-[18px] font-medium leading-7">Contact Us</h2>
-          <a
+        {/* Contact + Social */}
+        <div className="col-span-2 shrink-0 sm:col-span-1">
+          <h2 className={headingStyle}>Contact Us</h2>
+          <Link
             href={`tel:+${phone}`}
-            className={`${linkStyle} inline-block text-[14px] leading-4.75`}
+            className={`${linkStyle} inline-block text-[15px] font-medium leading-5`}
           >
             {displayPhone}
-          </a>
-          <div className="mb-2 mt-2.5 h-px w-27.25 bg-black/55" />
-          <h2 className="text-[18px] font-medium leading-7">Follow Us:</h2>
-          <div className="-ml-2 flex items-center gap-1">
-            {socialIcons.map(({ label, Icon }) => (
-              <span
+          </Link>
+
+          <div className="my-6 h-px w-28 bg-black/45" />
+
+          <h2 className={headingStyle}>Follow Us</h2>
+          <div className="flex items-center gap-2.5">
+            {socialIcons.map(({ label, Icon, href }) => (
+              <Link
                 key={label}
-                title={`${label} profile coming soon`}
-                role="img"
-                aria-label={`${label} profile coming soon`}
-                className="flex size-8 items-center justify-center"
+                href={href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`Visit us on ${label}`}
+                className={iconButtonStyle}
               >
                 <Icon size={17} aria-hidden="true" />
-              </span>
+              </Link>
             ))}
-            <a
+            <Link
               href={whatsappHref}
               target="_blank"
               rel="noreferrer"
               aria-label="Chat on WhatsApp"
-              className={`${linkStyle} flex size-8 items-center justify-center`}
+              className={iconButtonStyle}
             >
-              <FaWhatsapp size={17} aria-hidden="true" />
-            </a>
+              <FaWhatsapp size={18} aria-hidden="true" />
+            </Link>
           </div>
         </div>
       </div>
-      <p className="mt-14 text-center text-[12px] leading-5 sm:text-[14px] lg:mt-4">
-        © {new Date().getFullYear()} Legacy Sole. All rights reserved.
-      </p>
+
+      {/* Bottom bar */}
+      <div className="mt-14 border-t border-black/25 pt-5">
+        <p className="text-center text-[12px] leading-5 text-black/75 sm:text-[13px]">
+          © {new Date().getFullYear()} Legacy Sole. All rights reserved.
+        </p>
+      </div>
     </footer>
   );
 }

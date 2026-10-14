@@ -10,7 +10,7 @@ import { FiBox, FiCheckCircle, FiPlus, FiSearch, FiX } from "react-icons/fi";
 import { type Product } from "../_data/products";
 import { searchProducts, stockAlerts } from "../_data/admin";
 import { supabase } from "../../lib/supabase";
-import { inventoryError } from "../_data/inventory";
+import { inventoryError, productSizes } from "../_data/inventory";
 import { productPhotos } from "../_data/product-poses";
 
 type Props = {
@@ -87,7 +87,15 @@ export default function AdminProductEditor({
   const addCategory = async () => {
     const name = newCategory.trim();
     if (!name || !supabase) return;
-    const { error } = await supabase.from("categories").insert({ name });
+    let { error } = await supabase
+      .from("categories")
+      .upsert({ name, storefront_visible: true }, { onConflict: "name" });
+    if (error?.code === "42703" || error?.message.includes("storefront_visible")) {
+      const fallback = await supabase
+        .from("categories")
+        .upsert({ name }, { onConflict: "name" });
+      error = fallback.error;
+    }
     if (error) {
       setError(error.message);
       return;
@@ -159,11 +167,14 @@ export default function AdminProductEditor({
       category: "",
       color: "",
       price: 0,
+      discount_percent: 0,
+      sale_price: null,
       image: "",
       tag: "",
       description: "",
       details: [],
       stock: 0,
+      sizes: [...productSizes],
       gallery: [],
       sizeGuide: [],
       featured: false,
@@ -265,10 +276,15 @@ export default function AdminProductEditor({
     if (
       !Number.isSafeInteger(draft.price) ||
       draft.price < 0 ||
+      !Number.isSafeInteger(draft.discount_percent) ||
+      draft.discount_percent < 0 ||
+      draft.discount_percent > 90 ||
       !Number.isSafeInteger(draft.stock ?? 0) ||
       (draft.stock ?? 0) < 0
     ) {
-      setError("Price and stock must be non-negative whole numbers.");
+      setError(
+        "Price and stock must be non-negative whole numbers. Discount must be between 0 and 90%.",
+      );
       return;
     }
     if (
@@ -292,6 +308,15 @@ export default function AdminProductEditor({
       setError("Use a local image path or HTTPS URL for each product photo.");
       return;
     }
+    const photoCount = new Set(
+      [draft.image, ...draft.gallery]
+        .map((image) => image.trim())
+        .filter(Boolean),
+    ).size;
+    if (photoCount > 5) {
+      setError("A product can have up to 5 photos.");
+      return;
+    }
     setSaving(true);
     try {
       const isNew = editingSlug === "new-product";
@@ -304,16 +329,12 @@ export default function AdminProductEditor({
             draft.gallery.map((image) => image.trim()).filter(Boolean),
           ),
         ],
-        stock: draft.size_stock
-          ? Object.values(draft.size_stock).reduce(
-              (sum, count) => sum + count,
-              0,
-            )
-          : (draft.stock ?? 0),
+        stock: draft.stock ?? 0,
       };
       const { sizeGuide, ...fields } = savedDraft;
       const payload = {
         ...fields,
+        sale_price: null,
         name: draft.name.trim(),
         variant_group: draft.variant_group?.trim() || "",
         size_stock: draft.size_stock ?? null,
@@ -350,9 +371,19 @@ export default function AdminProductEditor({
       setEditingSlug(null);
       setDraft(null);
     } catch (cause) {
+      const failure =
+        cause && typeof cause === "object"
+          ? (cause as { code?: string; message?: string })
+          : undefined;
+      const databaseMessage = failure?.message ?? "";
+      const missingDiscountPricingColumn =
+        (failure?.code === "PGRST204" || failure?.code === "42703") &&
+        (databaseMessage.includes("discount_percent") ||
+          databaseMessage.includes("sale_price"));
       setError(
-        (cause as { message?: string }).message ||
-          "Product could not be saved.",
+        missingDiscountPricingColumn
+        ? "The database is missing discount pricing columns. Apply the latest pricing migrations in supabase/migrations, then retry."
+          : databaseMessage || "Product could not be saved.",
       );
     } finally {
       setSaving(false);

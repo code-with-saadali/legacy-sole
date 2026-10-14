@@ -6,6 +6,8 @@ import {
 import { defaultStyleGuide, type StyleGuideSettings } from "./style-guide";
 import type { MenuColumn } from "./navigation";
 export type StoreSettings = {
+  hero_image: string;
+  shop_hero_image: string;
   new_arrivals: NewArrivalsSettings;
   classic_feature: ClassicFeatureSettings;
   style_guide: StyleGuideSettings;
@@ -16,6 +18,8 @@ export type StoreSettings = {
   city_rates: Record<string, number>;
 };
 export const defaultSettings: StoreSettings = {
+  hero_image: "/baner.jpeg",
+  shop_hero_image: "",
   new_arrivals: defaultNewArrivals,
   classic_feature: defaultClassicFeature,
   style_guide: defaultStyleGuide,

@@ -17,6 +17,7 @@ import DeliverySettings from "./DeliverySettings";
 import CouponManager from "./CouponManager";
 import NavigationSettings from "./NavigationSettings";
 import { useStoreSettings } from "./StoreSettingsProvider";
+import HeroSettingsPanel from "./HeroSettingsPanel";
 
 export default function AdminSettingsPanel() {
   const [section, setSection] = useState("Delivery & support");
@@ -88,6 +89,16 @@ export default function AdminSettingsPanel() {
           >
             {[
               {
+                label: "Homepage hero",
+                icon: FiImage,
+                text: "Homepage banner image",
+              },
+              {
+                label: "Shop hero",
+                icon: FiImage,
+                text: "Shop page banner image",
+              },
+              {
                 label: "New arrivals",
                 icon: FiImage,
                 text: "Arrival image and content",
@@ -155,7 +166,11 @@ export default function AdminSettingsPanel() {
           aria-label={section}
           className="min-w-0 [&_input:not([type=checkbox])]:rounded-xl [&_textarea]:rounded-xl [&_fieldset]:min-w-0"
         >
-          {section === "New arrivals" ? (
+          {section === "Homepage hero" ? (
+            <HeroSettingsPanel target="homepage" />
+          ) : section === "Shop hero" ? (
+            <HeroSettingsPanel target="shop" />
+          ) : section === "New arrivals" ? (
             <NewArrivalsSettingsPanel />
           ) : section === "Classic feature" ? (
             <ClassicFeatureSettingsPanel />

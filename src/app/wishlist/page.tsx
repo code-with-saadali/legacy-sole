@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { FiArrowLeft, FiHeart } from "react-icons/fi";
 import { useCatalog } from "../_components/CatalogProvider";
 import { readWishlist, toggleWishlist } from "../_data/wishlist";
+import ProductPrice from "../_components/ProductPrice";
+import DiscountBadge from "../_components/DiscountBadge";
 
 export default function WishlistPage() {
   const { products } = useCatalog();
@@ -64,13 +66,17 @@ export default function WishlistPage() {
                   href={`/products/${product.slug}`}
                   className="group block"
                 >
-                  <div className="relative aspect-[1.05] bg-[#E9E2D7]">
+                  <div className="relative aspect-[1.05] overflow-hidden rounded-2xl bg-[#E9E2D7]">
                     <Image
                       src={product.image}
                       alt={product.name}
                       fill
                       sizes="33vw"
-                      className="object-contain transition-transform duration-500 group-hover:scale-105"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <DiscountBadge
+                      product={product}
+                      className="absolute right-2 top-2"
                     />
                   </div>
                   <div className="flex items-start justify-between pt-4">
@@ -82,9 +88,7 @@ export default function WishlistPage() {
                         {product.color}
                       </p>
                     </div>
-                    <span className="text-xs">
-                      Rs. {product.price.toLocaleString()}
-                    </span>
+                    <ProductPrice product={product} className="text-xs" />
                   </div>
                 </Link>
                 <button

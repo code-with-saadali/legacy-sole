@@ -4,25 +4,17 @@ import Link from "next/link";
 import Image from "./ProductImage";
 import { useCatalog } from "./CatalogProvider";
 import { categoryCollections } from "../_data/storefront";
-import { menuCategories } from "../_data/navigation";
-import { useStoreSettings } from "./StoreSettingsProvider";
 
 import { categoryImages } from "../_data/category-images";
 
 export default function ShopByCategory() {
-  const { settings } = useStoreSettings();
-  const navigationCategories = menuCategories(settings.menu_columns);
-  const { products, categories, loading, error } = useCatalog();
+  const { products, categories, loading, categoryError } = useCatalog();
   const productCollections = categoryCollections(products);
   const collectionsByName = new Map(
     productCollections.map((collection) => [collection.name, collection]),
   );
   const collections = [
-    ...new Set([
-      ...navigationCategories,
-      ...categories,
-      ...productCollections.map(({ name }) => name),
-    ]),
+    ...new Set(categories),
   ]
     .filter((name) => name.trim())
     .map((name) => ({
@@ -59,12 +51,12 @@ export default function ShopByCategory() {
           ))}
         </div>
       )}
-      {error && (
+      {categoryError && (
         <p role="alert" className="mb-5 text-sm text-black/60">
-          We could not refresh the collection. Please try again shortly.
+          Categories could not be refreshed. Product listings are still available.
         </p>
       )}
-      {!loading && !error && !collections.length && (
+      {!loading && !categoryError && !collections.length && (
         <p className="py-8 text-sm text-black/55">
           New collections are on their way. Check back soon.
         </p>

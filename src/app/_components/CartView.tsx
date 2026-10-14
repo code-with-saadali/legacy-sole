@@ -14,6 +14,8 @@ import {
 } from "react-icons/fi";
 import { useStoreSettings } from "./StoreSettingsProvider";
 import { supportLink } from "../_data/store-settings";
+import ProductPrice from "./ProductPrice";
+import { productSalePrice } from "../_data/discounts";
 
 export default function CartView() {
   const { items, updateCart, issues, ready, error } = useCart();
@@ -26,7 +28,7 @@ export default function CartView() {
     );
 
   const total = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + productSalePrice(item) * item.quantity,
     0,
   );
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -159,9 +161,11 @@ export default function CartView() {
                           {item.size}
                         </span>
                       </div>
-                      <strong className="shrink-0 text-sm font-medium sm:text-base">
-                        Rs. {(item.price * item.quantity).toLocaleString()}
-                      </strong>
+                      <ProductPrice
+                        product={item}
+                        quantity={item.quantity}
+                        className="shrink-0 text-sm sm:text-base"
+                      />
                     </div>
                     <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
                       <span className="text-xs text-black/45">
@@ -254,7 +258,7 @@ export default function CartView() {
                   if (error || issues.length || !items.length) return;
                   const lines = items.map(
                     (item) =>
-                      `${item.name} (${item.color})\nSize: ${item.size} | Quantity: ${item.quantity}\nRs. ${(item.price * item.quantity).toLocaleString("en-PK")}\n${window.location.origin}/products/${encodeURIComponent(item.slug)}`,
+                      `${item.name} (${item.color})\nSize: ${item.size} | Quantity: ${item.quantity}\nRs. ${(productSalePrice(item) * item.quantity).toLocaleString("en-PK")}\n${window.location.origin}/products/${encodeURIComponent(item.slug)}`,
                   );
                   const message = `Assalam o Alaikum, I would like to order:\n\n${lines.join("\n\n")}\n\nSubtotal: Rs. ${total.toLocaleString("en-PK")}\nPlease confirm availability, delivery charges and final total.`;
                   window.open(

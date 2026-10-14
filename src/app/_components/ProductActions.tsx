@@ -2,13 +2,14 @@
 
 import { useStoreSettings } from "./StoreSettingsProvider";
 import { supportLink } from "../_data/store-settings";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiMessageCircle, FiShoppingBag } from "react-icons/fi";
 import type { Product } from "../_data/products";
 
 export type { CartItem } from "../_data/cart";
 import { cartKey, parseCart } from "../_data/cart";
 import { availableSizes, sizeStock } from "../_data/inventory";
+import { productSalePrice } from "../_data/discounts";
 
 function saveItem(product: Product, quantity: number, size: string) {
   const stored = window.localStorage.getItem(cartKey);
@@ -44,6 +45,16 @@ export default function ProductActions({ product }: { product: Product }) {
       availableSizes(product).find((size) => sizeStock(product, size) > 0) ??
       availableSizes(product)[0],
   );
+  useEffect(() => {
+    const options = availableSizes(product);
+    setSize((current) =>
+      options.includes(current)
+        ? current
+        : (options.find((option) => sizeStock(product, option) > 0) ??
+          options[0] ??
+          ""),
+    );
+  }, [product]);
   const [message, setMessage] = useState("");
   const soldOut =
     (product.stock ?? 0) < 1 ||
@@ -74,7 +85,7 @@ export default function ProductActions({ product }: { product: Product }) {
 
   const whatsappOrder = () => {
     if (sizeStock(product, size) < 1 || (product.stock ?? 0) < 1) return;
-    const message = `Assalam o Alaikum, I would like to order:\n\n${product.name}\nColour: ${product.color}\nSize: ${size}\nQuantity: 1\nProduct price: Rs. ${product.price.toLocaleString("en-PK")}\n\nPlease confirm availability, delivery charges and total.\n\nProduct: `;
+    const message = `Assalam o Alaikum, I would like to order:\n\n${product.name}\nColour: ${product.color}\nSize: ${size}\nQuantity: 1\nProduct price: Rs. ${productSalePrice(product).toLocaleString("en-PK")}\n\nPlease confirm availability, delivery charges and total.\n\nProduct: `;
     window.open(
       supportLink(
         settings.whatsapp,

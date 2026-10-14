@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { FiArrowUpRight, FiSearch, FiX } from "react-icons/fi";
 import { useCatalog } from "./CatalogProvider";
 import ProductImage from "./ProductImage";
+import DiscountBadge from "./DiscountBadge";
+import ProductPrice from "./ProductPrice";
 
 export default function NavbarSearch({ onClose }: { onClose: () => void }) {
   const router = useRouter();
@@ -187,15 +189,20 @@ export default function NavbarSearch({ onClose }: { onClose: () => void }) {
                           alt={product.name}
                           fill
                           sizes="(max-width: 767px) 28vw, 220px"
-                          className="object-contain transition-transform duration-300 motion-safe:group-hover:scale-105"
+                          className="object-cover transition-transform duration-300 motion-safe:group-hover:scale-105"
+                        />
+                        <DiscountBadge
+                          product={product}
+                          className="absolute right-2 top-2"
                         />
                       </div>
                       <p className="mt-3 text-xs font-medium sm:text-sm">
                         {product.name}
                       </p>
-                      <p className="mt-1 text-[10px] text-black/45 sm:text-xs">
-                        Rs. {product.price.toLocaleString("en-PK")}
-                      </p>
+                      <ProductPrice
+                        product={product}
+                        className="mt-1 text-[10px] sm:text-xs"
+                      />
                     </Link>
                   ))}
                 </div>
@@ -239,7 +246,11 @@ export default function NavbarSearch({ onClose }: { onClose: () => void }) {
                               alt={`${product.name}, ${product.color}`}
                               fill
                               sizes="96px"
-                              className="object-contain transition-transform duration-300 motion-safe:group-hover:scale-105"
+                              className="object-cover transition-transform duration-300 motion-safe:group-hover:scale-105"
+                            />
+                            <DiscountBadge
+                              product={product}
+                              className="absolute right-1 top-1 px-2 py-1 text-[8px]"
                             />
                           </div>
                           <div className="min-w-0 flex-1">
@@ -250,9 +261,10 @@ export default function NavbarSearch({ onClose }: { onClose: () => void }) {
                               {product.category} · {product.color}
                             </p>
                           </div>
-                          <p className="shrink-0 text-xs font-semibold text-[#956248] sm:text-sm">
-                            Rs. {product.price.toLocaleString("en-PK")}
-                          </p>
+                          <ProductPrice
+                            product={product}
+                            className="shrink-0 text-xs sm:text-sm"
+                          />
                           <FiArrowUpRight
                             aria-hidden="true"
                             className="hidden shrink-0 text-black/35 sm:block"

@@ -2,6 +2,8 @@ import { FiEdit3 } from "react-icons/fi";
 import Image from "./ProductImage";
 import type { Product } from "../_data/products";
 import { productPhotos } from "../_data/product-poses";
+import DiscountBadge from "./DiscountBadge";
+import ProductPrice from "./ProductPrice";
 
 type Props = {
   product: Product;
@@ -12,17 +14,20 @@ type Props = {
 export default function AdminProductCard({ product, onEdit, onDelete }: Props) {
   return (
     <article className="rounded-2xl border border-black/[0.08] bg-white p-4 shadow-[0_2px_8px_#20211e03]">
-      <p className="mb-3 text-xs text-black/60">
-        Stock: {product.stock ?? 0} units
-        {(product.stock ?? 0) <= 0 ? " / Out of stock" : ""}
-      </p>
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <p className="text-xs text-black/60">
+          Stock: {product.stock ?? 0} units
+          {(product.stock ?? 0) <= 0 ? " / Out of stock" : ""}
+        </p>
+        <DiscountBadge product={product} />
+      </div>
       <div className="relative aspect-[1.4] overflow-hidden rounded-xl bg-[#E9E2D7]">
         <Image
           src={product.image}
           alt={product.name}
           fill
           sizes="30vw"
-          className="object-contain p-[8%]"
+          className="object-cover"
         />
       </div>
       <div className="mt-3 flex flex-wrap gap-2" aria-label="Product poses">
@@ -32,14 +37,14 @@ export default function AdminProductCard({ product, onEdit, onDelete }: Props) {
             type="button"
             onClick={() => onEdit(product)}
             aria-label={`Edit ${product.name} photo ${index + 1}`}
-            className="relative h-14 w-14 shrink-0 rounded-lg border border-black/10 bg-[#E9E2D7] hover:border-[#4b5b40]"
+            className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-black/20 bg-[#E9E2D7] transition-colors hover:border-[#4b5b40] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4b5b40]"
           >
             <Image
               src={image}
               alt=""
               fill
               sizes="56px"
-              className="object-contain p-1"
+              className="object-cover"
             />
           </button>
         ))}
@@ -53,9 +58,7 @@ export default function AdminProductCard({ product, onEdit, onDelete }: Props) {
             {product.category} / {product.color}
           </p>
         </div>
-        <span className="text-sm font-semibold">
-          Rs. {product.price.toLocaleString()}
-        </span>
+        <ProductPrice product={product} className="text-sm text-right" />
       </div>
       <div className="mt-5 grid grid-cols-2 gap-2">
         <button

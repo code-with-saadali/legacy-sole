@@ -15,6 +15,7 @@ import {
 import Image from "./ProductImage";
 import type { Product } from "../_data/products";
 import { productSizes } from "../_data/inventory";
+import { discountedPrice } from "../_data/discounts";
 
 type Props = {
   draft: Product;
@@ -56,22 +57,45 @@ export default function ProductEditorDialog({
   ];
   const [restocking, setRestocking] = useState(false);
   const [restockQuantity, setRestockQuantity] = useState(1);
-  const [restockSize, setRestockSize] = useState(productSizes[0]);
-  const totalStock = draft.size_stock
-    ? Object.values(draft.size_stock).reduce((sum, count) => sum + count, 0)
-    : (draft.stock ?? 0);
+  const [newSize, setNewSize] = useState("");
+  const totalStock = draft.stock ?? 0;
+  const sizes = draft.sizes ?? productSizes;
+  const totalSizeStock = sizes.reduce(
+    (sum, size) => sum + (draft.size_stock?.[size] ?? 0),
+    0,
+  );
   const soldOut = totalStock <= 0;
+  const imageCount = new Set(
+    [draft.image, ...draft.gallery]
+      .map((image) => image.trim())
+      .filter(Boolean),
+  ).size;
   const markSoldOut = () => {
     setRestocking(false);
     updateDraft("stock", 0);
-    if (draft.size_stock) {
-      updateDraft(
-        "size_stock",
-        Object.fromEntries(
-          Object.keys(draft.size_stock).map((size) => [size, 0]),
-        ),
-      );
-    }
+  };
+  const addSize = () => {
+    const size = newSize.trim();
+    if (
+      !size ||
+      size.length > 40 ||
+      sizes.some((value) => value.toLowerCase() === size.toLowerCase())
+    )
+      return;
+    updateDraft("sizes", [...sizes, size]);
+    if (draft.size_stock)
+      updateDraft("size_stock", {
+        ...draft.size_stock,
+        [size]: draft.size_stock[size] ?? 0,
+      });
+    setNewSize("");
+  };
+  const removeSize = (size: string) => {
+    updateDraft(
+      "sizes",
+      sizes.filter((value) => value !== size),
+    );
+    // Keep historical stock keys so returns can restore the original size.
   };
   return (
     <div
@@ -168,7 +192,6 @@ export default function ProductEditorDialog({
                 URL slug
                 <input
                   value={draft.slug}
-                  disabled={editingSlug !== "new-product"}
                   placeholder="e.g. leather-boot"
                   onChange={(event) =>
                     updateDraft(
@@ -177,6 +200,11 @@ export default function ProductEditorDialog({
                     )
                   }
                 />
+                {editingSlug !== "new-product" && (
+                  <span className="text-[11px] font-normal text-black/45">
+                    Existing product links will redirect to the new slug.
+                  </span>
+                )}
               </label>
               <label className={formFieldClasses}>
                 Product name
@@ -197,23 +225,41 @@ export default function ProductEditorDialog({
                 />
               </label>
               <label className={formFieldClasses}>
+                Discount (%)
+                <input
+                  type="number"
+                  min="0"
+                  max="90"
+                  step="1"
+                  value={draft.discount_percent}
+                  onChange={(event) =>
+                    updateDraft("discount_percent", Number(event.target.value))
+                  }
+                />
+              </label>
+              <p className={`${formFieldClasses} flex flex-col justify-center`}>
+                Sale price after discount
+                <span className="mt-2 text-base font-semibold text-[#a64226]">
+                  Rs.{" "}
+                  {discountedPrice(draft.price, draft.discount_percent).toLocaleString(
+                    "en-PK",
+                  )}
+                </span>
+              </p>
+              <label className={formFieldClasses}>
                 Total stock
                 <input
                   type="number"
                   min="0"
-                  disabled={!!draft.size_stock}
-                  value={
-                    draft.size_stock
-                      ? Object.values(draft.size_stock).reduce(
-                          (sum, count) => sum + count,
-                          0,
-                        )
-                      : (draft.stock ?? 0)
-                  }
+                  step="1"
+                  value={draft.stock ?? 0}
                   onChange={(event) =>
                     updateDraft("stock", Number(event.target.value))
                   }
                 />
+                <span className="text-[11px] font-normal text-black/45">
+                  This total stock count is managed separately from size stock.
+                </span>
               </label>
               <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-black/10 bg-[#F4F1E9] p-4 sm:col-span-2">
                 <div>
@@ -223,7 +269,7 @@ export default function ProductEditorDialog({
                   <p className="mt-1 max-w-md text-xs leading-5 text-black/55">
                     {soldOut
                       ? "Add a quantity to make this product available again."
-                      : `${totalStock} units available. Mark sold out to set all quantities to zero.`}{" "}
+                      : `${totalStock} total units available. Mark sold out changes only total stock; size counts stay unchanged.`}{" "}
                     Save changes to apply.
                   </p>
                 </div>
@@ -239,33 +285,8 @@ export default function ProductEditorDialog({
                 </button>
                 {soldOut && restocking && (
                   <div className="grid w-full gap-3 border-t border-black/10 pt-4 sm:grid-cols-3">
-                    {draft.size_stock && (
-                      <label className={formFieldClasses}>
-                        Size to restock
-                        <span className="relative block w-full">
-                          <FaAngleDown
-                            aria-hidden="true"
-                            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-[#20211e]"
-                          />
-                          <select
-                            className="appearance-none !pr-10"
-                            value={restockSize}
-                            disabled={saving}
-                            onChange={(event) =>
-                              setRestockSize(event.target.value)
-                            }
-                          >
-                            {productSizes.map((size) => (
-                              <option key={size} value={size}>
-                                {size}
-                              </option>
-                            ))}
-                          </select>
-                        </span>
-                      </label>
-                    )}
                     <label className={formFieldClasses}>
-                      Available quantity
+                      Set total available units
                       <input
                         type="number"
                         min="1"
@@ -285,11 +306,6 @@ export default function ProductEditorDialog({
                         restockQuantity < 1
                       }
                       onClick={() => {
-                        if (draft.size_stock)
-                          updateDraft("size_stock", {
-                            ...draft.size_stock,
-                            [restockSize]: restockQuantity,
-                          });
                         updateDraft("stock", restockQuantity);
                         setRestocking(false);
                       }}
@@ -358,8 +374,8 @@ export default function ProductEditorDialog({
               <FiImage size={17} /> Product images
             </h4>
             <p className="mt-1 text-xs leading-6 text-black/45">
-              Upload or replace each pose, then save changes to update the shop.
-              PNG, JPEG or WebP, up to 5 MB per photo.
+              Add up to 5 photos, then save changes to update the shop. PNG,
+              JPEG or WebP, up to 5 MB per photo.
             </p>
             <fieldset
               disabled={saving}
@@ -367,12 +383,12 @@ export default function ProductEditorDialog({
             >
               <legend className="sr-only">Product photo uploads</legend>
               {Array.from(
-                { length: Math.max(3, draft.gallery.length + 1) },
+                { length: Math.max(5, draft.gallery.length + 1) },
                 (_, slot) => {
                   const source =
                     slot === 0 ? draft.image : draft.gallery[slot - 1] || "";
                   const label =
-                    slot === 0 ? "Pose 1 / Main photo" : "Pose " + (slot + 1);
+                    slot === 0 ? "Photo 1 / Main photo" : "Photo " + (slot + 1);
                   return (
                     <div
                       key={slot}
@@ -386,7 +402,7 @@ export default function ProductEditorDialog({
                             alt={label + " preview"}
                             fill
                             sizes="(max-width: 639px) 80vw, 240px"
-                            className="object-contain p-3"
+                            className="object-cover"
                           />
                         ) : (
                           <div className="flex h-full items-center justify-center text-black/30">
@@ -400,6 +416,7 @@ export default function ProductEditorDialog({
                           type="file"
                           accept="image/png,image/jpeg,image/webp"
                           aria-label={"Upload " + label}
+                          disabled={!source && imageCount >= 5}
                           onChange={(event) => void uploadImage(event, slot)}
                           className="mt-2 block w-full min-w-0 text-[10px] file:mr-2 file:rounded-lg file:border-0 file:bg-[#20211e] file:px-3 file:py-2 file:text-white"
                         />
@@ -417,6 +434,7 @@ export default function ProductEditorDialog({
                           <input
                             value={source}
                             placeholder="https://..."
+                            disabled={!source && imageCount >= 5}
                             onChange={(event) => {
                               if (slot === 0)
                                 updateDraft("image", event.target.value);
@@ -612,6 +630,65 @@ export default function ProductEditorDialog({
                   </div>
                 </div>
 
+                {!draft.one_size && (
+                <div className="mt-5 rounded-xl border border-black/10 bg-white p-3">
+                  <p className="text-sm font-medium text-[#20211e]">
+                    Product sizes
+                  </p>
+                  <p className="mt-1 text-xs leading-5 text-black/50">
+                    Add the sizes customers can select on the product page.
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {sizes.map((size) => (
+                      <span
+                        key={size}
+                        className="inline-flex items-center gap-2 rounded-full bg-[#F4F1E9] px-3 py-1.5 text-xs text-[#20211e]"
+                      >
+                        {size}
+                        <button
+                          type="button"
+                          aria-label={`Remove ${size}`}
+                          onClick={() => removeSize(size)}
+                          className="text-black/45 hover:text-[#a04c2a]"
+                        >
+                          <FiX size={13} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  <div className="mt-3 flex gap-2">
+                    <input
+                      aria-label="Add product size"
+                      value={newSize}
+                      maxLength={40}
+                      onChange={(event) => setNewSize(event.target.value)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          event.preventDefault();
+                          addSize();
+                        }
+                      }}
+                      placeholder="e.g. UK 11 or EU 44"
+                      className="min-w-0 flex-1 border border-black/10 bg-transparent px-3 py-2 text-sm outline-none focus:border-[#4b5b40]"
+                    />
+                    <button
+                      type="button"
+                      onClick={addSize}
+                      disabled={
+                        !newSize.trim() ||
+                        sizes.some(
+                          (size) =>
+                            size.toLowerCase() === newSize.trim().toLowerCase(),
+                        )
+                      }
+                      className="rounded-xl bg-[#4b5b40] px-4 text-xs font-medium text-white disabled:opacity-40"
+                    >
+                      Add size
+                    </button>
+                  </div>
+                </div>
+                )}
+
                 <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border border-black/10 bg-white p-3 text-sm transition-colors hover:border-[#4b5b40]/45">
                   <input
                     type="checkbox"
@@ -648,8 +725,11 @@ export default function ProductEditorDialog({
                         "size_stock",
                         event.target.checked
                           ? Object.fromEntries(
-                              productSizes.map((size) => [size, 0]),
-                            )
+                            sizes.map((size) => [
+                              size,
+                              draft.size_stock?.[size] ?? 0,
+                            ]),
+                          )
                           : null,
                       )
                     }
@@ -666,18 +746,10 @@ export default function ProductEditorDialog({
                 </label>
 
                 {!draft.size_stock && (
-                  <label className={`${formFieldClasses} mt-4`}>
-                    Total available units
-                    <input
-                      type="number"
-                      min="0"
-                      step="1"
-                      value={draft.stock ?? 0}
-                      onChange={(event) =>
-                        updateDraft("stock", Number(event.target.value))
-                      }
-                    />
-                  </label>
+                  <p className="mt-4 text-xs leading-5 text-black/50">
+                    Size-level stock is off. Purchases will use the selected
+                    size against total stock only.
+                  </p>
                 )}
               </div>
             </div>
@@ -690,16 +762,16 @@ export default function ProductEditorDialog({
                       Size availability
                     </h5>
                     <p className="mt-1 text-xs text-black/50">
-                      Set units per size. A zero quantity marks that size sold
-                      out.
+                      Size quantities are managed separately from total stock.
+                      Orders deduct from both independently.
                     </p>
                   </div>
                   <span className="rounded-full bg-white px-3 py-1.5 text-xs font-medium text-[#4b5b40]">
-                    Total: {totalStock} units
+                    Sizes total: {totalSizeStock} units
                   </span>
                 </div>
                 <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
-                  {productSizes.map((size) => {
+                  {sizes.map((size) => {
                     const quantity = draft.size_stock?.[size] ?? 0;
                     return (
                       <label

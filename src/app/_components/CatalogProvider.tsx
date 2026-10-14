@@ -16,6 +16,7 @@ type Catalog = {
   categories: string[];
   loading: boolean;
   error: string;
+  categoryError: string;
   connection: string;
   refresh: () => Promise<void>;
 };
@@ -40,30 +41,39 @@ export default function CatalogProvider({
   ]);
   const [loading, setLoading] = useState(!initialProducts);
   const [error, setError] = useState("");
+  const [categoryError, setCategoryError] = useState("");
   const [connection, setConnection] = useState("Connecting");
   const request = useRef(0);
 
   const refresh = useCallback(async () => {
     const version = ++request.current;
-    try {
-      const [nextProducts, nextCategories] = await Promise.all([
-        getProducts(),
-        getCategories(),
-      ]);
-      if (version !== request.current) return;
-      setProducts(nextProducts);
-      setCategories(nextCategories);
+    const [productsResult, categoriesResult] = await Promise.allSettled([
+      getProducts(),
+      getCategories(),
+    ]);
+    if (version !== request.current) return;
+
+    if (productsResult.status === "fulfilled") {
+      setProducts(productsResult.value);
       setError("");
-    } catch (cause) {
-      if (version === request.current)
-        setError(
-          cause instanceof Error
-            ? cause.message
-            : "Unable to load the collection.",
-        );
-    } finally {
-      if (version === request.current) setLoading(false);
+    } else {
+      setError(
+        productsResult.reason instanceof Error
+          ? productsResult.reason.message
+          : "Unable to load products.",
+      );
     }
+    if (categoriesResult.status === "fulfilled") {
+      setCategories(categoriesResult.value);
+      setCategoryError("");
+    } else {
+      setCategoryError(
+        categoriesResult.reason instanceof Error
+          ? categoriesResult.reason.message
+          : "Unable to load categories.",
+      );
+    }
+    setLoading(false);
   }, []);
 
   const invalidate = useCallback(() => {
@@ -119,7 +129,15 @@ export default function CatalogProvider({
 
   return (
     <CatalogContext.Provider
-      value={{ products, categories, loading, error, connection, refresh }}
+      value={{
+        products,
+        categories,
+        loading,
+        error,
+        categoryError,
+        connection,
+        refresh,
+      }}
     >
       {children}
     </CatalogContext.Provider>

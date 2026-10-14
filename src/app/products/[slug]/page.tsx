@@ -1,13 +1,19 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import ProductDetailView from "../../_components/ProductDetailView";
-import { seoProducts } from "../../../lib/seo-catalog";
+import { productSlugAlias, seoProducts } from "../../../lib/seo-catalog";
 import { absoluteUrl, pageMetadata, jsonLd } from "../../../lib/seo";
 import { availableSizes, sizeStock } from "../../_data/inventory";
+import { productSalePrice } from "../../_data/discounts";
 export const dynamic = "force-dynamic";
 type Props = { params: Promise<{ slug: string }> };
 async function findProduct(params: Props["params"]) {
   const { slug } = await params;
-  const product = (await seoProducts()).find((p) => p.slug === slug);
+  const products = await seoProducts();
+  let product = products.find((p) => p.slug === slug);
+  if (!product) {
+    const currentSlug = await productSlugAlias(slug);
+    product = products.find((p) => p.slug === currentSlug);
+  }
   if (!product) notFound();
   return product;
 }
@@ -23,6 +29,8 @@ export async function generateMetadata({ params }: Props) {
 }
 export default async function ProductPage({ params }: Props) {
   const p = await findProduct(params);
+  const { slug } = await params;
+  if (p.slug !== slug) redirect(`/products/${encodeURIComponent(p.slug)}`);
   const url = absoluteUrl("/products/" + encodeURIComponent(p.slug));
   const inStock =
     (p.stock ?? 0) > 0 && availableSizes(p).some((s) => sizeStock(p, s) > 0);
@@ -39,7 +47,7 @@ export default async function ProductPage({ params }: Props) {
       "@type": "Offer",
       url,
       priceCurrency: "PKR",
-      price: p.price,
+      price: productSalePrice(p),
       availability:
         "https://schema.org/" + (inStock ? "InStock" : "OutOfStock"),
       seller: { "@type": "Organization", name: "Legacy Sole" },

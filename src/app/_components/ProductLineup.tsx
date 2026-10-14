@@ -7,6 +7,8 @@ import { FiArrowUpRight } from "react-icons/fi";
 
 import { useCatalog } from "./CatalogProvider";
 import WishlistButton from "./WishlistButton";
+import DiscountBadge from "./DiscountBadge";
+import ProductPrice from "./ProductPrice";
 
 export default function ProductLineup() {
   const { products, loading, error } = useCatalog();
@@ -99,7 +101,7 @@ export default function ProductLineup() {
           <article key={product.slug} className="group min-w-0">
             <Link href={`/products/${product.slug}`} className="block">
               <div className="relative aspect-[1.08] overflow-hidden rounded-2xl bg-[#E9E2D7] sm:rounded-[26px] lg:rounded-[30px]">
-                <div className="absolute left-2 top-2 z-10 hidden sm:left-5 sm:top-5 sm:flex items-center rounded-full border border-black/10 bg-[#F8F6F1]/85 px-3 py-2 backdrop-blur-md">
+                <div className="absolute left-1/2 top-2 z-10 hidden -translate-x-1/2 items-center rounded-full border border-black/10 bg-[#F8F6F1]/85 px-3 py-2 backdrop-blur-md sm:top-5 sm:flex">
                   <span className="text-[8px] font-medium uppercase tracking-[0.16em] text-black/55">
                     {product.featured ? "Featured / " : ""}
                     {product.tag}
@@ -108,7 +110,11 @@ export default function ProductLineup() {
 
                 <WishlistButton
                   product={product}
-                  className="absolute right-2 top-2 z-20 flex h-9 w-9 sm:right-5 sm:top-5 items-center justify-center rounded-full border border-black/10 bg-[#F8F6F1]/80 text-[#20211e] backdrop-blur-md hover:border-[#ed682c] hover:bg-[#ed682c] hover:text-white"
+                  className="absolute left-2 top-2 z-20 flex h-9 w-9 sm:left-5 sm:top-5 items-center justify-center rounded-full border border-black/10 bg-[#F8F6F1]/80 text-[#20211e] backdrop-blur-md hover:border-[#ed682c] hover:bg-[#ed682c] hover:text-white"
+                />
+                <DiscountBadge
+                  product={product}
+                  className="absolute right-2 top-2 z-20 sm:right-5 sm:top-5"
                 />
 
                 <span className="pointer-events-none absolute left-1/2 top-[10%] -translate-x-1/2 whitespace-nowrap text-[clamp(52px,6vw,90px)] font-semibold tracking-[-0.08em] text-black/[0.035]">
@@ -138,7 +144,12 @@ export default function ProductLineup() {
                 <div className="flex flex-col items-start gap-2 sm:flex-row sm:justify-between sm:gap-4">
                   <div>
                     <h3 className="wrap-break-word text-sm font-medium tracking-[-0.035em] text-[#20211e] sm:text-[21px]">
-                      {product.name}
+                      <span className="sm:hidden">
+                        {product.name.length > 16
+                          ? `${product.name.slice(0, 16)}...`
+                          : product.name}
+                      </span>
+                      <span className="hidden sm:inline">{product.name}</span>
                     </h3>
 
                     <p className="mt-1.5 text-[11px] text-black/40">
@@ -146,9 +157,10 @@ export default function ProductLineup() {
                     </p>
                   </div>
 
-                  <strong className="shrink-0 text-[12px] font-medium text-[#20211e] sm:text-[13px]">
-                    Rs. {product.price.toLocaleString()}
-                  </strong>
+                  <ProductPrice
+                    product={product}
+                    className="shrink-0 text-[12px] sm:text-[13px]"
+                  />
                 </div>
 
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-black/10 pt-3">

@@ -5,6 +5,8 @@ import { useCatalog } from "./CatalogProvider";
 import Image from "./ProductImage";
 import Link from "next/link";
 import { FiArrowUpRight } from "react-icons/fi";
+import ProductPrice from "./ProductPrice";
+import DiscountBadge from "./DiscountBadge";
 
 export default function ClassicFeature() {
   const { settings } = useStoreSettings();
@@ -38,6 +40,10 @@ export default function ClassicFeature() {
               {feature.styleValue}
             </p>
           </div>
+          <DiscountBadge
+            product={product}
+            className="absolute right-5 top-20 z-10 sm:right-7 sm:top-24"
+          />
 
           <div className="absolute inset-0">
             <Image
@@ -100,9 +106,7 @@ export default function ClassicFeature() {
                 <p className="text-[8px] uppercase tracking-[0.18em] text-black/30">
                   {feature.priceLabel}
                 </p>
-                <p className="mt-2 text-[12px] font-medium text-[#20211e]">
-                  Rs. {product.price.toLocaleString()}
-                </p>
+                <ProductPrice product={product} className="mt-2 text-[12px]" />
               </div>
             </div>
 
